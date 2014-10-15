@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="app_name">SymptomManagement</string>
+    <string name="content_authority" translatable="false">"com.skywomantech.app.symptommanagement"</string>
+    <string name="action_settings">Settings</string>
+    <string name="login_title">Login</string>
+    <string name="pref_enable_auto_login_label">Enable Automatic Login</string>
+    <string name="pref_enable_auto_login_key" translatable="false">auto_login</string>
+    <string name="pref_enable_auto_login_default" translatable="false">false</string>
+    <string name="pref_enable_auto_login_false">Not Enabled</string>
+    <string name="pref_enable_auto_login_true">Enabled</string>
+    <string name="pref_login_name">Login Id:</string>
+    <string name="pref_login_name_key">login_name</string>
+    <string name="pref_login_name_default"></string>
+    <string name="pref_login_password">Password:</string>
+    <string name="pref_login_password_key">password_key</string>
+    <string name="pref_login_password_default"></string>
+    <string name="pref_enable_notifications_key" translatable="false">enable_notifications</string>
+    <string name="pref_enable_notifications_label">Notifications</string>
+    <string name="pref_enable_notifications_default" translatable="false">true</string>
+    <string name="pref_enable_notifications_true">Enabled</string>
+    <string name="pref_enable_notifications_false">Not Enabled</string>
+    <string name="pref_enable_reminders_key" translatable="false">enable_reminders</string>
+    <string name="pref_enable_reminders_label">Pain Log Reminders</string>
+    <string name="pref_enable_reminders_default" translatable="false">true</string>
+    <string name="pref_enable_reminders_true">Enabled</string>
+    <string name="pref_enable_reminders_false">Not Enabled</string>
+    <string name="pref_enable_med_reminders_key" translatable="false">enable_reminders</string>
+    <string name="pref_enable_med_reminders_label">Medication Reminders</string>
+    <string name="pref_enable_med_reminders_default" translatable="false">true</string>
+    <string name="pref_enable_med_reminders_true">Enabled</string>
+    <string name="pref_enable_med_reminders_false">Not Enabled</string>
+    <string name="title_admin_patient_list">Admin Patients</string>
+    <string name="title_admin_patient_detail">Admin Patient Details</string>
+    <string name="title_admin_physician_list">Admin Physicians</string>
+    <string name="title_admin_physician_detail">Admin Physician Details</string>
+    <string name="title_activity_admin_main">AdminMain</string>
+    <string name="admin_main_title"><![CDATA[Administrate Users  & Medications]]></string>
+    <string name="title_admin_medication_list">Admin Medications</string>
+    <string name="title_admin_medication_detail">Admin Medications Detail</string>
+    <string name="empty_list_text">This List is Empty.</string>
+
+</resources>

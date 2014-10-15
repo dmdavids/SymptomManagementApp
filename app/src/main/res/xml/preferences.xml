@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <CheckBoxPreference
+        android:title="@string/pref_enable_auto_login_label"
+        android:key="@string/pref_enable_auto_login_key"
+        android:summaryOff="@string/pref_enable_auto_login_false"
+        android:summaryOn="@string/pref_enable_auto_login_true"
+        android:defaultValue="@string/pref_enable_auto_login_default" />
+
+    <EditTextPreference
+        android:title="@string/pref_login_name"
+        android:key="@string/pref_login_name_key"
+        android:defaultValue="@string/pref_login_name_default"
+        android:inputType="text"
+        android:singleLine="true"  />
+
+    <EditTextPreference
+        android:title="@string/pref_login_password"
+        android:key="@string/pref_login_password_key"
+        android:defaultValue="@string/pref_login_password_default"
+        android:inputType="text"
+        android:singleLine="true"  />
+
+    <CheckBoxPreference
+        android:title="@string/pref_enable_notifications_label"
+        android:key="@string/pref_enable_notifications_key"
+        android:summaryOff="@string/pref_enable_notifications_false"
+        android:summaryOn="@string/pref_enable_notifications_true"
+        android:defaultValue="@string/pref_enable_notifications_default" />
+
+    <CheckBoxPreference
+        android:title="@string/pref_enable_reminders_label"
+        android:key="@string/pref_enable_reminders_key"
+        android:summaryOff="@string/pref_enable_reminders_false"
+        android:summaryOn="@string/pref_enable_reminders_true"
+        android:defaultValue="@string/pref_enable_reminders_default" />
+
+    <CheckBoxPreference
+        android:title="@string/pref_enable_med_reminders_label"
+        android:key="@string/pref_enable_med_reminders_key"
+        android:summaryOff="@string/pref_enable_med_reminders_false"
+        android:summaryOn="@string/pref_enable_med_reminders_true"
+        android:defaultValue="@string/pref_enable_med_reminders_default" />
+
+</PreferenceScreen>

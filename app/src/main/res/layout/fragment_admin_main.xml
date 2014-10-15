@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context="com.skywomantech.app.symptommanagement.admin.AdminMain$PlaceholderFragment">
+
+
+    <TextView
+        android:text="@string/admin_main_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/adminTitleView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:textSize="32dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Medications"
+        android:id="@+id/edit_medications_button"
+        android:layout_below="@+id/edit_physicians_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit Physicians"
+        android:id="@+id/edit_physicians_button"
+        android:layout_marginTop="80dp"
+        android:layout_below="@+id/edit_patients_button"
+        android:layout_alignLeft="@+id/edit_medications_button"
+        android:layout_alignStart="@+id/edit_medications_button" />
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit Patients"
+            android:id="@+id/edit_patients_button"
+            android:layout_toEndOf="@+id/adminTitleView"
+        android:layout_below="@+id/adminTitleView"
+        android:layout_alignLeft="@+id/edit_physicians_button"
+        android:layout_alignStart="@+id/edit_physicians_button"
+        android:layout_marginTop="127dp" />
+
+
+</RelativeLayout>
