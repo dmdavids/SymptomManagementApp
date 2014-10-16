@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.skywomantech.app.symptommanagement.R;
@@ -28,6 +29,7 @@ import com.skywomantech.app.symptommanagement.R;
 public class AdminMedicationsListActivity extends Activity
         implements AdminMedicationsListFragment.Callbacks {
 
+    public final String LOG_TAG = AdminMedicationsListActivity.class.getSimpleName();
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
@@ -72,24 +74,24 @@ public class AdminMedicationsListActivity extends Activity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(String medId) {
+        Log.d(LOG_TAG, "Saving Med ID: " + medId + " 2-pane is " + Boolean.toString(mTwoPane));
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(AdminMedicationsDetailFragment.ARG_ITEM_ID, id);
+            arguments.putString(AdminMedicationsDetailFragment.MED_ID_KEY, medId);
             AdminMedicationsDetailFragment fragment = new AdminMedicationsDetailFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
                     .replace(R.id.adminmedication_detail_container, fragment)
                     .commit();
-
         } else {
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, AdminMedicationDetailActivity.class);
-            detailIntent.putExtra(AdminMedicationsDetailFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra(AdminMedicationsDetailFragment.MED_ID_KEY, medId);
             startActivity(detailIntent);
         }
     }

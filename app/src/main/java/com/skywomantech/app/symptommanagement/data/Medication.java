@@ -56,10 +56,7 @@ public class Medication {
 
     @Override
     public String toString() {
-        return "Medication{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+        return name;
     }
 
 }

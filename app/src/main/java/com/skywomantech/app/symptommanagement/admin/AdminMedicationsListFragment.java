@@ -2,15 +2,18 @@ package com.skywomantech.app.symptommanagement.admin;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.app.ListFragment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 
+import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
@@ -19,6 +22,7 @@ import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.dummy.DummyContent;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -35,6 +39,8 @@ import java.util.concurrent.Callable;
  * interface.
  */
 public class AdminMedicationsListFragment extends ListFragment {
+
+    private static final String LOG_TAG = AdminMedicationsListFragment.class.getSimpleName();
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -62,7 +68,7 @@ public class AdminMedicationsListFragment extends ListFragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        public void onItemSelected(String medId);
     }
 
     /**
@@ -71,7 +77,7 @@ public class AdminMedicationsListFragment extends ListFragment {
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(String medId) {
         }
     };
 
@@ -85,13 +91,6 @@ public class AdminMedicationsListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                DummyContent.ITEMS));
     }
 
     @Override
@@ -132,18 +131,18 @@ public class AdminMedicationsListFragment extends ListFragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        // Reset the active callbacks interface to the dummy implementation.
-        mCallbacks = sDummyCallbacks;
     }
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
-        super.onListItemClick(listView, view, position, id);
-        setActivatedPosition(position);
 
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+        Medication med = (Medication) getListAdapter().getItem(position);
+        Log.d(LOG_TAG, "Medication name selected is " + med.getName()
+                + " id is : " + med.getId().toString());
+        String medId = med.getId().toString();
+        Log.d(LOG_TAG, " String id value is : " + medId);
+        ((Callbacks) getActivity()).onItemSelected(medId);
+        setActivatedPosition(position);
     }
 
     @Override
@@ -151,6 +150,8 @@ public class AdminMedicationsListFragment extends ListFragment {
         super.onSaveInstanceState(outState);
         if (mActivatedPosition != ListView.INVALID_POSITION) {
             // Serialize and persist the activated item position.
+            Log.v(LOG_TAG, "Saving the activated medication list position as "
+                    + Integer.toString(mActivatedPosition));
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
     }
@@ -168,12 +169,12 @@ public class AdminMedicationsListFragment extends ListFragment {
     }
 
     private void setActivatedPosition(int position) {
+        if (getListView() == null) return;
         if (position == ListView.INVALID_POSITION) {
             getListView().setItemChecked(mActivatedPosition, false);
         } else {
             getListView().setItemChecked(position, true);
         }
-
         mActivatedPosition = position;
     }
 
@@ -182,28 +183,27 @@ public class AdminMedicationsListFragment extends ListFragment {
         // hardcoded for my local host (see ipconfig for values) at port 8080
         // need to put this is prefs or somewhere it can me modified
         final SymptomManagementApi svc =
-                SymptomManagementService.getService("http://192.168.0.34:8080");
+                SymptomManagementService.getService(Login.SERVER_ADDRESS);
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Collection<Medication>>() {
 
                 @Override
                 public Collection<Medication> call() throws Exception {
+                    Log.d(LOG_TAG,"getting all medications");
                     return svc.getAllMedications();
                 }
             }, new TaskCallback<Collection<Medication>>() {
 
                 @Override
                 public void success(Collection<Medication> result) {
-                    List<String> names = new ArrayList<String>();
-                    for (Medication m : result) {
-                        names.add(m.getName());
-                    }
-                    getListView().setAdapter(new ArrayAdapter<String>(
+                    Log.d(LOG_TAG,"creating list of all medications");
+                    setListAdapter(new ArrayAdapter<Medication>(
                             getActivity(),
-                            android.R.layout.simple_list_item_1, names));
+                            android.R.layout.simple_list_item_activated_1,
+                            android.R.id.text1,
+                            new ArrayList(result)));
                 }
-
                 @Override
                 public void error(Exception e) {
                     Toast.makeText(

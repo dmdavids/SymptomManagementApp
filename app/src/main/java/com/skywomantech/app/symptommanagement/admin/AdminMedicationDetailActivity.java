@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.skywomantech.app.symptommanagement.R;
@@ -19,6 +20,8 @@ import com.skywomantech.app.symptommanagement.R;
  * more than a {@link AdminMedicationsDetailFragment}.
  */
 public class AdminMedicationDetailActivity extends Activity {
+
+    private static final String LOG_TAG = AdminMedicationDetailActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,11 +41,12 @@ public class AdminMedicationDetailActivity extends Activity {
         // http://developer.android.com/guide/components/fragments.html
         //
         if (savedInstanceState == null) {
-            // Create the detail fragment and add it to the activity
-            // using a fragment transaction.
+            // Create the detail fragment and add it to the activity using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(AdminMedicationsDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(AdminMedicationsDetailFragment.ARG_ITEM_ID));
+            // store the medication id so that the detail fragment can use it
+            String medId = getIntent().getStringExtra(AdminMedicationsDetailFragment.MED_ID_KEY);
+            Log.d(LOG_TAG, "Med ID Key is : " + medId);
+            arguments.putString(AdminMedicationsDetailFragment.MED_ID_KEY, medId);
             AdminMedicationsDetailFragment fragment = new AdminMedicationsDetailFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()

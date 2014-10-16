@@ -2,6 +2,7 @@ package com.skywomantech.app.symptommanagement.client;
 
 import com.skywomantech.app.symptommanagement.data.*;
 
+import java.math.BigInteger;
 import java.util.Collection;
 
 import retrofit.http.Body;
@@ -74,7 +75,7 @@ public interface SymptomManagementApi {
 	public Collection<Medication> getAllMedications();
 	
 	@GET(MEDICATION_PATH+ID_PATH)
-	public Medication getMedication(@Path(ID_PARAMETER) long medId);
+	public Medication getMedication(@Path(ID_PARAMETER) BigInteger medId);
 	
 	@POST(MEDICATION_PATH)
 	public Medication addMedication(@Body Medication medication);

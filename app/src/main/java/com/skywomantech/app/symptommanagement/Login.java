@@ -19,8 +19,10 @@ import butterknife.OnClick;
 
 public class Login extends Activity {
 
-    public final String LOG_TAG = Login.class.getSimpleName();
+    public final static String LOG_TAG = Login.class.getSimpleName();
     boolean loggedIn = false;
+
+    public final static String SERVER_ADDRESS = "http://192.168.0.34:8080";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
