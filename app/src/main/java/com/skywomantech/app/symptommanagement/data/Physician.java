@@ -1,12 +1,13 @@
 package com.skywomantech.app.symptommanagement.data;
 
-import java.math.BigInteger;
+
 import java.util.Collection;
+
 
 
 public class Physician {
 
-	private BigInteger id;
+	private String id;
 	private String name;
 	private Collection<Patient> patients;
 	
@@ -27,23 +28,29 @@ public class Physician {
 		this.patients = patients;
 	}
 
-	public BigInteger getId() {
+
+	public String getId() {
 		return id;
 	}
-	public void setId(BigInteger id) {
+
+	public void setId(String id) {
 		this.id = id;
 	}
 
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
 
+
 	public Collection<Patient> getPatients() {
 		return patients;
 	}
+
+
 	public void setPatients(Collection<Patient> patients) {
 		this.patients = patients;
 	}
@@ -85,7 +92,5 @@ public class Physician {
 		return "Physician [id=" + id + ", name=" + name + ", patients="
 				+ patients + "]";
 	}
-
-
 	
 }

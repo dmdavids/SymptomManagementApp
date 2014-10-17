@@ -1,11 +1,12 @@
 package com.skywomantech.app.symptommanagement.data;
 
-import java.math.BigInteger;
 import java.util.Set;
+
 
 public class Patient {
 
-	private BigInteger id;
+
+	private String id;
 	private String name;
 	private long lastLogin;
 	private Boolean isActive;
@@ -46,23 +47,32 @@ public class Patient {
 		this.prefs = prefs;
 	}
 
-	public BigInteger getId() {
+
+	public String getId() {
 		return id;
 	}
-	public void setId(BigInteger id) {
+
+
+	public void setId(String id) {
 		this.id = id;
 	}
+
 
 	public String getName() {
 		return name;
 	}
+
+
 	public void setName(String name) {
 		this.name = name;
 	}
 
+
 	public long getLastLogin() {
 		return lastLogin;
 	}
+
+
 	public void setLastLogin(long lastLogin) {
 		this.lastLogin = lastLogin;
 	}
@@ -71,6 +81,8 @@ public class Patient {
 	public Boolean getIsActive() {
 		return isActive;
 	}
+
+
 	public void setIsActive(Boolean isActive) {
 		this.isActive = isActive;
 	}

@@ -1,6 +1,8 @@
 package com.skywomantech.app.symptommanagement.client;
 
-import com.skywomantech.app.symptommanagement.data.*;
+import com.skywomantech.app.symptommanagement.data.Medication;
+import com.skywomantech.app.symptommanagement.data.Patient;
+import com.skywomantech.app.symptommanagement.data.Physician;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -33,58 +35,57 @@ public interface SymptomManagementApi {
 	public static final String PHYSICIAN_SEARCH_PATH = PHYSICIAN_PATH + SEARCH_PATH;
 	public static final String MEDICATION_SEARCH_PATH = MEDICATION_PATH + SEARCH_PATH;
 	
-	//TODO: How to handle the images - storing and downloading?  Figure out later!
 
 	@GET(PATIENT_PATH)
-	public Collection<Patient> getAllPatients();
+	public Collection<Patient> getPatientList();
 	
 	@GET(PATIENT_PATH+ID_PATH)
-	public Patient getPatient(@Path(ID_PARAMETER) long userId);		
+	public Patient getPatient(@Path(ID_PARAMETER) String id);		
 	
 	@POST(PATIENT_PATH)
 	public Patient addPatient(@Body Patient patient);
 	
 	@PUT(PATIENT_PATH+ID_PATH)
-	public Patient updatePatient(@Path(ID_PARAMETER) long userId, @Body Patient patient);		
+	public Patient updatePatient(@Path(ID_PARAMETER) String id, @Body Patient patient);		
 
 	@DELETE(PATIENT_PATH+ID_PATH)
-	public void deletePatient(@Path(ID_PARAMETER) long userId);		
+	public Patient deletePatient(@Path(ID_PARAMETER) String id);
 	
 	@GET(PATIENT_SEARCH_PATH)
 	public Collection<Patient> findByPatientName(@Query(NAME_PARAMETER) String name);
 	
 	@GET(PHYSICIAN_PATH)
-	public Collection<Physician> getAllPhysicians();
+	public Collection<Physician> getPhysicianList();
 	
 	@GET(PHYSICIAN_PATH+ID_PATH)
-	public Physician getPhysician(@Path(ID_PARAMETER) long userId);
+	public Physician getPhysician(@Path(ID_PARAMETER) String id);
 	
 	@POST(PHYSICIAN_PATH)
 	public Physician addPhysician(@Body Physician physician);
 	
 	@PUT(PHYSICIAN_PATH+ID_PATH)
-	public Physician updatePhysician(@Path(ID_PARAMETER) long userId, @Body Physician physician);	
+	public Physician updatePhysician(@Path(ID_PARAMETER) String id, @Body Physician physician);	
 	
 	@DELETE(PHYSICIAN_PATH+ID_PATH)
-	public void deletePhysician(@Path(ID_PARAMETER) long userId);
+	public Physician deletePhysician(@Path(ID_PARAMETER) long userId);
 	
 	@GET(PHYSICIAN_SEARCH_PATH)
 	public Collection<Physician> findByPhysicianName(@Query(NAME_PARAMETER) String name);
 	
-	@GET(MEDICATION_PATH)
-	public Collection<Medication> getAllMedications();
-	
 	@GET(MEDICATION_PATH+ID_PATH)
-	public Medication getMedication(@Path(ID_PARAMETER) BigInteger medId);
+	public Medication getMedication(@Path(ID_PARAMETER) String id);
+	
+	@GET(MEDICATION_PATH)
+	public Collection<Medication> getMedicationList();
 	
 	@POST(MEDICATION_PATH)
 	public Medication addMedication(@Body Medication medication);
 	
 	@PUT(MEDICATION_PATH+ID_PATH)
-	public Medication updateMedication(@Path(ID_PARAMETER) long medId, @Body Medication medication);	
+	public Medication updateMedication(@Path(ID_PARAMETER) String id, @Body Medication medication);	
 	
 	@DELETE(MEDICATION_PATH+ID_PATH)
-	public void deleteMedication(@Path(ID_PARAMETER) long medId);
+	public Medication deleteMedication(@Path(ID_PARAMETER) String id);
 	
 	@GET(MEDICATION_SEARCH_PATH)
 	public Collection<Medication> findByMedicationName(@Query(NAME_PARAMETER) String name);

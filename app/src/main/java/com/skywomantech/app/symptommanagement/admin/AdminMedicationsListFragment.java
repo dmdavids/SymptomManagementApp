@@ -2,16 +2,13 @@ package com.skywomantech.app.symptommanagement.admin;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.app.ListFragment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-
 
 import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
@@ -20,12 +17,9 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Medication;
-import com.skywomantech.app.symptommanagement.dummy.DummyContent;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 
@@ -138,8 +132,8 @@ public class AdminMedicationsListFragment extends ListFragment {
 
         Medication med = (Medication) getListAdapter().getItem(position);
         Log.d(LOG_TAG, "Medication name selected is " + med.getName()
-                + " id is : " + med.getId().toString());
-        String medId = med.getId().toString();
+                + " id is : " + med.getId());
+        String medId = med.getId();
         Log.d(LOG_TAG, " String id value is : " + medId);
         ((Callbacks) getActivity()).onItemSelected(medId);
         setActivatedPosition(position);
@@ -191,7 +185,7 @@ public class AdminMedicationsListFragment extends ListFragment {
                 @Override
                 public Collection<Medication> call() throws Exception {
                     Log.d(LOG_TAG,"getting all medications");
-                    return svc.getAllMedications();
+                    return svc.getMedicationList();
                 }
             }, new TaskCallback<Collection<Medication>>() {
 
