@@ -1,5 +1,6 @@
 package com.skywomantech.app.symptommanagement.admin;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
@@ -19,9 +20,11 @@ import com.skywomantech.app.symptommanagement.R;
  * This activity is mostly just a 'shell' activity containing nothing
  * more than a {@link AdminMedicationsDetailFragment}.
  */
-public class AdminMedicationDetailActivity extends Activity {
+public class AdminMedicationDetailActivity extends Activity
+        implements AdminMedicationsDetailFragment.Callbacks{
 
     private static final String LOG_TAG = AdminMedicationDetailActivity.class.getSimpleName();
+    public final static String MED_ID_KEY = AdminMedicationsListActivity.MED_ID_KEY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +47,15 @@ public class AdminMedicationDetailActivity extends Activity {
             // Create the detail fragment and add it to the activity using a fragment transaction.
             Bundle arguments = new Bundle();
             // store the medication id so that the detail fragment can use it
-            String medId = getIntent().getStringExtra(AdminMedicationsDetailFragment.MED_ID_KEY);
+            String medId = getIntent().getStringExtra(MED_ID_KEY);
             Log.d(LOG_TAG, "Med ID Key is : " + medId);
-            arguments.putString(AdminMedicationsDetailFragment.MED_ID_KEY, medId);
-            AdminMedicationsDetailFragment fragment = new AdminMedicationsDetailFragment();
+            Fragment fragment;
+            if (medId != null) {
+                arguments.putString(MED_ID_KEY, medId);
+                 fragment = new AdminMedicationsDetailFragment();
+            } else {
+                 fragment = new AdminMedicationsAddEditFragment();
+            }
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
                     .add(R.id.adminmedication_detail_container, fragment)
@@ -69,5 +77,17 @@ public class AdminMedicationDetailActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onEditMedication(String medId) {
+        // switch out the fragments
+        Bundle arguments = new Bundle();
+        arguments.putString(MED_ID_KEY, medId);
+        AdminMedicationsAddEditFragment fragment = new AdminMedicationsAddEditFragment();
+        fragment.setArguments(arguments);
+        getFragmentManager().beginTransaction()
+                .replace(R.id.adminmedication_detail_container, fragment)
+                .commit();
     }
 }

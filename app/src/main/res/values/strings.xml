@@ -40,6 +40,9 @@
     <string name="admin_main_title"><![CDATA[Administrate Users  & Medications]]></string>
     <string name="title_admin_medication_list">Admin Medications</string>
     <string name="title_admin_medication_detail">Admin Medications Detail</string>
+    <string name="admin_medication_edit">Edit</string>
+    <string name="admin_medication_delete">Delete</string>
+    <string name="admin_medication_add">Add</string>
     <string name="empty_list_text">This List is Empty.</string>
 
 </resources>

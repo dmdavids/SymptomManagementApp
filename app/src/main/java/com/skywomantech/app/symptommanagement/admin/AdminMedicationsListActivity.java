@@ -30,6 +30,13 @@ public class AdminMedicationsListActivity extends Activity
         implements AdminMedicationsListFragment.Callbacks {
 
     public final String LOG_TAG = AdminMedicationsListActivity.class.getSimpleName();
+
+    /**
+     * The fragment argument representing the medication ID that this fragment
+     * represents.
+     */
+    public static final String MED_ID_KEY = "med_id";
+
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
@@ -42,6 +49,10 @@ public class AdminMedicationsListActivity extends Activity
         setContentView(R.layout.activity_admin_medication_list);
         // Show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // return if Activity is being restored, no need to recreate GUI
+        if (savedInstanceState != null)
+            return;
 
         if (findViewById(R.id.adminmedication_detail_container) != null) {
             // The detail container view will be present only in the
@@ -74,14 +85,14 @@ public class AdminMedicationsListActivity extends Activity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String medId) {
+    public void onMedicationSelected(String medId) {
         Log.d(LOG_TAG, "Saving Med ID: " + medId + " 2-pane is " + Boolean.toString(mTwoPane));
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(AdminMedicationsDetailFragment.MED_ID_KEY, medId);
+            arguments.putString(MED_ID_KEY, medId);
             AdminMedicationsDetailFragment fragment = new AdminMedicationsDetailFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -91,8 +102,31 @@ public class AdminMedicationsListActivity extends Activity
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, AdminMedicationDetailActivity.class);
-            detailIntent.putExtra(AdminMedicationsDetailFragment.MED_ID_KEY, medId);
+            detailIntent.putExtra(MED_ID_KEY, medId);
             startActivity(detailIntent);
         }
     }
+
+    @Override
+    public void onAddMedication() {
+        Log.d(LOG_TAG, "Changing to Add/Edit Fragment");
+        if (mTwoPane) {
+            // In two-pane mode, show the detail view in this activity by
+            // adding or replacing the detail fragment using a
+            // fragment transaction.
+            Bundle arguments = new Bundle();
+            AdminMedicationsAddEditFragment fragment = new AdminMedicationsAddEditFragment();
+            fragment.setArguments(arguments);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.adminmedication_detail_container, fragment)
+                    .commit();
+        } else {
+            // In single-pane mode, simply start the detail activity
+            // for the selected item ID.
+            Intent detailIntent = new Intent(this, AdminMedicationDetailActivity.class);
+            startActivity(detailIntent);
+        }
+    }
+
+
 }

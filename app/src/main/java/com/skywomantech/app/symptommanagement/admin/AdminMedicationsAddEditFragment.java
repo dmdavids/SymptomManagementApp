@@ -1,20 +1,17 @@
 package com.skywomantech.app.symptommanagement.admin;
 
-import android.content.Intent;
-import android.os.Bundle;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
 import android.widget.Toast;
-
 
 import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
@@ -23,11 +20,7 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Medication;
-import com.skywomantech.app.symptommanagement.dummy.DummyContent;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
@@ -36,33 +29,26 @@ import butterknife.OnClick;
 
 /**
  * A fragment representing a single admin_medication detail screen.
- * This fragment is either contained in a {@link com.skywomantech.app.symptommanagement.admin.AdminMedicationsListActivity}
- * in two-pane mode (on tablets) or a {@link com.skywomantech.app.symptommanagement.admin.AdminMedicationDetailActivity}
+ * This fragment is either contained in a {@link AdminMedicationsListActivity}
+ * in two-pane mode (on tablets) or a {@link AdminMedicationDetailActivity}
  * on handsets.
  */
-public class AdminMedicationsDetailFragment extends Fragment {
-    private static final String LOG_TAG = AdminMedicationsDetailFragment.class.getSimpleName();
-
-    public interface Callbacks {
-        // called when user selects Edit from options menu
-        public void onEditMedication(String medId);
-    }
+public class AdminMedicationsAddEditFragment extends Fragment {
+    private static final String LOG_TAG = AdminMedicationsAddEditFragment.class.getSimpleName();
 
     public final static String MED_ID_KEY = AdminMedicationsListActivity.MED_ID_KEY;
 
-    /**
-     * The Medication that this fragment is presenting.
-     */
-    private String mMedId;
     private Medication mMedication;
+    private String mMedId;
 
-    @InjectView(R.id.admin_medication_detail) TextView mTextView;
+    @InjectView(R.id.admin_medication_edit_name)  EditText mMedName;
+    @InjectView(R.id.save_medication_button)  Button mSaveButton;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public AdminMedicationsDetailFragment() {
+    public AdminMedicationsAddEditFragment() {
     }
 
     @Override
@@ -82,7 +68,6 @@ public class AdminMedicationsDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments().containsKey(MED_ID_KEY)) {
             mMedId = getArguments().getString(MED_ID_KEY);
             Log.d(LOG_TAG, "onCreate-Med ID Key is : " + mMedId );
@@ -92,50 +77,23 @@ public class AdminMedicationsDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        Bundle arguments = getArguments();
-        if (arguments != null) {
-            mMedId = arguments.getString(MED_ID_KEY);
-            Log.d(LOG_TAG, "onCreateView 2-Med ID Key is : " + mMedId);
-        }
-        else if (savedInstanceState != null) {
-            mMedId = savedInstanceState.getString(MED_ID_KEY);
-            Log.d(LOG_TAG, "onCreateView 3-Med ID Key is : " + mMedId);
-        }
 
-        View rootView = inflater.inflate(R.layout.fragment_admin_medication_detail, container, false);
-        setHasOptionsMenu(true); // this fragment has menu items to display
-        mTextView = (TextView) rootView.findViewById(R.id.admin_medication_detail);
-        if (mMedication != null) {
-            mTextView.setText(mMedication.toString());
-        }
+        setRetainInstance(true); // save fragment across config changes
+        setHasOptionsMenu(true); // fragment has menu items to display
+
+        // else editing
+        View rootView = inflater.inflate(R.layout.fragment_admin_medication_add_edit, container, false);
+        mMedName = (EditText) rootView.findViewById(R.id.admin_medication_edit_name);
         ButterKnife.inject(this, rootView);
-        return rootView;
-    }
 
-    // display this fragment's menu items
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-    {
-        super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.admin_medication, menu);
-    }
-
-
-    // handle menu item selections
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
-            case R.id.action_edit:
-                ((Callbacks) getActivity()).onEditMedication(mMedId);
-                return true;
-            case R.id.action_delete:
-                deleteMedication();
-                return true;
+        mMedication = new Medication();
+        Bundle arguments = getArguments();
+        if (arguments != null && arguments.containsKey(MED_ID_KEY) && mMedId != null) {
+            mMedId = getArguments().getString(MED_ID_KEY);
+            Log.d(LOG_TAG, "onResume 1b-Med ID Key is : " + mMedId );
+            loadMedicationFromAPI();
         }
-
-        return super.onOptionsItemSelected(item);
+        return rootView;
     }
 
     @Override
@@ -144,7 +102,7 @@ public class AdminMedicationsDetailFragment extends Fragment {
         Bundle arguments = getArguments();
         Log.d(LOG_TAG, "onResume-Med ID Key is : " + mMedId);
         if (arguments != null && arguments.containsKey(MED_ID_KEY) && mMedId != null) {
-            String x = getArguments().getString(MED_ID_KEY);
+            mMedId = getArguments().getString(MED_ID_KEY);
             Log.d(LOG_TAG, "onResume 1b-Med ID Key is : " + mMedId );
             loadMedicationFromAPI();
         }
@@ -159,6 +117,7 @@ public class AdminMedicationsDetailFragment extends Fragment {
     }
 
     private void loadMedicationFromAPI() {
+        if (mMedId == null) return;
         Log.d(LOG_TAG, "LoadFromAPI - Med ID Key is : " + mMedId);
         // hardcoded for my local host (see ipconfig for values) at port 8080
         // need to put this is prefs or somewhere it can me modified
@@ -179,14 +138,14 @@ public class AdminMedicationsDetailFragment extends Fragment {
                 public void success(Medication result) {
                     Log.d(LOG_TAG, "Found Medication :" + result.toString());
                     mMedication = result;
-                    mTextView.setText(mMedication.toString());
+                    mMedName.setText(mMedication.toString());
                 }
 
                 @Override
                 public void error(Exception e) {
                     Toast.makeText(
                             getActivity(),
-                            "Unable to fetch Selected Medication. Please check Internet connection.",
+                            "Unable to fetch Medication for editing. Please check Internet connection.",
                             Toast.LENGTH_LONG).show();
                     getActivity().onBackPressed();
                 }
@@ -194,18 +153,45 @@ public class AdminMedicationsDetailFragment extends Fragment {
         }
     }
 
-    public void deleteMedication() {
+    @OnClick(R.id.save_medication_button)
+    public void saveMedication(Button button) {
+        if (mMedName.getText().toString().trim().length() == 0) {
+            DialogFragment errorSaving =
+                    new DialogFragment()
+                    {
+                        @Override
+                        public Dialog onCreateDialog(Bundle savedInstanceState)
+                        {
+                            AlertDialog.Builder builder =
+                                    new AlertDialog.Builder(getActivity());
+                            builder.setMessage("Please Enter a Medication Name to Save.");
+                            builder.setPositiveButton("OK", null);
+                            return builder.create();
+                        }
+                    };
+
+            errorSaving.show(getFragmentManager(), "error saving medication");
+            return;
+        }
 
         final SymptomManagementApi svc =
                 SymptomManagementService.getService(Login.SERVER_ADDRESS);
 
+        final String successMsg = (mMedId == null ? "ADDED" : "UPDATED");
         if (svc != null) {
             CallableTask.invoke(new Callable<Medication>() {
 
                 @Override
                 public Medication call() throws Exception {
-                    Log.d(LOG_TAG, "deleting medication with id : " + mMedId);
-                    return svc.deleteMedication(mMedId);
+                    mMedication.setId(mMedId);
+                    mMedication.setName(mMedName.getText().toString());
+                    if (mMedId == null) {
+                        Log.d(LOG_TAG, "adding medication :" + mMedication.toDebugString());
+                        return svc.addMedication(mMedication);
+                    }else {
+                        Log.d(LOG_TAG, "updating medication :" + mMedication.toDebugString());
+                        return svc.updateMedication(mMedId, mMedication);
+                    }
                 }
             }, new TaskCallback<Medication>() {
 
@@ -213,7 +199,7 @@ public class AdminMedicationsDetailFragment extends Fragment {
                 public void success(Medication result) {
                     Toast.makeText(
                             getActivity(),
-                            "Medication [" + result.getName() + "] deleted successfully.",
+                            "Medication [" + result.getName() + "] " + successMsg + " successfully.",
                             Toast.LENGTH_SHORT).show();
                     // re-GET the medications list .. shouldn't have the medication in it any more
                     getActivity().onBackPressed();
@@ -223,7 +209,7 @@ public class AdminMedicationsDetailFragment extends Fragment {
                 public void error(Exception e) {
                     Toast.makeText(
                             getActivity(),
-                            "Unable to delete Medication. Please check Internet connection.",
+                            "Unable to SAVE Medication. Please check Internet connection.",
                             Toast.LENGTH_LONG).show();
                     //re-GET the medications list ... medication should still be in the list
                     getActivity().onBackPressed();

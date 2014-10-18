@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.ListFragment;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -43,12 +46,6 @@ public class AdminMedicationsListFragment extends ListFragment {
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
     /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
-     */
-    private Callbacks mCallbacks = sDummyCallbacks;
-
-    /**
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
@@ -59,21 +56,13 @@ public class AdminMedicationsListFragment extends ListFragment {
      * selections.
      */
     public interface Callbacks {
-        /**
-         * Callback for when an item has been selected.
-         */
-        public void onItemSelected(String medId);
-    }
 
-    /**
-     * A dummy implementation of the {@link Callbacks} interface that does
-     * nothing. Used only when this fragment is not attached to an activity.
-     */
-    private static Callbacks sDummyCallbacks = new Callbacks() {
-        @Override
-        public void onItemSelected(String medId) {
-        }
-    };
+        // called when user selects a Medication
+        public void onMedicationSelected(String medId);
+
+        // called when user wants to add a medication
+        public void onAddMedication();
+    }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -90,6 +79,8 @@ public class AdminMedicationsListFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        setRetainInstance(true); // save fragment across config changes
+        setHasOptionsMenu(true); // this fragment has menu items to display
         setEmptyText(getString(R.string.empty_list_text));
         // Restore the previously serialized activated item position.
         if (savedInstanceState != null
@@ -112,7 +103,27 @@ public class AdminMedicationsListFragment extends ListFragment {
         if (!(activity instanceof Callbacks)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
-        mCallbacks = (Callbacks) activity;
+    }
+
+    // display this fragment's menu items
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.admin_medication_list, menu);
+    }
+
+    // handle choice from options menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case R.id.action_add:
+                ((Callbacks) getActivity()).onAddMedication();
+                return true;
+        }
+        return super.onOptionsItemSelected(item); // call super's method
     }
 
     @Override
@@ -135,7 +146,7 @@ public class AdminMedicationsListFragment extends ListFragment {
                 + " id is : " + med.getId());
         String medId = med.getId();
         Log.d(LOG_TAG, " String id value is : " + medId);
-        ((Callbacks) getActivity()).onItemSelected(medId);
+        ((Callbacks) getActivity()).onMedicationSelected(medId);
         setActivatedPosition(position);
     }
 
