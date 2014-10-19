@@ -13,14 +13,12 @@
         android:layout_height="fill_parent"
         android:orientation="vertical">
 
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:height="@android:dimen/app_icon_size"
             android:text="PATIENT DETAILS :"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
 
         <TextView
             android:id="@+id/admin_patient_detail"
@@ -40,65 +38,12 @@
             android:text="Physicians :"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <TextView
-            android:id="@+id/admin_patient_physician_name_1"
+        <ListView
+            android:id="@+id/patient_physicians_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:height="@android:dimen/app_icon_size"
-            android:editable="true"
-            android:text="Physician Name 1"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textIsSelectable="true" />
+            android:height="@android:dimen/app_icon_size" />
 
-        <TextView
-            android:id="@+id/admin_patient_physician_name_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:height="@android:dimen/app_icon_size"
-            android:editable="true"
-            android:text="Physician Name 2"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textIsSelectable="true" />
-
-        <TextView
-            android:id="@+id/admin_patient_physician_name_3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:height="@android:dimen/app_icon_size"
-            android:editable="true"
-            android:text="Physician Name 3"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textIsSelectable="true" />
-
-        <TextView
-            android:id="@+id/admin_patient_physician_name_4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:height="@android:dimen/app_icon_size"
-            android:editable="true"
-            android:text="Physician Name 4"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textIsSelectable="true" />
-
-        <TextView
-            android:id="@+id/admin_patient_physician_name_5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:height="@android:dimen/app_icon_size"
-            android:editable="true"
-            android:text="Physician Name 5"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textIsSelectable="true" />
-
-        <TextView
-            android:id="@+id/admin_patient_physician_name_6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:height="@android:dimen/app_icon_size"
-            android:editable="true"
-            android:text="Physician Name 6"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textIsSelectable="true" />
     </LinearLayout>
 
 </ScrollView>

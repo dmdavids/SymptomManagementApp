@@ -9,6 +9,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,7 +25,6 @@ import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.Physician;
 
 import java.util.ArrayList;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
@@ -37,50 +38,21 @@ import butterknife.InjectView;
  */
 public class AdminPatientDetailFragment extends Fragment {
     private static final String LOG_TAG = AdminPatientDetailFragment.class.getSimpleName();
+    public final static String PATIENT_ID_KEY = AdminPatientListActivity.PATIENT_ID_KEY;
+
+    private String mPatientId;
+    private Patient mPatient;
 
     public interface Callbacks {
         // called when user selects Edit from options menu
         public void onEditPatient(String id);
     }
 
-    public final static String PATIENT_ID_KEY = AdminPatientListActivity.PATIENT_ID_KEY;
-
-    private String mPatientId;
-    private Patient mPatient;
-
-
     @InjectView(R.id.admin_patient_detail) TextView mTextView;
-    // only show a max of 6 physicians.. no user requirements so I can do whatever
-    @InjectView(R.id.admin_patient_physician_name_1) TextView mPhysician1;
-    @InjectView(R.id.admin_patient_physician_name_2) TextView mPhysician2;
-    @InjectView(R.id.admin_patient_physician_name_3) TextView mPhysician3;
-    @InjectView(R.id.admin_patient_physician_name_4) TextView mPhysician4;
-    @InjectView(R.id.admin_patient_physician_name_5) TextView mPhysician5;
-    @InjectView(R.id.admin_patient_physician_name_6) TextView mPhysician6;
+    @InjectView(R.id.patient_physicians_list)   ListView mPhysiciansListView;
 
 
     public AdminPatientDetailFragment() {
-    }
-
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            mPatientId = savedInstanceState.getString(PATIENT_ID_KEY);
-        }
-        Bundle arguments = getArguments();
-        if (arguments != null && arguments.containsKey(PATIENT_ID_KEY)) {
-            mPatientId = getArguments().getString(PATIENT_ID_KEY);
-        }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments().containsKey(PATIENT_ID_KEY)) {
-            mPatientId = getArguments().getString(PATIENT_ID_KEY);
-        }
     }
 
     @Override
@@ -93,13 +65,8 @@ public class AdminPatientDetailFragment extends Fragment {
         } else if (savedInstanceState != null) {
             mPatientId = savedInstanceState.getString(PATIENT_ID_KEY);
         }
-
         View rootView = inflater.inflate(R.layout.fragment_admin_patient_detail, container, false);
-        setHasOptionsMenu(true); // this fragment has menu items to display
-        mTextView = (TextView) rootView.findViewById(R.id.admin_patient_detail);
-        if (mPatient != null) {
-            mTextView.setText(mPatient.toString());
-        }
+        setHasOptionsMenu(true);
         ButterKnife.inject(this, rootView);
         return rootView;
     }
@@ -113,7 +80,6 @@ public class AdminPatientDetailFragment extends Fragment {
     }
 
 
-    // handle menu item selections
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -132,10 +98,31 @@ public class AdminPatientDetailFragment extends Fragment {
         super.onResume();
         Bundle arguments = getArguments();
         if (arguments != null && arguments.containsKey(PATIENT_ID_KEY)) {
+            mPatientId = arguments.getString(PATIENT_ID_KEY);
             loadPatientFromAPI();
+            displayPhysicians();
         }
     }
 
+    private void displayPhysicians() {
+        if (mPatient == null || mPatient.getPhysicians() == null) {
+            final ArrayList<String> emptyList = new ArrayList<String>();
+            emptyList.add("No Physicians for this Patient.");
+            mPhysiciansListView
+                    .setAdapter(new ArrayAdapter<String>(
+                            getActivity(),
+                            android.R.layout.simple_list_item_activated_1,
+                            android.R.id.text1,
+                            new ArrayList(emptyList)));
+        } else {
+            mPhysiciansListView
+                    .setAdapter(new ArrayAdapter<Physician>(
+                            getActivity(),
+                            android.R.layout.simple_list_item_activated_1,
+                            android.R.id.text1,
+                            new ArrayList(mPatient.getPhysicians())));
+        }
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -165,18 +152,6 @@ public class AdminPatientDetailFragment extends Fragment {
                     Log.d(LOG_TAG, "Found Patient :" + result.toString());
                     mPatient = result;
                     mTextView.setText(mPatient.getName());
-                    if (mPatient != null && mPatient.getPhysicians() != null &&
-                            mPatient.getPhysicians().size() > 0) {
-                       displayPhysicians(mPatient.getPhysicians());
-                    }
-                    else  {
-                        mPhysician1.setText("No Physicians Assigned to Patient.");
-                        mPhysician2.setText("");
-                        mPhysician3.setText("");
-                        mPhysician4.setText("");
-                        mPhysician5.setText("");
-                        mPhysician6.setText("");
-                    }
                 }
 
                 @Override
@@ -191,16 +166,6 @@ public class AdminPatientDetailFragment extends Fragment {
         }
     }
 
-    private void displayPhysicians(Set<Physician> physicians) {
-        int numberOf = physicians.size();
-        Physician[] drs = physicians.toArray(new Physician[numberOf]);
-        mPhysician1.setText(drs[0].getName());
-        if (numberOf > 1) mPhysician2.setText(drs[1].getName());
-        if (numberOf > 2) mPhysician3.setText(drs[2].getName());
-        if (numberOf > 3) mPhysician4.setText(drs[3].getName());
-        if (numberOf > 4) mPhysician5.setText(drs[4].getName());
-        if (numberOf > 5) mPhysician6.setText(drs[5].getName());
-    }
 
     public void deletePatient() {
 

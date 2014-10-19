@@ -34,47 +34,19 @@ import butterknife.InjectView;
  */
 public class AdminMedicationDetailFragment extends Fragment {
     private static final String LOG_TAG = AdminMedicationDetailFragment.class.getSimpleName();
+    public final static String MED_ID_KEY = AdminMedicationListActivity.MED_ID_KEY;
+
+    private String mMedId;
+    private Medication mMedication;
 
     public interface Callbacks {
         // called when user selects Edit from options menu
         public void onEditMedication(String medId);
     }
 
-    public final static String MED_ID_KEY = AdminMedicationListActivity.MED_ID_KEY;
-
-    /**
-     * The Medication that this fragment is presenting.
-     */
-    private String mMedId;
-    private Medication mMedication;
-
     @InjectView(R.id.admin_medication_detail) TextView mTextView;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public AdminMedicationDetailFragment() {
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null) {
-            mMedId = savedInstanceState.getString(MED_ID_KEY);
-        }
-        Bundle arguments = getArguments();
-        if (arguments != null && arguments.containsKey(MED_ID_KEY)) {
-            mMedId = getArguments().getString(MED_ID_KEY);
-        }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments().containsKey(MED_ID_KEY)) {
-            mMedId = getArguments().getString(MED_ID_KEY);
-        }
     }
 
     @Override
@@ -87,18 +59,12 @@ public class AdminMedicationDetailFragment extends Fragment {
         else if (savedInstanceState != null) {
             mMedId = savedInstanceState.getString(MED_ID_KEY);
         }
-
         View rootView = inflater.inflate(R.layout.fragment_admin_medication_detail, container, false);
         setHasOptionsMenu(true); // this fragment has menu items to display
-        mTextView = (TextView) rootView.findViewById(R.id.admin_medication_detail);
-        if (mMedication != null) {
-            mTextView.setText(mMedication.toString());
-        }
         ButterKnife.inject(this, rootView);
         return rootView;
     }
 
-    // display this fragment's menu items
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
@@ -106,8 +72,6 @@ public class AdminMedicationDetailFragment extends Fragment {
         inflater.inflate(R.menu.admin_edit_delete_menu, menu);
     }
 
-
-    // handle menu item selections
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -127,11 +91,11 @@ public class AdminMedicationDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Bundle arguments = getArguments();
-        if (arguments != null && arguments.containsKey(MED_ID_KEY) && mMedId != null) {
+        if (arguments != null && arguments.containsKey(MED_ID_KEY)) {
+            mMedId = arguments.getString(MED_ID_KEY);
             loadMedicationFromAPI();
         }
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {

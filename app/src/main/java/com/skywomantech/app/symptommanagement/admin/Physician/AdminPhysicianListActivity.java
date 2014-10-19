@@ -47,7 +47,7 @@ public class AdminPhysicianListActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin_physician_list);
+        setContentView(R.layout.activity_adminphysician_list);
         // Show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -65,7 +65,7 @@ public class AdminPhysicianListActivity extends Activity
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
             ((AdminPhysicianListFragment) getFragmentManager()
-                    .findFragmentById(R.id.adminphysician_list))
+                    .findFragmentById(R.id.admin_physician_list))
                     .setActivateOnItemClick(true);
         }
 

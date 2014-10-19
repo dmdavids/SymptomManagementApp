@@ -35,41 +35,19 @@ import android.os.Bundle;
  public class AdminPhysicianDetailFragment extends Fragment {
      private static final String LOG_TAG = AdminPhysicianDetailFragment.class.getSimpleName();
 
+    public final static String PHYSICIAN_ID_KEY = AdminPhysicianListActivity.PHYSICIAN_ID_KEY;
+
+    private String mPhysicianId;
+    private Physician mPhysician;
+
      public interface Callbacks {
          // called when user selects Edit from options menu
          public void onEditPhysician(String id);
      }
 
-     public final static String PHYSICIAN_ID_KEY = AdminPhysicianListActivity.PHYSICIAN_ID_KEY;
-
-     private String mPhysicianId;
-     private Physician mPhysician;
-
-
-     @InjectView(R.id.admin_physician_detail)
-     TextView mTextView;
+     @InjectView(R.id.admin_physician_detail) TextView mTextView;
 
      public AdminPhysicianDetailFragment() {
-     }
-
-     @Override
-     public void onActivityCreated(Bundle savedInstanceState) {
-         super.onActivityCreated(savedInstanceState);
-         if (savedInstanceState != null) {
-             mPhysicianId = savedInstanceState.getString(PHYSICIAN_ID_KEY);
-         }
-         Bundle arguments = getArguments();
-         if (arguments != null && arguments.containsKey(PHYSICIAN_ID_KEY)) {
-             mPhysicianId = getArguments().getString(PHYSICIAN_ID_KEY);
-         }
-     }
-
-     @Override
-     public void onCreate(Bundle savedInstanceState) {
-         super.onCreate(savedInstanceState);
-         if (getArguments().containsKey(PHYSICIAN_ID_KEY)) {
-             mPhysicianId = getArguments().getString(PHYSICIAN_ID_KEY);
-         }
      }
 
      @Override
@@ -82,26 +60,18 @@ import android.os.Bundle;
          } else if (savedInstanceState != null) {
              mPhysicianId = savedInstanceState.getString(PHYSICIAN_ID_KEY);
          }
-
          View rootView = inflater.inflate(R.layout.fragment_admin_physician_detail, container, false);
-         setHasOptionsMenu(true); // this fragment has menu items to display
-         mTextView = (TextView) rootView.findViewById(R.id.admin_physician_detail);
-         if (mPhysician != null) {
-             mTextView.setText(mPhysician.toString());
-         }
+         setHasOptionsMenu(true);
          ButterKnife.inject(this, rootView);
          return rootView;
      }
 
-     // display this fragment's menu items
      @Override
      public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
          super.onCreateOptionsMenu(menu, inflater);
          inflater.inflate(R.menu.admin_edit_delete_menu, menu);
      }
 
-
-     // handle menu item selections
      @Override
      public boolean onOptionsItemSelected(MenuItem item) {
          switch (item.getItemId()) {
@@ -119,12 +89,11 @@ import android.os.Bundle;
      public void onResume() {
          super.onResume();
          Bundle arguments = getArguments();
-         if (arguments != null && arguments.containsKey(PHYSICIAN_ID_KEY)
-                 && mPhysicianId != null) {
+         if (arguments != null && arguments.containsKey(PHYSICIAN_ID_KEY)) {
+             mPhysicianId = arguments.getString(PHYSICIAN_ID_KEY);
              loadPhysicianFromAPI();
          }
      }
-
 
      @Override
      public void onSaveInstanceState(Bundle outState) {
@@ -153,7 +122,7 @@ import android.os.Bundle;
                  public void success(Physician result) {
                      Log.d(LOG_TAG, "Found Physician :" + result.toString());
                      mPhysician = result;
-                     mTextView.setText(mPhysician.getName());
+                     mTextView.setText(mPhysician.toString());
                  }
 
                  @Override
