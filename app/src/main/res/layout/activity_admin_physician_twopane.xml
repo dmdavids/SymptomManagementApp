@@ -8,7 +8,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="com.skywomantech.app.symptommanagement.admin.AdminPhysicianListActivity">
+    tools:context="com.skywomantech.app.symptommanagement.admin.Physician.AdminPhysicianListActivity">
 
     <!--
     This layout is a two-pane layout for the AdminPhysicians
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/adminphysician_list"
-        android:name="com.skywomantech.app.symptommanagement.admin.AdminPhysicianListFragment"
+        android:name="com.skywomantech.app.symptommanagement.admin.Physician.AdminPhysicianListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

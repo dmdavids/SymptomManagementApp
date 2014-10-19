@@ -89,8 +89,11 @@ public class Physician {
 
 	@Override
 	public String toString() {
-		return "Physician [id=" + id + ", name=" + name + ", patients="
-				+ patients + "]";
+		return name;
 	}
-	
+
+    public String toDebugString() {
+        return "Physician [id=" + id + ", name=" + name + ", patients="
+                + patients + "]";
+    }
 }

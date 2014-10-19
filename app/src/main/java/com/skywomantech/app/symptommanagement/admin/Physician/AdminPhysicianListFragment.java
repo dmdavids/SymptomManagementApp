@@ -1,7 +1,6 @@
-package com.skywomantech.app.symptommanagement.admin;
+package com.skywomantech.app.symptommanagement.admin.Physician;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.app.ListFragment;
 import android.util.Log;
@@ -13,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+
 import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
@@ -20,24 +20,25 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Medication;
+import com.skywomantech.app.symptommanagement.data.Physician;
+import com.skywomantech.app.symptommanagement.dummy.DummyContent;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-
 /**
- * A list fragment representing a list of admin_medications. This fragment
+ * A list fragment representing a list of AdminPhysicians. This fragment
  * also supports tablet devices by allowing list items to be given an
  * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link AdminMedicationsDetailFragment}.
+ * currently being viewed in a {@link AdminPhysicianDetailFragment}.
  * <p>
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class AdminMedicationsListFragment extends ListFragment {
+public class AdminPhysicianListFragment extends ListFragment {
 
-    private static final String LOG_TAG = AdminMedicationsListFragment.class.getSimpleName();
+    private static final String LOG_TAG = AdminPhysicianListFragment.class.getSimpleName();
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -57,18 +58,18 @@ public class AdminMedicationsListFragment extends ListFragment {
      */
     public interface Callbacks {
 
-        // called when user selects a Medication
-        public void onMedicationSelected(String medId);
+        // called when user selects a Physician
+        public void onPhysicianSelected(String physicianId);
 
-        // called when user wants to add a medication
-        public void onAddMedication();
+        // called when user wants to add a Physician
+        public void onAddPhysician();
     }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public AdminMedicationsListFragment() {
+    public AdminPhysicianListFragment() {
     }
 
     @Override
@@ -104,13 +105,12 @@ public class AdminMedicationsListFragment extends ListFragment {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
     }
-
     // display this fragment's menu items
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.admin_medication_list, menu);
+        inflater.inflate(R.menu.admin_add_menu, menu);
     }
 
     // handle choice from options menu
@@ -120,7 +120,7 @@ public class AdminMedicationsListFragment extends ListFragment {
         switch (item.getItemId())
         {
             case R.id.action_add:
-                ((Callbacks) getActivity()).onAddMedication();
+                ((Callbacks) getActivity()).onAddPhysician();
                 return true;
         }
         return super.onOptionsItemSelected(item); // call super's method
@@ -129,24 +129,19 @@ public class AdminMedicationsListFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        refreshMedications();
-    }
-
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
+        refreshPhysicians();
     }
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
-
-        Medication med = (Medication) getListAdapter().getItem(position);
-        Log.d(LOG_TAG, "Medication name selected is " + med.getName()
-                + " id is : " + med.getId());
-        String medId = med.getId();
-        Log.d(LOG_TAG, " String id value is : " + medId);
-        ((Callbacks) getActivity()).onMedicationSelected(medId);
+        super.onListItemClick(listView, view, position, id);
+        Physician physician =
+                (Physician) getListAdapter().getItem(position);
+        Log.d(LOG_TAG, "Physician name selected is " + physician.getName()
+                + " id is : " + physician.getId());
+        String physicianId = physician.getId();
+        Log.d(LOG_TAG, " String id value is : " + physicianId);
+        ((Callbacks) getActivity()).onPhysicianSelected(physicianId);
         setActivatedPosition(position);
     }
 
@@ -155,8 +150,6 @@ public class AdminMedicationsListFragment extends ListFragment {
         super.onSaveInstanceState(outState);
         if (mActivatedPosition != ListView.INVALID_POSITION) {
             // Serialize and persist the activated item position.
-            Log.v(LOG_TAG, "Saving the activated medication list position as "
-                    + Integer.toString(mActivatedPosition));
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
     }
@@ -174,16 +167,16 @@ public class AdminMedicationsListFragment extends ListFragment {
     }
 
     private void setActivatedPosition(int position) {
-        if (getListView() == null) return;
         if (position == ListView.INVALID_POSITION) {
             getListView().setItemChecked(mActivatedPosition, false);
         } else {
             getListView().setItemChecked(position, true);
         }
+
         mActivatedPosition = position;
     }
 
-    private void refreshMedications() {
+    private void refreshPhysicians() {
 
         // hardcoded for my local host (see ipconfig for values) at port 8080
         // need to put this is prefs or somewhere it can me modified
@@ -191,35 +184,34 @@ public class AdminMedicationsListFragment extends ListFragment {
                 SymptomManagementService.getService(Login.SERVER_ADDRESS);
 
         if (svc != null) {
-            CallableTask.invoke(new Callable<Collection<Medication>>() {
+            CallableTask.invoke(new Callable<Collection<Physician>>() {
 
                 @Override
-                public Collection<Medication> call() throws Exception {
-                    Log.d(LOG_TAG,"getting all medications");
-                    return svc.getMedicationList();
+                public Collection<Physician> call() throws Exception {
+                    Log.d(LOG_TAG, "getting all physicians");
+                    return svc.getPhysicianList();
                 }
-            }, new TaskCallback<Collection<Medication>>() {
+            }, new TaskCallback<Collection<Physician>>() {
 
                 @Override
-                public void success(Collection<Medication> result) {
-                    Log.d(LOG_TAG,"creating list of all medications");
-                    setListAdapter(new ArrayAdapter<Medication>(
+                public void success(Collection<Physician> result) {
+                    Log.d(LOG_TAG, "creating list of all physicians");
+                    setListAdapter(new ArrayAdapter<Physician>(
                             getActivity(),
                             android.R.layout.simple_list_item_activated_1,
                             android.R.id.text1,
                             new ArrayList(result)));
                 }
+
                 @Override
                 public void error(Exception e) {
                     Toast.makeText(
                             getActivity(),
-                            "Unable to fetch the Medications please check Internet connection.",
+                            "Unable to fetch the Physicians please check Internet connection.",
                             Toast.LENGTH_LONG).show();
-
-                    startActivity(new Intent(getActivity(), AdminMain.class));
+                    getActivity().onBackPressed();
                 }
             });
         }
     }
-
 }

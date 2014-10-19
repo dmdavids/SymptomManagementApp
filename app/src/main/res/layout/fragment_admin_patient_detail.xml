@@ -1,4 +1,4 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/adminpatient_detail"
     style="?android:attr/textAppearanceLarge"
@@ -6,4 +6,99 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     android:textIsSelectable="true"
-    tools:context="com.skywomantech.app.symptommanagement.admin.AdminPatientDetailFragment" />
+    tools:context="com.skywomantech.app.symptommanagement.admin.Patient.AdminPatientDetailFragment">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:text="PATIENT DETAILS :"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+
+        <TextView
+            android:id="@+id/admin_patient_detail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:editable="true"
+            android:text="Patient Name"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textIsSelectable="true" />
+
+        <TextView
+            android:id="@+id/patient_physicians_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:text="Physicians :"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/admin_patient_physician_name_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:editable="true"
+            android:text="Physician Name 1"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textIsSelectable="true" />
+
+        <TextView
+            android:id="@+id/admin_patient_physician_name_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:editable="true"
+            android:text="Physician Name 2"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textIsSelectable="true" />
+
+        <TextView
+            android:id="@+id/admin_patient_physician_name_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:editable="true"
+            android:text="Physician Name 3"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textIsSelectable="true" />
+
+        <TextView
+            android:id="@+id/admin_patient_physician_name_4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:editable="true"
+            android:text="Physician Name 4"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textIsSelectable="true" />
+
+        <TextView
+            android:id="@+id/admin_patient_physician_name_5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:editable="true"
+            android:text="Physician Name 5"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textIsSelectable="true" />
+
+        <TextView
+            android:id="@+id/admin_patient_physician_name_6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:editable="true"
+            android:text="Physician Name 6"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textIsSelectable="true" />
+    </LinearLayout>
+
+</ScrollView>

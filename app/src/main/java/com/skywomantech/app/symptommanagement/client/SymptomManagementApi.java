@@ -67,7 +67,7 @@ public interface SymptomManagementApi {
 	public Physician updatePhysician(@Path(ID_PARAMETER) String id, @Body Physician physician);	
 	
 	@DELETE(PHYSICIAN_PATH+ID_PATH)
-	public Physician deletePhysician(@Path(ID_PARAMETER) long userId);
+	public Physician deletePhysician(@Path(ID_PARAMETER) String userId);
 	
 	@GET(PHYSICIAN_SEARCH_PATH)
 	public Collection<Physician> findByPhysicianName(@Query(NAME_PARAMETER) String name);

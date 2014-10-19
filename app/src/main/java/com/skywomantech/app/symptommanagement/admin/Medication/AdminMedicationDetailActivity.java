@@ -1,4 +1,4 @@
-package com.skywomantech.app.symptommanagement.admin;
+package com.skywomantech.app.symptommanagement.admin.Medication;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -15,34 +15,24 @@ import com.skywomantech.app.symptommanagement.R;
  * An activity representing a single admin_medication detail screen. This
  * activity is only used on handset devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
- * in a {@link com.skywomantech.app.symptommanagement.admin.AdminMedicationsListActivity}.
+ * in a {@link AdminMedicationListActivity}.
  * <p>
  * This activity is mostly just a 'shell' activity containing nothing
- * more than a {@link AdminMedicationsDetailFragment}.
+ * more than a {@link AdminMedicationDetailFragment}.
  */
 public class AdminMedicationDetailActivity extends Activity
-        implements AdminMedicationsDetailFragment.Callbacks{
+        implements AdminMedicationDetailFragment.Callbacks{
 
     private static final String LOG_TAG = AdminMedicationDetailActivity.class.getSimpleName();
-    public final static String MED_ID_KEY = AdminMedicationsListActivity.MED_ID_KEY;
+    public final static String MED_ID_KEY = AdminMedicationListActivity.MED_ID_KEY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_medication_detail);
 
-        // Show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity using a fragment transaction.
             Bundle arguments = new Bundle();
@@ -52,9 +42,9 @@ public class AdminMedicationDetailActivity extends Activity
             Fragment fragment;
             if (medId != null) {
                 arguments.putString(MED_ID_KEY, medId);
-                 fragment = new AdminMedicationsDetailFragment();
+                 fragment = new AdminMedicationDetailFragment();
             } else {
-                 fragment = new AdminMedicationsAddEditFragment();
+                 fragment = new AdminMedicationAddEditFragment();
             }
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -73,7 +63,7 @@ public class AdminMedicationDetailActivity extends Activity
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            navigateUpTo(new Intent(this, AdminMedicationsListActivity.class));
+            navigateUpTo(new Intent(this, AdminMedicationListActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -84,7 +74,7 @@ public class AdminMedicationDetailActivity extends Activity
         // switch out the fragments
         Bundle arguments = new Bundle();
         arguments.putString(MED_ID_KEY, medId);
-        AdminMedicationsAddEditFragment fragment = new AdminMedicationsAddEditFragment();
+        AdminMedicationAddEditFragment fragment = new AdminMedicationAddEditFragment();
         fragment.setArguments(arguments);
         getFragmentManager().beginTransaction()
                 .replace(R.id.adminmedication_detail_container, fragment)

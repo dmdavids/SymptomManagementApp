@@ -1,4 +1,4 @@
-package com.skywomantech.app.symptommanagement.admin;
+package com.skywomantech.app.symptommanagement.admin.Medication;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -29,14 +29,14 @@ import butterknife.OnClick;
 
 /**
  * A fragment representing a single admin_medication detail screen.
- * This fragment is either contained in a {@link AdminMedicationsListActivity}
+ * This fragment is either contained in a {@link AdminMedicationListActivity}
  * in two-pane mode (on tablets) or a {@link AdminMedicationDetailActivity}
  * on handsets.
  */
-public class AdminMedicationsAddEditFragment extends Fragment {
-    private static final String LOG_TAG = AdminMedicationsAddEditFragment.class.getSimpleName();
+public class AdminMedicationAddEditFragment extends Fragment {
+    private static final String LOG_TAG = AdminMedicationAddEditFragment.class.getSimpleName();
 
-    public final static String MED_ID_KEY = AdminMedicationsListActivity.MED_ID_KEY;
+    public final static String MED_ID_KEY = AdminMedicationListActivity.MED_ID_KEY;
 
     private Medication mMedication;
     private String mMedId;
@@ -48,7 +48,7 @@ public class AdminMedicationsAddEditFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public AdminMedicationsAddEditFragment() {
+    public AdminMedicationAddEditFragment() {
     }
 
     @Override

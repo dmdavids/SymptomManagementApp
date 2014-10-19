@@ -1,6 +1,5 @@
-package com.skywomantech.app.symptommanagement.admin;
+package com.skywomantech.app.symptommanagement.admin.Medication;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -10,8 +9,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,32 +20,27 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Medication;
-import com.skywomantech.app.symptommanagement.dummy.DummyContent;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 
 /**
  * A fragment representing a single admin_medication detail screen.
- * This fragment is either contained in a {@link com.skywomantech.app.symptommanagement.admin.AdminMedicationsListActivity}
- * in two-pane mode (on tablets) or a {@link com.skywomantech.app.symptommanagement.admin.AdminMedicationDetailActivity}
+ * This fragment is either contained in a {@link AdminMedicationListActivity}
+ * in two-pane mode (on tablets) or a {@link AdminMedicationDetailActivity}
  * on handsets.
  */
-public class AdminMedicationsDetailFragment extends Fragment {
-    private static final String LOG_TAG = AdminMedicationsDetailFragment.class.getSimpleName();
+public class AdminMedicationDetailFragment extends Fragment {
+    private static final String LOG_TAG = AdminMedicationDetailFragment.class.getSimpleName();
 
     public interface Callbacks {
         // called when user selects Edit from options menu
         public void onEditMedication(String medId);
     }
 
-    public final static String MED_ID_KEY = AdminMedicationsListActivity.MED_ID_KEY;
+    public final static String MED_ID_KEY = AdminMedicationListActivity.MED_ID_KEY;
 
     /**
      * The Medication that this fragment is presenting.
@@ -62,7 +54,7 @@ public class AdminMedicationsDetailFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public AdminMedicationsDetailFragment() {
+    public AdminMedicationDetailFragment() {
     }
 
     @Override
@@ -70,22 +62,18 @@ public class AdminMedicationsDetailFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
             mMedId = savedInstanceState.getString(MED_ID_KEY);
-            Log.d(LOG_TAG, "onActivityCreated 1-Med ID Key is : " + mMedId );
         }
         Bundle arguments = getArguments();
         if (arguments != null && arguments.containsKey(MED_ID_KEY)) {
             mMedId = getArguments().getString(MED_ID_KEY);
-            Log.d(LOG_TAG, "onActivityCreated 1b-Med ID Key is : " + mMedId );
         }
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (getArguments().containsKey(MED_ID_KEY)) {
             mMedId = getArguments().getString(MED_ID_KEY);
-            Log.d(LOG_TAG, "onCreate-Med ID Key is : " + mMedId );
         }
     }
 
@@ -95,11 +83,9 @@ public class AdminMedicationsDetailFragment extends Fragment {
         Bundle arguments = getArguments();
         if (arguments != null) {
             mMedId = arguments.getString(MED_ID_KEY);
-            Log.d(LOG_TAG, "onCreateView 2-Med ID Key is : " + mMedId);
         }
         else if (savedInstanceState != null) {
             mMedId = savedInstanceState.getString(MED_ID_KEY);
-            Log.d(LOG_TAG, "onCreateView 3-Med ID Key is : " + mMedId);
         }
 
         View rootView = inflater.inflate(R.layout.fragment_admin_medication_detail, container, false);
@@ -117,7 +103,7 @@ public class AdminMedicationsDetailFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.admin_medication, menu);
+        inflater.inflate(R.menu.admin_edit_delete_menu, menu);
     }
 
 
@@ -134,7 +120,6 @@ public class AdminMedicationsDetailFragment extends Fragment {
                 deleteMedication();
                 return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -142,10 +127,7 @@ public class AdminMedicationsDetailFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Bundle arguments = getArguments();
-        Log.d(LOG_TAG, "onResume-Med ID Key is : " + mMedId);
         if (arguments != null && arguments.containsKey(MED_ID_KEY) && mMedId != null) {
-            String x = getArguments().getString(MED_ID_KEY);
-            Log.d(LOG_TAG, "onResume 1b-Med ID Key is : " + mMedId );
             loadMedicationFromAPI();
         }
     }
@@ -154,7 +136,6 @@ public class AdminMedicationsDetailFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(MED_ID_KEY, mMedId);
-        Log.d(LOG_TAG, "onSaveInstanceState-Med ID Key is : " + mMedId);
         super.onSaveInstanceState(outState);
     }
 

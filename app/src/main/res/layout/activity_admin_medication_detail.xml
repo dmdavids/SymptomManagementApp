@@ -3,5 +3,5 @@
     android:id="@+id/adminmedication_detail_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.skywomantech.app.symptommanagement.admin.AdminMedicationDetailActivity"
+    tools:context="com.skywomantech.app.symptommanagement.admin.Medication.AdminMedicationDetailActivity"
     tools:ignore="MergeRootFrame" />

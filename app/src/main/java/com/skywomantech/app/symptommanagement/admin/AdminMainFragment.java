@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.skywomantech.app.symptommanagement.R;
+import com.skywomantech.app.symptommanagement.admin.Medication.AdminMedicationListActivity;
+import com.skywomantech.app.symptommanagement.admin.Patient.AdminPatientListActivity;
+import com.skywomantech.app.symptommanagement.admin.Physician.AdminPhysicianListActivity;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -40,7 +43,7 @@ public class AdminMainFragment extends Fragment {
 
     @OnClick(R.id.edit_medications_button)
     public void addEditMedications() {
-        startActivity(new Intent(getActivity(), AdminMedicationsListActivity.class));
+        startActivity(new Intent(getActivity(), AdminMedicationListActivity.class));
     }
 
 }

@@ -8,24 +8,21 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.skywomantech.app.symptommanagement.admin.AdminMedicationsDetailFragment">
+    tools:context="com.skywomantech.app.symptommanagement.admin.Medication.AdminMedicationDetailFragment">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent">
 
-        <FrameLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent">
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="MEDICATION DETAILS"
+                android:text="MEDICATION DETAILS :"
+                android:height="@android:dimen/app_icon_size"
                 android:id="@+id/medication_details_heading" />
-        </FrameLayout>
+
 
         <TextView
             android:layout_width="wrap_content"

@@ -4,11 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/admin_patient_add_edit_detail"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.skywomantech.app.symptommanagement.admin.Medication.AdminMedicationDetailFragment">
+    tools:context="com.skywomantech.app.symptommanagement.admin.Physician.AdminPatientDetailFragment">
 
     <LinearLayout
         android:orientation="vertical"
@@ -20,27 +21,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="MEDICATION DETAILS :"
-            android:height="@android:dimen/app_icon_size"
-            android:id="@+id/medication_details_heading_x" />
-
+            android:text="PATIENT DETAILS :"
+            android:height="@android:dimen/app_icon_size" />
 
         <EditText
-            android:id="@+id/admin_medication_edit_name"
+            android:id="@+id/admin_patient_edit_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Medication Name"
+            android:hint="Patient Name"
             android:imeOptions="actionNext"
             android:height="@android:dimen/app_icon_size"
             android:inputType="textPersonName|textCapWords" >
         </EditText>
 
         <Button
-            android:id="@+id/save_medication_button"
+            android:id="@+id/save_patient_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="Save Medication" >
+            android:text="Save Patient" >
         </Button>
 
     </LinearLayout>

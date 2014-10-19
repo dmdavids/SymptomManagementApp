@@ -170,11 +170,15 @@ public class Patient {
 
 	@Override
 	public String toString() {
-		return "Patient [id=" + id + ", name=" + name + ", lastLogin="
-				+ lastLogin + ", isActive=" + isActive + ", prescriptions="
-				+ prescriptions + ", physicians=" + physicians + ", painLog="
-				+ painLog + ", medLog=" + medLog + ", statusLog=" + statusLog
-				+ ", prefs=" + prefs + "]";
+		return name;
 	}
+
+    public String toDebugString() {
+        return "Patient [id=" + id + ", name=" + name + ", lastLogin="
+                + lastLogin + ", isActive=" + isActive + ", prescriptions="
+                + prescriptions + ", physicians=" + physicians + ", painLog="
+                + painLog + ", medLog=" + medLog + ", statusLog=" + statusLog
+                + ", prefs=" + prefs + "]";
+    }
 	
 }
