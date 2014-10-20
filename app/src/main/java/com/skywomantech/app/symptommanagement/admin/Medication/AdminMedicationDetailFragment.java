@@ -34,12 +34,17 @@ import butterknife.InjectView;
  */
 public class AdminMedicationDetailFragment extends Fragment {
     private static final String LOG_TAG = AdminMedicationDetailFragment.class.getSimpleName();
+
     public final static String MED_ID_KEY = AdminMedicationListActivity.MED_ID_KEY;
 
     private String mMedId;
     private Medication mMedication;
 
     public interface Callbacks {
+
+        //indicates if the options menu should be shown or nor
+        public boolean showEditMedicationOptionsMenu();
+
         // called when user selects Edit from options menu
         public void onEditMedication(String medId);
     }
@@ -59,8 +64,12 @@ public class AdminMedicationDetailFragment extends Fragment {
         else if (savedInstanceState != null) {
             mMedId = savedInstanceState.getString(MED_ID_KEY);
         }
-        View rootView = inflater.inflate(R.layout.fragment_admin_medication_detail, container, false);
-        setHasOptionsMenu(true); // this fragment has menu items to display
+
+        // set up the option menu according to the activity's choice
+        setHasOptionsMenu(((Callbacks) getActivity()).showEditMedicationOptionsMenu());
+
+        View rootView =
+                inflater.inflate(R.layout.fragment_admin_medication_detail, container, false);
         ButterKnife.inject(this, rootView);
         return rootView;
     }

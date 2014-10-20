@@ -1,5 +1,6 @@
 package com.skywomantech.app.symptommanagement.admin.Patient;
 
+
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -9,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -25,10 +27,14 @@ import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.Physician;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+
 
 /**
  * A fragment representing a single AdminPatient detail screen.
@@ -36,8 +42,9 @@ import butterknife.InjectView;
  * in two-pane mode (on tablets) or a {@link AdminPatientDetailActivity}
  * on handsets.
  */
-public class AdminPatientDetailFragment extends Fragment {
-    private static final String LOG_TAG = AdminPatientDetailFragment.class.getSimpleName();
+public class PatientDetailFragment extends Fragment {
+    private static final String LOG_TAG = PatientDetailFragment.class.getSimpleName();
+
     public final static String PATIENT_ID_KEY = AdminPatientListActivity.PATIENT_ID_KEY;
 
     private String mPatientId;
@@ -49,10 +56,9 @@ public class AdminPatientDetailFragment extends Fragment {
     }
 
     @InjectView(R.id.admin_patient_detail) TextView mTextView;
-    @InjectView(R.id.patient_physicians_list)   ListView mPhysiciansListView;
+    @InjectView(R.id.patient_physicians_list) ListView mPhysiciansListView;
 
-
-    public AdminPatientDetailFragment() {
+    public PatientDetailFragment() {
     }
 
     @Override
@@ -100,27 +106,6 @@ public class AdminPatientDetailFragment extends Fragment {
         if (arguments != null && arguments.containsKey(PATIENT_ID_KEY)) {
             mPatientId = arguments.getString(PATIENT_ID_KEY);
             loadPatientFromAPI();
-            displayPhysicians();
-        }
-    }
-
-    private void displayPhysicians() {
-        if (mPatient == null || mPatient.getPhysicians() == null) {
-            final ArrayList<String> emptyList = new ArrayList<String>();
-            emptyList.add("No Physicians for this Patient.");
-            mPhysiciansListView
-                    .setAdapter(new ArrayAdapter<String>(
-                            getActivity(),
-                            android.R.layout.simple_list_item_activated_1,
-                            android.R.id.text1,
-                            new ArrayList(emptyList)));
-        } else {
-            mPhysiciansListView
-                    .setAdapter(new ArrayAdapter<Physician>(
-                            getActivity(),
-                            android.R.layout.simple_list_item_activated_1,
-                            android.R.id.text1,
-                            new ArrayList(mPatient.getPhysicians())));
         }
     }
 
@@ -152,6 +137,7 @@ public class AdminPatientDetailFragment extends Fragment {
                     Log.d(LOG_TAG, "Found Patient :" + result.toString());
                     mPatient = result;
                     mTextView.setText(mPatient.getName());
+                    displayPhysicianList(mPatient.getPhysicians());
                 }
 
                 @Override
@@ -163,6 +149,25 @@ public class AdminPatientDetailFragment extends Fragment {
                     getActivity().onBackPressed();
                 }
             });
+        }
+    }
+
+    private void displayPhysicianList(Collection<Physician> physicians) {
+        if (physicians == null || physicians.size() == 0){
+            final List<Physician> emptyList = new ArrayList<Physician>();
+            Physician emptyPhysician = new Physician("No Physicians for this Patient.");
+            emptyList.add(emptyPhysician);
+            mPhysiciansListView.setAdapter(new ArrayAdapter<Physician>(
+                    getActivity(),
+                    android.R.layout.simple_list_item_activated_1,
+                    android.R.id.text1,
+                    new ArrayList(emptyList)));
+        } else {
+            mPhysiciansListView.setAdapter(new ArrayAdapter<Physician>(
+                    getActivity(),
+                    android.R.layout.simple_list_item_activated_1,
+                    android.R.id.text1,
+                    new ArrayList(physicians)));
         }
     }
 
@@ -188,7 +193,7 @@ public class AdminPatientDetailFragment extends Fragment {
                             getActivity(),
                             "Patient [" + result.getName() + "] deleted successfully.",
                             Toast.LENGTH_SHORT).show();
-                    // re-GET the medications list .. shouldn't have the medication in it any more
+                    // re-GET the patient list .. shouldn't have the medication in it any more
                     getActivity().onBackPressed();
                 }
 
@@ -198,7 +203,7 @@ public class AdminPatientDetailFragment extends Fragment {
                             getActivity(),
                             "Unable to delete Patient. Please check Internet connection.",
                             Toast.LENGTH_LONG).show();
-                    //re-GET the medications list ... medication should still be in the list
+                    //re-GET the patient list ... medication should still be in the list
                     getActivity().onBackPressed();
                 }
             });

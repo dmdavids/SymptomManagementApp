@@ -9,7 +9,10 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.skywomantech.app.symptommanagement.R;
-import com.skywomantech.app.symptommanagement.admin.Physician.AdminPhysicianAddEditFragment;
+import com.skywomantech.app.symptommanagement.data.Physician;
+
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -19,10 +22,10 @@ import com.skywomantech.app.symptommanagement.admin.Physician.AdminPhysicianAddE
  * in a {@link AdminPatientListActivity}.
  * <p>
  * This activity is mostly just a 'shell' activity containing nothing
- * more than a {@link AdminPatientDetailFragment}.
+ * more than a {@link PatientDetailFragment}.
  */
 public class AdminPatientDetailActivity extends Activity
-            implements AdminPatientDetailFragment.Callbacks {
+            implements PatientDetailFragment.Callbacks {
     private static final String LOG_TAG = AdminPatientDetailActivity.class.getSimpleName();
     public final static String PATIENT_ID_KEY = AdminPatientListActivity.PATIENT_ID_KEY;
 
@@ -41,9 +44,9 @@ public class AdminPatientDetailActivity extends Activity
             Fragment fragment;
             if(id != null) {
                 arguments.putString(PATIENT_ID_KEY, id);
-                fragment = new AdminPatientDetailFragment();
+                fragment = new PatientDetailFragment();
             } else {
-                fragment = new AdminPatientAddEditFragment();
+                fragment = new PatientAddEditFragment();
             }
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -67,10 +70,11 @@ public class AdminPatientDetailActivity extends Activity
         // switch out the fragments
         Bundle arguments = new Bundle();
         arguments.putString(PATIENT_ID_KEY, id);
-        AdminPatientAddEditFragment fragment = new AdminPatientAddEditFragment();
+        PatientAddEditFragment fragment = new PatientAddEditFragment();
         fragment.setArguments(arguments);
         getFragmentManager().beginTransaction()
                 .replace(R.id.adminpatient_detail_container, fragment)
                 .commit();
     }
+
 }

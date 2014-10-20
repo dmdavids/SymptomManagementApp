@@ -1,7 +1,6 @@
 package com.skywomantech.app.symptommanagement.admin.Medication;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.app.ListFragment;
 import android.util.Log;
@@ -15,7 +14,6 @@ import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
-import com.skywomantech.app.symptommanagement.admin.AdminMain;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
@@ -36,9 +34,9 @@ import java.util.concurrent.Callable;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class AdminMedicationListFragment extends ListFragment {
+public class MedicationListFragment extends ListFragment {
 
-    private static final String LOG_TAG = AdminMedicationListFragment.class.getSimpleName();
+    private static final String LOG_TAG = MedicationListFragment.class.getSimpleName();
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -63,20 +61,25 @@ public class AdminMedicationListFragment extends ListFragment {
 
         // called when user wants to add a medication
         public void onAddMedication();
+
+        public boolean showAddMedicationOptionsMenu();
     }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public AdminMedicationListFragment() {
+    public MedicationListFragment() {
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setRetainInstance(true); // save fragment across config changes
-        setHasOptionsMenu(true); // this fragment has menu items to display
+
+        // see if the activity want the ADD icon to display in the options menu
+        setHasOptionsMenu(((Callbacks) getActivity()).showAddMedicationOptionsMenu());
+
         setEmptyText(getString(R.string.empty_list_text));
         // Restore the previously serialized activated item position.
         if (savedInstanceState != null
@@ -125,7 +128,7 @@ public class AdminMedicationListFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        refreshMedications();
+        refreshAllMedications();
     }
 
 
@@ -174,7 +177,7 @@ public class AdminMedicationListFragment extends ListFragment {
         mActivatedPosition = position;
     }
 
-    private void refreshMedications() {
+    private void refreshAllMedications() {
 
         // hardcoded for my local host (see ipconfig for values) at port 8080
         // need to put this is prefs or somewhere it can me modified

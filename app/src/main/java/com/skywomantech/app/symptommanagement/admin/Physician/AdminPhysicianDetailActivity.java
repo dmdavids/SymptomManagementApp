@@ -67,12 +67,6 @@ public class AdminPhysicianDetailActivity extends Activity
               public boolean onOptionsItemSelected(MenuItem item) {
                   int id = item.getItemId();
                   if (id == android.R.id.home) {
-                      // This ID represents the Home or Up button. In the case of this
-                      // activity, the Up button is shown. For
-                      // more details, see the Navigation pattern on Android Design:
-                      //
-                      // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-                      //
                       navigateUpTo(new Intent(this, AdminPhysicianListActivity.class));
                       return true;
                   }

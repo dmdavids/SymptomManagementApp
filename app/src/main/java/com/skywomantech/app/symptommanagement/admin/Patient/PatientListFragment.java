@@ -20,7 +20,6 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Patient;
-import com.skywomantech.app.symptommanagement.dummy.DummyContent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,14 +29,14 @@ import java.util.concurrent.Callable;
  * A list fragment representing a list of AdminPatients. This fragment
  * also supports tablet devices by allowing list items to be given an
  * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link AdminPatientDetailFragment}.
+ * currently being viewed in a {@link PatientDetailFragment}.
  * <p>
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class AdminPatientListFragment extends ListFragment {
+public class PatientListFragment extends ListFragment {
 
-    private static final String LOG_TAG = AdminPatientListFragment.class.getSimpleName();
+    private static final String LOG_TAG = PatientListFragment.class.getSimpleName();
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -59,15 +58,16 @@ public class AdminPatientListFragment extends ListFragment {
         // called when user selects a Patient
         public void onPatientSelected(String id);
 
-        // called when user wants to add a medication
+        // called when user wants to add a patient
         public void onAddPatient();
+
     }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public AdminPatientListFragment() {
+    public PatientListFragment() {
     }
 
     @Override
@@ -122,7 +122,7 @@ public class AdminPatientListFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        refreshPatients();
+        refreshAllPatients();
     }
 
     @Override
@@ -168,7 +168,7 @@ public class AdminPatientListFragment extends ListFragment {
         mActivatedPosition = position;
     }
 
-    private void refreshPatients() {
+    private void refreshAllPatients() {
 
         // hardcoded for my local host (see ipconfig for values) at port 8080
         // need to put this is prefs or somewhere it can me modified

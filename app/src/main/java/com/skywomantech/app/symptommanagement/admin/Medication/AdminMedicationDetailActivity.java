@@ -70,6 +70,11 @@ public class AdminMedicationDetailActivity extends Activity
     }
 
     @Override
+    public boolean showEditMedicationOptionsMenu() {
+        return true;
+    }
+
+    @Override
     public void onEditMedication(String medId) {
         // switch out the fragments
         Bundle arguments = new Bundle();

@@ -21,15 +21,16 @@ import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
  * item details side-by-side using two vertical panes.
  * <p>
  * The activity makes heavy use of fragments. The list of items is a
- * {@link AdminPhysicianListFragment} and the item details
+ * {@link PhysicianListFragment} and the item details
  * (if present) is a {@link AdminPhysicianDetailFragment}.
  * <p>
  * This activity also implements the required
- * {@link AdminPhysicianListFragment.Callbacks} interface
+ * {@link PhysicianListFragment.Callbacks} interface
  * to listen for item selections.
  */
 public class AdminPhysicianListActivity extends Activity
-        implements AdminPhysicianListFragment.Callbacks {
+        implements PhysicianListFragment.Callbacks,
+        AdminPhysicianDetailFragment.Callbacks {
 
     public final String LOG_TAG = AdminPhysicianListActivity.class.getSimpleName();
     /**
@@ -64,7 +65,7 @@ public class AdminPhysicianListActivity extends Activity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((AdminPhysicianListFragment) getFragmentManager()
+            ((PhysicianListFragment) getFragmentManager()
                     .findFragmentById(R.id.admin_physician_list))
                     .setActivateOnItemClick(true);
         }
@@ -83,11 +84,11 @@ public class AdminPhysicianListActivity extends Activity
     }
 
     /**
-     * Callback method from {@link AdminPhysicianListFragment.Callbacks}
+     * Callback method from {@link PhysicianListFragment.Callbacks}
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onPhysicianSelected(String physicianId) {
+    public void onPhysicianSelected(String physicianId, String physicianName) {
         Log.d(LOG_TAG, "Saving Physician ID: " + physicianId + " 2-pane is " + Boolean.toString(mTwoPane));
 
         if (mTwoPane) {
@@ -112,6 +113,11 @@ public class AdminPhysicianListActivity extends Activity
     }
 
     @Override
+    public boolean showAddPhysicianOptionsMenu() {
+        return true;
+    }
+
+    @Override
     public void onAddPhysician() {
         Log.d(LOG_TAG, "Changing to Add/Edit Fragment");
         if (mTwoPane) {
@@ -130,5 +136,18 @@ public class AdminPhysicianListActivity extends Activity
             Intent detailIntent = new Intent(this, AdminPhysicianDetailActivity.class);
             startActivity(detailIntent);
         }
+    }
+
+
+    @Override
+    public void onEditPhysician(String id) {
+        // switch out the fragments
+        Bundle arguments = new Bundle();
+        arguments.putString(PHYSICIAN_ID_KEY, id);
+        AdminPhysicianAddEditFragment fragment = new AdminPhysicianAddEditFragment();
+        fragment.setArguments(arguments);
+        getFragmentManager().beginTransaction()
+                .replace(R.id.adminphysician_detail_container, fragment)
+                .commit();
     }
 }

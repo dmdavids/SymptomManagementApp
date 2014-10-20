@@ -21,15 +21,15 @@ import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
  * item details side-by-side using two vertical panes.
  * <p>
  * The activity makes heavy use of fragments. The list of items is a
- * {@link AdminMedicationListFragment} and the item details
+ * {@link MedicationListFragment} and the item details
  * (if present) is a {@link AdminMedicationDetailFragment}.
  * <p>
  * This activity also implements the required
- * {@link AdminMedicationListFragment.Callbacks} interface
+ * {@link MedicationListFragment.Callbacks} interface
  * to listen for item selections.
  */
 public class AdminMedicationListActivity extends Activity
-        implements AdminMedicationListFragment.Callbacks {
+        implements MedicationListFragment.Callbacks {
 
     public final String LOG_TAG = AdminMedicationListActivity.class.getSimpleName();
 
@@ -65,7 +65,7 @@ public class AdminMedicationListActivity extends Activity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((AdminMedicationListFragment) getFragmentManager()
+            ((MedicationListFragment) getFragmentManager()
                     .findFragmentById(R.id.adminmedication_list))
                     .setActivateOnItemClick(true);
         }
@@ -84,7 +84,7 @@ public class AdminMedicationListActivity extends Activity
     }
 
     /**
-     * Callback method from {@link AdminMedicationListFragment.Callbacks}
+     * Callback method from {@link MedicationListFragment.Callbacks}
      * indicating that the item with the given ID was selected.
      */
     @Override
@@ -111,6 +111,11 @@ public class AdminMedicationListActivity extends Activity
     }
 
     @Override
+    public boolean showAddMedicationOptionsMenu() {
+        return true;
+    }
+
+    @Override
     public void onAddMedication() {
         Log.d(LOG_TAG, "Changing to Add/Edit Fragment");
         if (mTwoPane) {
@@ -130,6 +135,7 @@ public class AdminMedicationListActivity extends Activity
             startActivity(detailIntent);
         }
     }
+
 
 
 }

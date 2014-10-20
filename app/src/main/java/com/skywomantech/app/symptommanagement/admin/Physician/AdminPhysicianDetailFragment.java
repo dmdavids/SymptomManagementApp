@@ -9,7 +9,9 @@ import android.os.Bundle;
  import android.view.MenuItem;
  import android.view.View;
  import android.view.ViewGroup;
- import android.widget.TextView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
  import android.widget.Toast;
 
 
@@ -19,9 +21,13 @@ import android.os.Bundle;
  import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
  import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
  import com.skywomantech.app.symptommanagement.client.TaskCallback;
- import com.skywomantech.app.symptommanagement.data.Physician;
+import com.skywomantech.app.symptommanagement.data.Patient;
+import com.skywomantech.app.symptommanagement.data.Physician;
 
- import java.util.concurrent.Callable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
 
  import butterknife.ButterKnife;
  import butterknife.InjectView;
@@ -46,6 +52,7 @@ import android.os.Bundle;
      }
 
      @InjectView(R.id.admin_physician_detail) TextView mTextView;
+    @InjectView(R.id.physician_patients_list) ListView mListView;
 
      public AdminPhysicianDetailFragment() {
      }
@@ -123,6 +130,7 @@ import android.os.Bundle;
                      Log.d(LOG_TAG, "Found Physician :" + result.toString());
                      mPhysician = result;
                      mTextView.setText(mPhysician.toString());
+                     displayPatientList(mPhysician.getPatients());
                  }
 
                  @Override
@@ -174,6 +182,25 @@ import android.os.Bundle;
              });
          }
      }
+
+    private void displayPatientList(Collection<Patient> patients) {
+        if (patients == null || patients.size() == 0){
+            final List<Patient> emptyList = new ArrayList<Patient>();
+            Patient emptyPatient = new Patient("No Patients for this Physician.");
+            emptyList.add(emptyPatient);
+            mListView.setAdapter(new ArrayAdapter<Patient>(
+                    getActivity(),
+                    android.R.layout.simple_list_item_activated_1,
+                    android.R.id.text1,
+                    new ArrayList(emptyList)));
+        } else {
+            mListView.setAdapter(new ArrayAdapter<Patient>(
+                    getActivity(),
+                    android.R.layout.simple_list_item_activated_1,
+                    android.R.id.text1,
+                    new ArrayList(patients)));
+        }
+    }
 
      /**
       * required by ButterKnife to null out the view when destroyed

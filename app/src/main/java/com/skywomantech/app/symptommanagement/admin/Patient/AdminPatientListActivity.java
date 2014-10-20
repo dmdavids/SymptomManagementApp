@@ -21,15 +21,15 @@ import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
  * item details side-by-side using two vertical panes.
  * <p>
  * The activity makes heavy use of fragments. The list of items is a
- * {@link AdminPatientListFragment} and the item details
- * (if present) is a {@link AdminPatientDetailFragment}.
+ * {@link PatientListFragment} and the item details
+ * (if present) is a {@link PatientDetailFragment}.
  * <p>
  * This activity also implements the required
- * {@link AdminPatientListFragment.Callbacks} interface
+ * {@link PatientListFragment.Callbacks} interface
  * to listen for item selections.
  */
 public class AdminPatientListActivity extends Activity
-        implements AdminPatientListFragment.Callbacks {
+        implements PatientListFragment.Callbacks {
 
     public final String LOG_TAG = AdminPatientListActivity.class.getSimpleName();
     /**
@@ -64,7 +64,7 @@ public class AdminPatientListActivity extends Activity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((AdminPatientListFragment) getFragmentManager()
+            ((PatientListFragment) getFragmentManager()
                     .findFragmentById(R.id.adminpatient_list))
                     .setActivateOnItemClick(true);
         }
@@ -83,7 +83,7 @@ public class AdminPatientListActivity extends Activity
     }
 
     /**
-     * Callback method from {@link AdminPatientListFragment.Callbacks}
+     * Callback method from {@link PatientListFragment.Callbacks}
      * indicating that the item with the given ID was selected.
      */
     @Override
@@ -96,7 +96,7 @@ public class AdminPatientListActivity extends Activity
             // fragment transaction.
             Bundle arguments = new Bundle();
             arguments.putString(PATIENT_ID_KEY, id);
-            AdminPatientDetailFragment fragment = new AdminPatientDetailFragment();
+            PatientDetailFragment fragment = new PatientDetailFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
                     .replace(R.id.adminpatient_detail_container, fragment)
@@ -119,7 +119,7 @@ public class AdminPatientListActivity extends Activity
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            AdminPatientAddEditFragment fragment = new AdminPatientAddEditFragment();
+            PatientAddEditFragment fragment = new PatientAddEditFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
                     .replace(R.id.adminpatient_detail_container, fragment)

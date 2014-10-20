@@ -54,6 +54,14 @@
                 android:value="com.skywomantech.app.symptommanagement.AdminMain" />
         </activity>
         <activity
+            android:name=".admin.Patient.PatientPhysicianListActivity"
+            android:label="@string/title_admin_physician_list"
+            android:parentActivityName=".admin.Patient.AdminPatientDetailActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.skywomantech.app.symptommanagement.AdminMain" />
+        </activity>
+        <activity
             android:name=".admin.Physician.AdminPhysicianDetailActivity"
             android:label="@string/title_admin_physician_detail"
             android:parentActivityName=".admin.Physician.AdminPhysicianListActivity" >

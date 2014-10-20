@@ -19,9 +19,7 @@ import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
-import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Physician;
-import com.skywomantech.app.symptommanagement.dummy.DummyContent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,9 +34,9 @@ import java.util.concurrent.Callable;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class AdminPhysicianListFragment extends ListFragment {
+public class PhysicianListFragment extends ListFragment {
 
-    private static final String LOG_TAG = AdminPhysicianListFragment.class.getSimpleName();
+    private static final String LOG_TAG = PhysicianListFragment.class.getSimpleName();
 
     /**
      * The serialization (saved instance state) Bundle key representing the
@@ -59,17 +57,19 @@ public class AdminPhysicianListFragment extends ListFragment {
     public interface Callbacks {
 
         // called when user selects a Physician
-        public void onPhysicianSelected(String physicianId);
+        public void onPhysicianSelected(String physicianId, String physicianName);
 
         // called when user wants to add a Physician
         public void onAddPhysician();
+
+        public boolean showAddPhysicianOptionsMenu();
     }
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public AdminPhysicianListFragment() {
+    public PhysicianListFragment() {
     }
 
     @Override
@@ -81,8 +81,11 @@ public class AdminPhysicianListFragment extends ListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setRetainInstance(true); // save fragment across config changes
-        setHasOptionsMenu(true); // this fragment has menu items to display
+
+        // see if Activity wants the options menu shown
+        setHasOptionsMenu(((Callbacks) getActivity()).showAddPhysicianOptionsMenu());
         setEmptyText(getString(R.string.empty_list_text));
+
         // Restore the previously serialized activated item position.
         if (savedInstanceState != null
                 && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
@@ -123,13 +126,13 @@ public class AdminPhysicianListFragment extends ListFragment {
                 ((Callbacks) getActivity()).onAddPhysician();
                 return true;
         }
-        return super.onOptionsItemSelected(item); // call super's method
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        refreshPhysicians();
+        refreshAllPhysicians();
     }
 
     @Override
@@ -141,7 +144,7 @@ public class AdminPhysicianListFragment extends ListFragment {
                 + " id is : " + physician.getId());
         String physicianId = physician.getId();
         Log.d(LOG_TAG, " String id value is : " + physicianId);
-        ((Callbacks) getActivity()).onPhysicianSelected(physicianId);
+        ((Callbacks) getActivity()).onPhysicianSelected(physicianId, physician.getName());
         setActivatedPosition(position);
     }
 
@@ -176,7 +179,7 @@ public class AdminPhysicianListFragment extends ListFragment {
         mActivatedPosition = position;
     }
 
-    private void refreshPhysicians() {
+    private void refreshAllPhysicians() {
 
         // hardcoded for my local host (see ipconfig for values) at port 8080
         // need to put this is prefs or somewhere it can me modified

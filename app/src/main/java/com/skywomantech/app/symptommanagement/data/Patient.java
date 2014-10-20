@@ -30,6 +30,14 @@ public class Patient {
 		this.isActive = true;
 		this.lastLogin = 0L;
 	}
+
+    public Patient( Patient patient ){
+        super();
+        this.id = patient.getId();
+        this.name = patient.getName();
+        this.lastLogin = patient.getLastLogin();
+        this.isActive = patient.getIsActive();
+    }
 	
 	public Patient( String name, long lastLogin,
 			Boolean isActive, Set<Medication> prescriptions,

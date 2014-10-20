@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/admin_physician_list"
-        android:name="com.skywomantech.app.symptommanagement.admin.Physician.AdminPhysicianListFragment"
+        android:name="com.skywomantech.app.symptommanagement.admin.Physician.PhysicianListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
