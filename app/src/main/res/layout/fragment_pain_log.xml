@@ -1,0 +1,95 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.skywomantech.app.symptommanagement.patient.PainLogActivity$PlaceholderFragment">
+
+    <TextView
+        android:id="@+id/severity_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="How bad is your mouth pain/sore throat?"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <LinearLayout
+        android:id="@+id/severityLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/severity_heading"
+        android:layout_marginTop="38dp"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/well_controlled_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Well-Controlled" />
+
+        <RadioButton
+            android:id="@+id/moderate_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Moderate" />
+
+        <RadioButton
+            android:id="@+id/severe_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Severe" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/eating_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Does your pain stop you from eating or drinking?"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_marginTop="38dp"
+        android:layout_below="@id/severityLayout"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/eating_heading"
+        android:layout_marginTop="38dp"
+        android:orientation="vertical"
+        android:id="@+id/eatingLayout">
+
+        <RadioButton
+            android:id="@+id/eating_ok_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No" />
+
+        <RadioButton
+            android:id="@+id/eating_some_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Some" />
+
+        <RadioButton
+            android:id="@+id/not_eating_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="I cannot eat." />
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:id="@+id/done_button"
+        android:layout_below="@+id/eatingLayout"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>

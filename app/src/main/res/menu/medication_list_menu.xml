@@ -1,0 +1,10 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/action_medication_list"
+        android:orderInCategory="1"
+        android:showAsAction="ifRoom|withText"
+        android:title="Medications"
+        android:icon="@drawable/ic_action_healthcare_pill_icon"/>
+
+</menu>

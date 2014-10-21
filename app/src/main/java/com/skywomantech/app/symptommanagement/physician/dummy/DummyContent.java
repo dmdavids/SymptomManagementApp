@@ -1,4 +1,4 @@
-package com.skywomantech.app.symptommanagement.dummy;
+package com.skywomantech.app.symptommanagement.physician.dummy;
 
 import java.util.ArrayList;
 import java.util.HashMap;

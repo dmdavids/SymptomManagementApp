@@ -3,9 +3,9 @@
     package="com.skywomantech.app.symptommanagement" >
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS"/>
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 
     <application
         android:allowBackup="true"
@@ -93,11 +93,53 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skywomantech.app.symptommanagement.adminmedicationListActivity" />
         </activity>
+
         <provider
-            android:authorities="@string/content_authority"
             android:name=".data.PatientContentProvider"
+            android:authorities="@string/content_authority"
             android:exported="false"
             android:syncable="true" />
+
+        <activity
+            android:name=".patient.PatientMainActivity"
+            android:label="@string/title_activity_patient_main"
+            android:parentActivityName=".Login" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.skywomantech.app.symptommanagement.Login" />
+        </activity>
+        <activity
+            android:name=".patient.PainLogActivity"
+            android:label="@string/title_activity_pain_log"
+            android:parentActivityName=".patient.PatientMainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.skywomantech.app.symptommanagement.PatientMain" />
+        </activity>
+        <activity
+            android:name=".physician.PhysicianPatientListActivity"
+            android:label="@string/title_physicianpatient_list"
+            android:parentActivityName=".Login" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.skywomantech.app.symptommanagement.Login" />
+        </activity>
+        <activity
+            android:name=".physician.PhysicianPatientDetailActivity"
+            android:label="@string/title_physicianpatient_detail"
+            android:parentActivityName=".physician.PhysicianPatientListActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.skywomantech.app.symptommanagement.physician.PhysicianPatientListActivity" />
+        </activity>
+        <activity
+            android:name=".patient.MedicationListActivity"
+            android:label="@string/title_activity_medication_list"
+            android:parentActivityName=".physician.PhysicianPatientDetailActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailActivity" />
+        </activity>
     </application>
 
 </manifest>

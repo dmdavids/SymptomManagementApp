@@ -44,5 +44,10 @@
     <string name="admin_medication_delete">Delete</string>
     <string name="admin_medication_add">Add</string>
     <string name="empty_list_text">This List is Empty.</string>
+    <string name="title_activity_patient_main">PatientMain</string>
+    <string name="title_activity_pain_log">PainLog</string>
+    <string name="title_physicianpatient_list">PhysicianPatients</string>
+    <string name="title_physicianpatient_detail">PhysicianPatient Detail</string>
+    <string name="title_activity_medication_list">MedicationList</string>
 
 </resources>
