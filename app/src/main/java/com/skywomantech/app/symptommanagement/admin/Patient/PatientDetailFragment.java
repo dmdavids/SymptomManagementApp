@@ -56,6 +56,7 @@ public class PatientDetailFragment extends Fragment {
     }
 
     @InjectView(R.id.admin_patient_detail) TextView mTextView;
+    @InjectView(R.id.admin_patient_detail_birthdate) TextView mBirthdate;
     @InjectView(R.id.patient_physicians_list) ListView mPhysiciansListView;
 
     public PatientDetailFragment() {
@@ -137,6 +138,7 @@ public class PatientDetailFragment extends Fragment {
                     Log.d(LOG_TAG, "Found Patient :" + result.toString());
                     mPatient = result;
                     mTextView.setText(mPatient.getName());
+                    mBirthdate.setText(mPatient.getFormattedBirthdate());
                     displayPhysicianList(mPatient.getPhysicians());
                 }
 
@@ -155,7 +157,7 @@ public class PatientDetailFragment extends Fragment {
     private void displayPhysicianList(Collection<Physician> physicians) {
         if (physicians == null || physicians.size() == 0){
             final List<Physician> emptyList = new ArrayList<Physician>();
-            Physician emptyPhysician = new Physician("No Physicians for this Patient.");
+            Physician emptyPhysician = new Physician("No Physicians for this Patient.", "");
             emptyList.add(emptyPhysician);
             mPhysiciansListView.setAdapter(new ArrayAdapter<Physician>(
                     getActivity(),

@@ -31,6 +31,23 @@
             android:textIsSelectable="true" />
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:text="Date of Birth:"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/admin_patient_detail_birthdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:editable="true"
+            android:text="mm/dd/yy"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textIsSelectable="true" />
+
+        <TextView
             android:id="@+id/patient_physicians_heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

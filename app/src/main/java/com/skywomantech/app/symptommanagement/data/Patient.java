@@ -1,192 +1,249 @@
 package com.skywomantech.app.symptommanagement.data;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Set;
+import java.util.TimeZone;
 
 
 public class Patient {
 
+    private String id;
+    private String firstName;
+    private String lastName;
+    private long birthdate = 0L;
+    private long lastLogin = 0L;
+    private Boolean isActive = true;
 
-	private String id;
-	private String name;
-	private long lastLogin;
-	private Boolean isActive;
-	
-	private Set<Medication> prescriptions;
-	private Set<Physician> physicians;
-	
-	private Set<PainLog> painLog;
-	private Set<MedicationLog> medLog;
-	private Set<StatusLog> statusLog;
-	
-	private PatientPrefs prefs;
-	
-	public Patient() {
-		super();
-	}
-	
-	public Patient( String name ){
-		super();
-		this.name = name;
-		this.isActive = true;
-		this.lastLogin = 0L;
-	}
+    private Set<Medication> prescriptions;
+    private Set<Physician> physicians;
 
-    public Patient( Patient patient ){
+    private Set<PainLog> painLog;
+    private Set<MedicationLog> medLog;
+    private Set<StatusLog> statusLog;
+
+    private PatientPrefs prefs;
+
+    public Patient() {
         super();
-        this.id = patient.getId();
-        this.name = patient.getName();
-        this.lastLogin = patient.getLastLogin();
-        this.isActive = patient.getIsActive();
     }
-	
-	public Patient( String name, long lastLogin,
-			Boolean isActive, Set<Medication> prescriptions,
-			Set<Physician> physicians, Set<PainLog> painLog,
-			Set<MedicationLog> medLog, Set<StatusLog> statusLog, PatientPrefs prefs) {
-		super();
-		this.name = name;
-		this.lastLogin = lastLogin;
-		this.isActive = isActive;
-		this.prescriptions = prescriptions;
-		this.physicians = physicians;
-		this.painLog = painLog;
-		this.medLog = medLog;
-		this.statusLog = statusLog;
-		this.prefs = prefs;
-	}
 
+    public Patient( String firstName, String lastName ){
+        super();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthdate = System.currentTimeMillis();
+    }
 
-	public String getId() {
-		return id;
-	}
+    public Patient(Patient patient) {
+        super();
+        this.firstName = patient.getFirstName();
+        this.lastName = patient.getLastName();
+        this.birthdate = patient.getBirthdate();
+        this.id = patient.getId();
+    }
 
+    public Patient( String firstName, String lastName, long birthdate, long lastLogin,
+                    Boolean isActive, Set<Medication> prescriptions,
+                    Set<Physician> physicians, Set<PainLog> painLog,
+                    Set<MedicationLog> medLog, Set<StatusLog> statusLog, PatientPrefs prefs) {
+        super();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthdate = birthdate;
+        this.lastLogin = lastLogin;
+        this.isActive = isActive;
+        this.prescriptions = prescriptions;
+        this.physicians = physicians;
+        this.painLog = painLog;
+        this.medLog = medLog;
+        this.statusLog = statusLog;
+        this.prefs = prefs;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getId() {
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        String name = "";
+        if (firstName != null && !firstName.isEmpty()) name += firstName;
+        if (!name.isEmpty()) name += " ";
+        if (lastName != null  && !lastName.isEmpty()) name+= lastName;
+        return name;
+    }
 
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
+    public String getLastName() {
+        return lastName;
+    }
 
-	public long getLastLogin() {
-		return lastLogin;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
+    public long getBirthdate() {
+        return birthdate;
+    }
 
-	public void setLastLogin(long lastLogin) {
-		this.lastLogin = lastLogin;
-	}
+    public void setBirthdate(long birthdate) {
+        this.birthdate = birthdate;
+    }
 
+    public long getLastLogin() {
+        return lastLogin;
+    }
 
-	public Boolean getIsActive() {
-		return isActive;
-	}
+    public void setLastLogin(long lastLogin) {
+        this.lastLogin = lastLogin;
+    }
 
+    public Boolean getIsActive() {
+        return isActive;
+    }
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
-	}
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
+    }
 
+    public Set<Medication> getPrescriptions() {
+        return prescriptions;
+    }
 
-	public Set<Medication> getPrescriptions() {
-		return prescriptions;
-	}
-	public void setPrescriptions(Set<Medication> prescriptions) {
-		this.prescriptions = prescriptions;
-	}
-	public Set<Physician> getPhysicians() {
-		return physicians;
-	}
-	public void setPhysicians(Set<Physician> physicians) {
-		this.physicians = physicians;
-	}
-	public Set<PainLog> getPainLog() {
-		return painLog;
-	}
-	public void setPainLog(Set<PainLog> painLog) {
-		this.painLog = painLog;
-	}
-	public Set<MedicationLog> getMedLog() {
-		return medLog;
-	}
-	public void setMedLog(Set<MedicationLog> medLog) {
-		this.medLog = medLog;
-	}
-	public Set<StatusLog> getStatusLog() {
-		return statusLog;
-	}
-	public void setStatusLog(Set<StatusLog> statusLog) {
-		this.statusLog = statusLog;
-	}
+    public void setPrescriptions(Set<Medication> prescriptions) {
+        this.prescriptions = prescriptions;
+    }
 
-	public PatientPrefs getPrefs() {
-		return prefs;
-	}
+    public Set<Physician> getPhysicians() {
+        return physicians;
+    }
 
-	public void setPrefs(PatientPrefs prefs) {
-		this.prefs = prefs;
-	}
+    public void setPhysicians(Set<Physician> physicians) {
+        this.physicians = physicians;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result
-				+ ((isActive == null) ? 0 : isActive.hashCode());
-		result = prime * result + (int) (lastLogin ^ (lastLogin >>> 32));
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
+    public Set<PainLog> getPainLog() {
+        return painLog;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Patient))
-			return false;
-		Patient other = (Patient) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		if (isActive == null) {
-			if (other.isActive != null)
-				return false;
-		} else if (!isActive.equals(other.isActive))
-			return false;
-		if (lastLogin != other.lastLogin)
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
-	}
+    public void setPainLog(Set<PainLog> painLog) {
+        this.painLog = painLog;
+    }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+    public Set<MedicationLog> getMedLog() {
+        return medLog;
+    }
+
+    public void setMedLog(Set<MedicationLog> medLog) {
+        this.medLog = medLog;
+    }
+
+    public Set<StatusLog> getStatusLog() {
+        return statusLog;
+    }
+
+    public void setStatusLog(Set<StatusLog> statusLog) {
+        this.statusLog = statusLog;
+    }
+
+    public PatientPrefs getPrefs() {
+        return prefs;
+    }
+
+    public void setPrefs(PatientPrefs prefs) {
+        this.prefs = prefs;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (birthdate ^ (birthdate >>> 32));
+        result = prime * result
+                + ((firstName == null) ? 0 : firstName.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result
+                + ((lastName == null) ? 0 : lastName.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Patient))
+            return false;
+        Patient other = (Patient) obj;
+        if (birthdate != other.birthdate)
+            return false;
+        if (firstName == null) {
+            if (other.firstName != null)
+                return false;
+        } else if (!firstName.equals(other.firstName))
+            return false;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (lastName == null) {
+            if (other.lastName != null)
+                return false;
+        } else if (!lastName.equals(other.lastName))
+            return false;
+        return true;
+    }
 
     public String toDebugString() {
-        return "Patient [id=" + id + ", name=" + name + ", lastLogin="
+        return "Patient [id=" + id + ", firstName=" + firstName + ", lastName="
+                + lastName + ", birthdate=" + birthdate + ", lastLogin="
                 + lastLogin + ", isActive=" + isActive + ", prescriptions="
                 + prescriptions + ", physicians=" + physicians + ", painLog="
                 + painLog + ", medLog=" + medLog + ", statusLog=" + statusLog
                 + ", prefs=" + prefs + "]";
     }
-	
+
+	@Override
+	public String toString() {
+		return getName();
+	}
+
+    public String getFormattedBirthdate() {
+        if (this.birthdate <= 0L) return "";
+        Date date = new Date(this.birthdate);
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+        return format.format(date);
+    }
+
+    // returns 0 if the string is invalid
+    public static long formatBirthdate(String s) {
+        if (s == null || s.isEmpty()) return -1L;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        Date dt = null;
+        try {
+            dt = dateFormat.parse(s);
+        } catch (ParseException e) {
+            return -1L;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(dt);
+        return cal.getTimeInMillis();
+    }
+
 }

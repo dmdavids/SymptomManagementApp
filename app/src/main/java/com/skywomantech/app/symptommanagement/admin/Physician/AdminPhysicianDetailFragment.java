@@ -186,7 +186,7 @@ import java.util.concurrent.Callable;
     private void displayPatientList(Collection<Patient> patients) {
         if (patients == null || patients.size() == 0){
             final List<Patient> emptyList = new ArrayList<Patient>();
-            Patient emptyPatient = new Patient("No Patients for this Physician.");
+            Patient emptyPatient = new Patient("No Patients for this Physician.", "");
             emptyList.add(emptyPatient);
             mListView.setAdapter(new ArrayAdapter<Patient>(
                     getActivity(),

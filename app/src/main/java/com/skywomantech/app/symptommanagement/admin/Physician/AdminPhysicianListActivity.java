@@ -88,7 +88,7 @@ public class AdminPhysicianListActivity extends Activity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onPhysicianSelected(String physicianId, String physicianName) {
+    public void onPhysicianSelected(String physicianId, String firstName, String lastName) {
         Log.d(LOG_TAG, "Saving Physician ID: " + physicianId + " 2-pane is " + Boolean.toString(mTwoPane));
 
         if (mTwoPane) {

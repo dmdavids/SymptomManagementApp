@@ -57,7 +57,7 @@ public class PhysicianListFragment extends ListFragment {
     public interface Callbacks {
 
         // called when user selects a Physician
-        public void onPhysicianSelected(String physicianId, String physicianName);
+        public void onPhysicianSelected(String physicianId, String firstName, String lastName);
 
         // called when user wants to add a Physician
         public void onAddPhysician();
@@ -144,7 +144,8 @@ public class PhysicianListFragment extends ListFragment {
                 + " id is : " + physician.getId());
         String physicianId = physician.getId();
         Log.d(LOG_TAG, " String id value is : " + physicianId);
-        ((Callbacks) getActivity()).onPhysicianSelected(physicianId, physician.getName());
+        ((Callbacks) getActivity()).onPhysicianSelected(physicianId,
+                physician.getFirstName(), physician.getLastName());
         setActivatedPosition(position);
     }
 

@@ -41,7 +41,8 @@ public class AdminPhysicianAddEditFragment extends Fragment {
     private Physician mPhysician;
     private String mPhysicianId;
 
-    @InjectView(R.id.admin_physician_edit_name)  EditText mPhysicianName;
+    @InjectView(R.id.admin_physician_edit_first_name)  EditText mFirstName;
+    @InjectView(R.id.admin_physician_edit_last_name)  EditText mLastName;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -129,7 +130,8 @@ public class AdminPhysicianAddEditFragment extends Fragment {
                 public void success(Physician result) {
                     Log.d(LOG_TAG, "Found Physician :" + result.toString());
                     mPhysician = result;
-                    mPhysicianName.setText(mPhysician.toString());
+                    mFirstName.setText(mPhysician.getFirstName());
+                    mLastName.setText(mPhysician.getLastName());
                 }
 
                 @Override
@@ -146,7 +148,8 @@ public class AdminPhysicianAddEditFragment extends Fragment {
 
     @OnClick(R.id.save_physician_button)
     public void savePhysician(Button button) {
-        if (mPhysicianName.getText().toString().trim().length() == 0) {
+        if (mFirstName.getText().toString().trim().length() == 0 &&
+            mLastName.getText().toString().trim().length() == 0) {
             DialogFragment errorSaving =
                     new DialogFragment()
                     {
@@ -175,7 +178,8 @@ public class AdminPhysicianAddEditFragment extends Fragment {
                 @Override
                 public Physician call() throws Exception {
                     mPhysician.setId(mPhysicianId);
-                    mPhysician.setName(mPhysicianName.getText().toString());
+                    mPhysician.setFirstName(mFirstName.getText().toString());
+                    mPhysician.setLastName(mLastName.getText().toString());
                     if (mPhysicianId == null) {
                         Log.d(LOG_TAG, "adding physician :" + mPhysician.toDebugString());
                         return svc.addPhysician(mPhysician);

@@ -36,7 +36,8 @@ public class PatientPhysicianListActivity extends Activity
 
     public final String LOG_TAG = PatientPhysicianListActivity.class.getSimpleName();
     public static final String PHYSICIAN_ID_KEY = "physician_id";
-    public static final String PHYSICIAN_NAME_KEY = "physician_name";
+    public static final String PHYSICIAN_FIRST_NAME_KEY = "physician_first_name";
+    public static final String PHYSICIAN_LAST_NAME_KEY = "physician_last_name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +61,12 @@ public class PatientPhysicianListActivity extends Activity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onPhysicianSelected(String physicianId, String physicianName) {
-        Log.d(LOG_TAG, "id selected is " + physicianId + " name is " + physicianName);
+    public void onPhysicianSelected(String physicianId, String firstName, String lastName) {
+        Log.d(LOG_TAG, "id selected is " + physicianId + " name is " + firstName + " " + lastName);
         Intent intent=new Intent();
         intent.putExtra(PHYSICIAN_ID_KEY, physicianId);
-        intent.putExtra(PHYSICIAN_NAME_KEY, physicianName);
+        intent.putExtra(PHYSICIAN_FIRST_NAME_KEY, firstName);
+        intent.putExtra(PHYSICIAN_LAST_NAME_KEY, lastName);
         setResult(RESULT_OK, intent);
         onBackPressed();
     }

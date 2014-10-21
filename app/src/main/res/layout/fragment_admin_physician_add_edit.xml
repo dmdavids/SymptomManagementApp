@@ -24,16 +24,25 @@
             android:height="@android:dimen/app_icon_size"
             android:id="@+id/physician_details_heading_x" />
 
-
         <EditText
-            android:id="@+id/admin_physician_edit_name"
+            android:id="@+id/admin_physician_edit_first_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Physician Name"
-            android:imeOptions="actionNext"
             android:height="@android:dimen/app_icon_size"
-            android:inputType="textPersonName|textCapWords" >
-        </EditText>
+            android:hint="Physician First Name"
+            android:imeOptions="actionNext"
+            android:inputType="textPersonName|textCapWords"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/admin_physician_edit_last_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:hint="Physician Last Name"
+            android:imeOptions="actionNext"
+            android:inputType="textPersonName|textCapWords"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
             android:id="@+id/save_physician_button"

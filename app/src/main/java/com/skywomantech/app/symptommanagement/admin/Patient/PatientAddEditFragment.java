@@ -49,7 +49,10 @@ public class PatientAddEditFragment extends Fragment {
     private Patient mPatient;
     private String mPatientId;
 
-    @InjectView(R.id.admin_patient_edit_name)  EditText mPatientName;
+
+    @InjectView(R.id.admin_patient_edit_first_name)  EditText mFirstName;
+    @InjectView(R.id.admin_patient_edit_last_name)  EditText mLastName;
+    @InjectView(R.id.admin_patient_edit_birthdate) EditText mBirthdate;
     @InjectView(R.id.admin_patient_physician_listview)  ListView mPhysiciansListView;
 
 
@@ -138,7 +141,9 @@ public class PatientAddEditFragment extends Fragment {
                 public void success(Patient result) {
                     Log.d(LOG_TAG, "Found Patient :" + result.toString());
                     mPatient = result;
-                    mPatientName.setText(mPatient.toString());
+                    mFirstName.setText(mPatient.getFirstName());
+                    mLastName.setText(mPatient.getLastName());
+                    mBirthdate.setText(mPatient.getFormattedBirthdate());
                     displayPhysicians(mPatient.getPhysicians());
                 }
 
@@ -156,22 +161,35 @@ public class PatientAddEditFragment extends Fragment {
 
     @OnClick(R.id.save_patient_button)
     public void savePatient(Button button) {
-        if (mPatientName.getText().toString().trim().length() == 0) {
+        if ( mFirstName.getText().toString().trim().length() == 0 &&
+                mLastName.getText().toString().trim().length() == 0)  {
             DialogFragment errorSaving =
-                    new DialogFragment()
-                    {
+                    new DialogFragment() {
                         @Override
-                        public Dialog onCreateDialog(Bundle savedInstanceState)
-                        {
+                        public Dialog onCreateDialog(Bundle savedInstanceState) {
                             AlertDialog.Builder builder =
                                     new AlertDialog.Builder(getActivity());
-                            builder.setMessage("Please Enter a Patient Name to Save.");
+                            builder.setMessage("Unable to Save patient. Please Enter a valid first and last name.");
                             builder.setPositiveButton("OK", null);
                             return builder.create();
                         }
                     };
-
-            errorSaving.show(getFragmentManager(), "error saving patient");
+            errorSaving.show(getFragmentManager(), "Error saving/updating patient");
+            return;
+        }
+        else if ( mPatient.formatBirthdate(mBirthdate.getText().toString()) < 0) {
+            DialogFragment errorSaving =
+                    new DialogFragment() {
+                        @Override
+                        public Dialog onCreateDialog(Bundle savedInstanceState) {
+                            AlertDialog.Builder builder =
+                                    new AlertDialog.Builder(getActivity());
+                            builder.setMessage("Unable to Save patient. Please Enter a valid birthdate with format mm/dd/yyyy.");
+                            builder.setPositiveButton("OK", null);
+                            return builder.create();
+                        }
+                    };
+            errorSaving.show(getFragmentManager(), "Error saving/updating patient");
             return;
         }
 
@@ -185,7 +203,10 @@ public class PatientAddEditFragment extends Fragment {
                 @Override
                 public Patient call() throws Exception {
                     mPatient.setId(mPatientId);
-                    mPatient.setName(mPatientName.getText().toString());
+                    mPatient.setFirstName(mFirstName.getText().toString());
+                    mPatient.setLastName(mLastName.getText().toString());
+                    long birth = mPatient.formatBirthdate(mBirthdate.getText().toString());
+                    if ( birth >= 0L) mPatient.setBirthdate(birth);
                     if (mPatientId == null) {
                         Log.d(LOG_TAG, "adding patient :" + mPatient.toDebugString());
                         return svc.addPatient(mPatient);
@@ -223,7 +244,7 @@ public class PatientAddEditFragment extends Fragment {
     private void displayPhysicians(Collection<Physician> physicians) {
         if (physicians == null || physicians.size() == 0) {
             final List<Physician> emptyList = new ArrayList<Physician>();
-            Physician emptyPhysician = new Physician("No Physicians for this Patient.");
+            Physician emptyPhysician = new Physician("No Physicians for this Patient.", "");
             emptyList.add(emptyPhysician);
             Physician[] plist =  emptyList.toArray(new Physician[1]);
             mPhysiciansListView
@@ -245,6 +266,10 @@ public class PatientAddEditFragment extends Fragment {
                 @Override
                 public Patient call() throws Exception {
                     Log.d(LOG_TAG, "updating patient :" + mPatient.toDebugString());
+                    if (mPatientId == null || mPatient.getId() == null ||
+                            mPatientId.isEmpty() || mPatient.getId().isEmpty()) {
+                        return svc.addPatient(mPatient);
+                    }
                     return svc.updatePatient(mPatientId, mPatient);
                 }
             }, new TaskCallback<Patient>() {
@@ -253,8 +278,10 @@ public class PatientAddEditFragment extends Fragment {
                 public void success(Patient result) {
                     Toast.makeText(
                             getActivity(),
-                            "Patient [" + result.getName() + "] updated successfully.",
+                            "Patient [" + result.getName() + "] added/updated successfully.",
                             Toast.LENGTH_SHORT).show();
+                    mPatient = result;
+                    mPatientId = mPatient.getId();
                     onResume();
                 }
 
@@ -282,10 +309,12 @@ public class PatientAddEditFragment extends Fragment {
         if(requestCode == 2) {
             Log.v(LOG_TAG, "Saving the new physician information.");
             String physicianId = data.getStringExtra(PatientPhysicianListActivity.PHYSICIAN_ID_KEY);
-            String physicianName = data.getStringExtra(PatientPhysicianListActivity.PHYSICIAN_NAME_KEY);
+            String physicianFirstName = data.getStringExtra(PatientPhysicianListActivity.PHYSICIAN_FIRST_NAME_KEY);
+            String physicianLastName = data.getStringExtra(PatientPhysicianListActivity.PHYSICIAN_LAST_NAME_KEY);
             Physician p = new Physician();
             p.setId(physicianId);
-            p.setName(physicianName);
+            p.setFirstName(physicianFirstName);
+            p.setLastName(physicianLastName);
             if (mPatient.getPhysicians() != null) {
                 mPatient.getPhysicians().add(p);
             } else {
@@ -293,17 +322,18 @@ public class PatientAddEditFragment extends Fragment {
                 newSet.add(p);
                 mPatient.setPhysicians(newSet);
             }
-            updatePatient();
-            updatePhysician(physicianId, mPatient);
+            // if there hasn't been any input yet then don't bother to save or update yet
+            // do it on a later saving opportunity
+            if (physicianId != null && !physicianId.isEmpty() && physicianFirstName != null &&
+                    !physicianFirstName.isEmpty() && physicianLastName != null &&
+                    !physicianLastName.isEmpty()) {
+                updatePatient();
+                loadAndSavePhysicianFromAPI(physicianId);
+            }
         }
     }
 
     private static Physician mPhysician;
-    private void updatePhysician(String physicianId, Patient patient) {
-        loadAndSavePhysicianFromAPI(physicianId);
-    }
-
-
     private void loadAndSavePhysicianFromAPI(final String physicianId) {
         Log.d(LOG_TAG, "Getting Physician to Update Patients - Physician ID is : " + physicianId);
         // hardcoded for my local host (see ipconfig for values) at port 8080
