@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello_world">Hello world!</string>
-    <string name="app_name">SymptomManagement</string>
+    <string name="app_name">Symptom Management</string>
     <string name="content_authority" translatable="false">"com.skywomantech.app.symptommanagement"</string>
     <string name="action_settings">Settings</string>
     <string name="login_title">Login</string>
@@ -36,18 +36,19 @@
     <string name="title_admin_patient_detail">Admin Patient Details</string>
     <string name="title_admin_physician_list">Admin Physicians</string>
     <string name="title_admin_physician_detail">Admin Physician Details</string>
-    <string name="title_activity_admin_main">AdminMain</string>
-    <string name="admin_main_title"><![CDATA[Administrate Users  & Medications]]></string>
+    <string name="title_activity_admin_main">Admin Main</string>
+    <string name="admin_main_title">Administrate Users and Medications</string>
     <string name="title_admin_medication_list">Admin Medications</string>
     <string name="title_admin_medication_detail">Admin Medications Detail</string>
     <string name="admin_medication_edit">Edit</string>
     <string name="admin_medication_delete">Delete</string>
     <string name="admin_medication_add">Add</string>
     <string name="empty_list_text">This List is Empty.</string>
-    <string name="title_activity_patient_main">PatientMain</string>
-    <string name="title_activity_pain_log">PainLog</string>
-    <string name="title_physicianpatient_list">PhysicianPatients</string>
-    <string name="title_physicianpatient_detail">PhysicianPatient Detail</string>
-    <string name="title_activity_medication_list">MedicationList</string>
+    <string name="title_activity_patient_main">Patient Main</string>
+    <string name="title_activity_pain_log">Pain Logs</string>
+    <string name="title_physicianpatient_list">Patients</string>
+    <string name="title_physicianpatient_detail">Patient Detail</string>
+    <string name="title_activity_medication_list">Medication List</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

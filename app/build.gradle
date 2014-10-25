@@ -39,4 +39,5 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.7.0'
     compile 'com.google.code.gson:gson:1.7.2'
     compile 'commons-io:commons-io:2.4'
+    compile 'com.android.support:appcompat-v7:20.0.0'
 }

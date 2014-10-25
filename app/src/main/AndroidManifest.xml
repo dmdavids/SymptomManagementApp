@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <!-- To auto-complete the email text field in the login form with the user's emails -->
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
 
     <application
         android:allowBackup="true"
@@ -30,9 +34,17 @@
                 android:value="com.skywomantech.app.symptommanagement.Login" />
         </activity>
         <activity
+            android:name=".admin.AdminMain"
+            android:label="@string/title_activity_admin_main"
+            android:parentActivityName=".Login" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.skywomantech.app.symptommanagement.Login" />
+        </activity>
+        <activity
             android:name=".admin.Patient.AdminPatientListActivity"
             android:label="@string/title_admin_patient_list"
-            android:parentActivityName=".Login" >
+            android:parentActivityName=".admin.AdminMain" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skywomantech.app.symptommanagement.AdminMain" />
@@ -48,7 +60,7 @@
         <activity
             android:name=".admin.Physician.AdminPhysicianListActivity"
             android:label="@string/title_admin_physician_list"
-            android:parentActivityName=".Login" >
+            android:parentActivityName=".admin.AdminMain" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skywomantech.app.symptommanagement.AdminMain" />
@@ -69,14 +81,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skywomantech.app.symptommanagement.AdminPhysicianListActivity" />
         </activity>
-        <activity
-            android:name=".admin.AdminMain"
-            android:label="@string/title_activity_admin_main"
-            android:parentActivityName=".Login" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skywomantech.app.symptommanagement.Login" />
-        </activity>
+
         <activity
             android:name=".admin.Medication.AdminMedicationListActivity"
             android:label="@string/title_admin_medication_list"
@@ -139,6 +144,15 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailActivity" />
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="Sign In"
+            android:parentActivityName=".Login"
+            android:windowSoftInputMode="adjustResize|stateVisible" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.skywomantech.app.symptommanagement.Login" />
         </activity>
     </application>
 

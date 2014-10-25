@@ -1,10 +1,12 @@
 package com.skywomantech.app.symptommanagement.client;
 
+
+
+import com.skywomantech.app.symptommanagement.data.Alert;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.Physician;
 
-import java.math.BigInteger;
 import java.util.Collection;
 
 import retrofit.http.Body;
@@ -25,6 +27,7 @@ public interface SymptomManagementApi {
     public static final String PATIENT_PATH = "/patient";
     public static final String PHYSICIAN_PATH = "/physician";
     public static final String MEDICATION_PATH = "/medication";
+    public static final String ALERT_PATH = "/alert";
 
     public static final String NAME_PARAMETER = "name";
     public static final String ID_PATH = "/{id}";
@@ -35,6 +38,12 @@ public interface SymptomManagementApi {
     public static final String PHYSICIAN_SEARCH_PATH = PHYSICIAN_PATH + SEARCH_PATH;
     public static final String MEDICATION_SEARCH_PATH = MEDICATION_PATH + SEARCH_PATH;
 
+
+    // access any severe patients via /physician/{id}/notification
+    public static final String PHYSICIAN_ALERT_PATH = PHYSICIAN_PATH + ID_PATH + ALERT_PATH;
+
+
+    // BEGIN Patient
 
     @GET(PATIENT_PATH)
     public Collection<Patient> getPatientList();
@@ -54,6 +63,8 @@ public interface SymptomManagementApi {
     @GET(PATIENT_SEARCH_PATH)
     public Collection<Patient> findByPatientLastName(@Query(NAME_PARAMETER) String lastName);
 
+    // BEGIN Physician
+
     @GET(PHYSICIAN_PATH)
     public Collection<Physician> getPhysicianList();
 
@@ -71,6 +82,22 @@ public interface SymptomManagementApi {
 
     @GET(PHYSICIAN_SEARCH_PATH)
     public Collection<Physician> findByPhysicianLastName(@Query(NAME_PARAMETER) String lastName);
+
+    @GET(PHYSICIAN_ALERT_PATH)
+    public Collection<Alert> getPatientAlerts(@Path(ID_PARAMETER) String id);
+
+    // BEGIN Alert
+
+    @GET(ALERT_PATH)
+    public Collection<Alert> getAlertList();
+
+    @POST(ALERT_PATH)
+    public Alert addAlert(@Body Alert alert);
+
+    @DELETE(ALERT_PATH+ID_PATH)
+    public Alert deleteAlert(@Path(ID_PARAMETER) String alertId);
+
+    //Begin Medication
 
     @GET(MEDICATION_PATH+ID_PATH)
     public Medication getMedication(@Path(ID_PARAMETER) String id);

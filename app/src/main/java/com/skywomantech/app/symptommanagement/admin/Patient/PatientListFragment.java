@@ -201,7 +201,6 @@ public class PatientListFragment extends ListFragment {
                             getActivity(),
                             "Unable to fetch the Patients. Please check Internet connection.",
                             Toast.LENGTH_LONG).show();
-                    getActivity().onBackPressed();
                 }
             });
         }

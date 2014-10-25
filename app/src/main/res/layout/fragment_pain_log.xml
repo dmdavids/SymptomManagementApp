@@ -22,7 +22,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/severity_heading"
-        android:layout_marginTop="38dp"
+        android:layout_marginTop="16dp"
         android:orientation="vertical">
 
         <RadioButton
@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:text="Does your pain stop you from eating or drinking?"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_marginTop="38dp"
+        android:layout_marginTop="16dp"
         android:layout_below="@id/severityLayout"/>
 
     <LinearLayout
@@ -60,7 +60,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_below="@id/eating_heading"
-        android:layout_marginTop="38dp"
+        android:layout_marginTop="16dp"
         android:orientation="vertical"
         android:id="@+id/eatingLayout">
 
@@ -80,16 +80,17 @@
             android:id="@+id/not_eating_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="I cannot eat." />
+            android:text="I cannot eat" />
 
     </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Done"
+        android:text="OK"
         android:id="@+id/done_button"
         android:layout_below="@+id/eatingLayout"
+        android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

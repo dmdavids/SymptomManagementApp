@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/physician_list_name_item"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="Physician Name"
         android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -16,7 +16,7 @@
     <ImageButton
         android:id="@+id/physician_list_delete_item"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="3"
         android:contentDescription="Delete"
         android:src="@android:drawable/ic_menu_delete" />

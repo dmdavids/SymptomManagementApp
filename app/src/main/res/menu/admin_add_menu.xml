@@ -3,7 +3,6 @@
     <item
         android:id="@+id/action_add"
         android:orderInCategory="0"
-        android:showAsAction="ifRoom|withText"
         android:title="@string/admin_medication_add"
         android:icon="@android:drawable/ic_menu_add"/>
 

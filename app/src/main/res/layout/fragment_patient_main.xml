@@ -9,7 +9,7 @@
     tools:context="com.skywomantech.app.symptommanagement.patient.PatientMainActivity$PlaceholderFragment">
 
     <TextView
-        android:text="Patient Options"
+        android:text="Choose An Option"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/patient_main_title"
@@ -21,31 +21,28 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pain Log"
+        android:text="Enter Pain Log"
         android:id="@+id/pain_log_button"
         android:layout_below="@+id/patient_main_title"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp" />
+        android:layout_marginTop="32dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Medication Log"
+        android:text="Enter Medication Log"
         android:id="@+id/medication_log_button"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="32dp"
         android:layout_below="@+id/pain_log_button"
-        android:layout_alignLeft="@+id/pain_log_button"
-        android:layout_alignStart="@+id/pain_log_button" />
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Status Log"
+        android:text="Enter Status Notes"
         android:id="@+id/status_log_button"
-        android:layout_toEndOf="@+id/patient_main_title"
         android:layout_below="@+id/medication_log_button"
-        android:layout_alignLeft="@+id/pain_log_button"
-        android:layout_alignStart="@+id/pain_log_button"
-        android:layout_marginTop="50dp" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp" />
 
 </RelativeLayout>
