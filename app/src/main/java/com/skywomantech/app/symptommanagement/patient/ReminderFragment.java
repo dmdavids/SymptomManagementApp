@@ -1,4 +1,4 @@
-package com.skywomantech.app.symptommanagement;
+package com.skywomantech.app.symptommanagement.patient;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -14,7 +14,6 @@ import com.skywomantech.app.symptommanagement.dummy.DummyContent;
  * A fragment representing a list of Items.
  * <p />
  * <p />
- * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
 public class ReminderFragment extends ListFragment {

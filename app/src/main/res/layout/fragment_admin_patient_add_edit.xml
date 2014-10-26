@@ -81,7 +81,7 @@
 
         <ListView
             android:id="@+id/admin_patient_physician_listview"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"></ListView>
 
 

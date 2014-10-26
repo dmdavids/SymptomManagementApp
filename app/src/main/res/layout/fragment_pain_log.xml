@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -6,91 +6,89 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.skywomantech.app.symptommanagement.patient.PainLogActivity$PlaceholderFragment">
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/severity_heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="How bad is your mouth pain/sore throat?"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <LinearLayout
-        android:id="@+id/severityLayout"
-        android:layout_width="fill_parent"
+    <RadioGroup
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/severity_heading"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical">
+        android:layout_below="@id/severity_heading"
+        android:id="@+id/severity_radio_group">
 
-        <RadioButton
-            android:id="@+id/well_controlled_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Well-Controlled" />
+            <RadioButton
+                android:id="@+id/well_controlled_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Well-Controlled" />
 
-        <RadioButton
-            android:id="@+id/moderate_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Moderate" />
+            <RadioButton
+                android:id="@+id/moderate_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Moderate" />
 
-        <RadioButton
-            android:id="@+id/severe_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Severe" />
+            <RadioButton
+                android:id="@+id/severe_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Severe" />
 
-    </LinearLayout>
+    </RadioGroup>
 
     <TextView
         android:id="@+id/eating_heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Does your pain stop you from eating or drinking?"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_marginTop="16dp"
-        android:layout_below="@id/severityLayout"/>
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_below="@id/severity_radio_group"
+        android:layout_marginTop="16dp"/>
 
-    <LinearLayout
-        android:layout_width="fill_parent"
+    <RadioGroup
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_below="@id/eating_heading"
-        android:layout_marginTop="16dp"
-        android:orientation="vertical"
-        android:id="@+id/eatingLayout">
+        android:id="@+id/eating_radio_group">
 
-        <RadioButton
-            android:id="@+id/eating_ok_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No" />
 
-        <RadioButton
-            android:id="@+id/eating_some_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Some" />
+            <RadioButton
+                android:id="@+id/eating_ok_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No" />
 
-        <RadioButton
-            android:id="@+id/not_eating_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="I cannot eat" />
+            <RadioButton
+                android:id="@+id/eating_some_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Some" />
 
-    </LinearLayout>
+            <RadioButton
+                android:id="@+id/not_eating_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="I cannot eat" />
+
+    </RadioGroup>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="OK"
-        android:id="@+id/done_button"
-        android:layout_below="@+id/eatingLayout"
+        android:id="@+id/pain_log_done_button"
+        android:layout_below="@+id/eating_radio_group"
         android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true" />
+        </RelativeLayout>
 
-</RelativeLayout>
+</ScrollView>

@@ -50,5 +50,6 @@
     <string name="title_physicianpatient_detail">Patient Detail</string>
     <string name="title_activity_medication_list">Medication List</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_patient_options">PatientOptionsActivity</string>
 
 </resources>

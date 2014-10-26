@@ -1,6 +1,8 @@
 package com.skywomantech.app.symptommanagement.data;
 
 import java.math.BigInteger;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class MedicationLog {
@@ -102,4 +104,10 @@ public class MedicationLog {
 				+ med + ", taken=" + taken + "]";
 	}
 
-}
+    public String getTakenDateFormattedString(String dateFormat) {
+            Date date = new Date(taken);
+            SimpleDateFormat format = new SimpleDateFormat(dateFormat);
+            return format.format(date);
+        }
+    }
+

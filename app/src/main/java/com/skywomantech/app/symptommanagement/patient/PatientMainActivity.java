@@ -1,28 +1,27 @@
 package com.skywomantech.app.symptommanagement.patient;
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.Fragment;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 
 import com.skywomantech.app.symptommanagement.R;
 
 
-public class PatientMainActivity extends Activity {
+public class PatientMainActivity extends Activity  {
+
+    public static final String PATIENT_ID_KEY = "patient_id_key";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_main);
         if (savedInstanceState == null) {
+            Bundle arguments = new Bundle();
+            arguments.putString(PATIENT_ID_KEY,
+                    getIntent().getStringExtra(PATIENT_ID_KEY));
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
+                    .add(R.id.container, new PatientMainFragment())
                     .commit();
         }
     }
@@ -47,19 +46,4 @@ public class PatientMainActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-
-        public PlaceholderFragment() {
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_patient_main, container, false);
-            return rootView;
-        }
-    }
 }

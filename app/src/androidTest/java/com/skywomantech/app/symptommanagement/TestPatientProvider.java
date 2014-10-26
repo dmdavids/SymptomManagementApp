@@ -8,6 +8,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
+import com.skywomantech.app.symptommanagement.patient.StatusLogEntryFragment;
+
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.MedLogEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PainLogEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PatientEntry;
@@ -15,7 +17,6 @@ import static com.skywomantech.app.symptommanagement.data.PatientCPContract.Phys
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PrefsEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PrescriptionEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.ReminderEntry;
-import static com.skywomantech.app.symptommanagement.data.PatientCPContract.StatusLogEntry;
 
 public class TestPatientProvider extends AndroidTestCase {
 
@@ -31,7 +32,7 @@ public class TestPatientProvider extends AndroidTestCase {
         deleteRecords(PhysicianEntry.CONTENT_URI);
         deleteRecords(PainLogEntry.CONTENT_URI);
         deleteRecords(MedLogEntry.CONTENT_URI);
-        deleteRecords(StatusLogEntry.CONTENT_URI);
+       // deleteRecords(StatusLogEntryFragment.CONTENT_URI);
     }
 
     public void testInsertReadDeleteAllRecords() {
@@ -144,8 +145,8 @@ public class TestPatientProvider extends AndroidTestCase {
     }
 
     public void testInsertReadStatusRecord() {
-        ContentValues testObj = TestData.createTestStatusLog("This is a silly note to put here.");
-        insertReadRecord(testObj, StatusLogEntry.CONTENT_URI);
+       // ContentValues testObj = TestData.createTestStatusLog("This is a silly note to put here.");
+     //   insertReadRecord(testObj, StatusLogEntryFragment.CONTENT_URI);
     }
 
     public long insertReadRecord(ContentValues testObj, Uri contentUri) {

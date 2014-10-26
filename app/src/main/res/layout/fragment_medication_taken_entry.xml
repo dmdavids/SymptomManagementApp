@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.skywomantech.app.symptommanagement.MedicationTakenEntry">
+    tools:context="com.skywomantech.app.symptommanagement.patient.MedicationTakenEntryFragment">
 
     <LinearLayout
         android:orientation="vertical"
@@ -33,13 +33,30 @@
                 android:calendarViewShown="false"
                 android:layout_marginTop="16dp"/>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OK"
-            android:id="@+id/done_medication_entry"
+            android:text="Cancel"
+            android:id="@+id/cancel_medication_entry"
             android:layout_marginTop="16dp"
             android:layout_gravity="center_horizontal" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ok"
+            android:id="@+id/done_medication_entry"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center_horizontal" />
+        </LinearLayout>
+
     </LinearLayout>
+
 </ScrollView>

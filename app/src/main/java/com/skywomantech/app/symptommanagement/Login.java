@@ -12,9 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.skywomantech.app.symptommanagement.admin.AdminMain;
+import com.skywomantech.app.symptommanagement.patient.PatientMainActivity;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.skywomantech.app.symptommanagement.R.id.patient_button;
 
 
 public class Login extends Activity {
@@ -74,14 +77,24 @@ public class Login extends Activity {
             ButterKnife.inject(this, rootView);
             return rootView;
         }
+
         @OnClick(R.id.admin_button)
         public void loginAdministrator() {
             startActivity(new Intent(getActivity(), AdminMain.class));
         }
 
         // TODO: Doctor Login
+        @OnClick(R.id.physician_button)
+        public void loginPhysician() {
+            // do nothing for now
+        }
+
 
         /// TODO: Patient Login
+        @OnClick(R.id.patient_button)
+        public void loginPatient() {
+            startActivity(new Intent(getActivity(), PatientMainActivity.class));
+        }
     }
 
 

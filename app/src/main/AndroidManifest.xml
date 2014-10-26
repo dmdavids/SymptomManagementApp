@@ -81,7 +81,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skywomantech.app.symptommanagement.AdminPhysicianListActivity" />
         </activity>
-
         <activity
             android:name=".admin.Medication.AdminMedicationListActivity"
             android:label="@string/title_admin_medication_list"
@@ -114,14 +113,6 @@
                 android:value="com.skywomantech.app.symptommanagement.Login" />
         </activity>
         <activity
-            android:name=".patient.PainLogActivity"
-            android:label="@string/title_activity_pain_log"
-            android:parentActivityName=".patient.PatientMainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skywomantech.app.symptommanagement.PatientMain" />
-        </activity>
-        <activity
             android:name=".physician.PhysicianPatientListActivity"
             android:label="@string/title_physicianpatient_list"
             android:parentActivityName=".Login" >
@@ -138,14 +129,6 @@
                 android:value="com.skywomantech.app.symptommanagement.physician.PhysicianPatientListActivity" />
         </activity>
         <activity
-            android:name=".patient.MedicationListActivity"
-            android:label="@string/title_activity_medication_list"
-            android:parentActivityName=".physician.PhysicianPatientDetailActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailActivity" />
-        </activity>
-        <activity
             android:name=".LoginActivity"
             android:label="Sign In"
             android:parentActivityName=".Login"
@@ -154,6 +137,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skywomantech.app.symptommanagement.Login" />
         </activity>
+
+        <provider
+            android:authorities="@string/content_authority"
+            android:name=".data.PatientContentProvider"
+            android:exported="false"
+            android:syncable="true" />
+
     </application>
 
 </manifest>

@@ -3,6 +3,8 @@ package com.skywomantech.app.symptommanagement;
 import android.content.ContentValues;
 
 
+import com.skywomantech.app.symptommanagement.patient.StatusLogEntryFragment;
+
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.MedLogEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PainLogEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PatientEntry;
@@ -10,7 +12,6 @@ import static com.skywomantech.app.symptommanagement.data.PatientCPContract.Phys
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PrefsEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PrescriptionEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.ReminderEntry;
-import static com.skywomantech.app.symptommanagement.data.PatientCPContract.StatusLogEntry;
 
 
 public class TestData {
@@ -92,13 +93,13 @@ public class TestData {
         return values;
     }
 
-    static ContentValues createTestStatusLog(String note ){
-        ContentValues values = new ContentValues();
-        values.put(StatusLogEntry.COLUMN_PATIENT_ID, id);
-        values.put(StatusLogEntry.COLUMN_NOTE, note);
-        values.put(StatusLogEntry.COLUMN_CREATED, System.currentTimeMillis());
-        return values;
-    }
+//    static ContentValues createTestStatusLog(String note ){
+//        ContentValues values = new ContentValues();
+//        values.put(StatusLogEntryFragment.COLUMN_, id);
+//        values.put(StatusLogEntryFragment.COLUMN_NOTE, note);
+//        values.put(StatusLogEntryFragment.COLUMN_CREATED, System.currentTimeMillis());
+//        return values;
+//    }
 
 
 }
