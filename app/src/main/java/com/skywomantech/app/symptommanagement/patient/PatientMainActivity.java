@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.R;
+import com.skywomantech.app.symptommanagement.data.Reminder;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -27,7 +28,10 @@ public class PatientMainActivity extends Activity
         implements
         MedicationLogListAdapter.Callbacks,
         MedicationTimeDialog.Callbacks,
-        PatientPainLogFragment.Callbacks  {
+        PatientPainLogFragment.Callbacks,
+        ReminderFragment.Callbacks,
+        ReminderAddEditDialog.Callbacks,
+        ReminderListAdapter.Callbacks {
 
 
     @Override
@@ -46,7 +50,6 @@ public class PatientMainActivity extends Activity
             }
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -137,4 +140,38 @@ public class PatientMainActivity extends Activity
         frag.updateMedicationLogTimeTaken(0L, position);
     }
 
+    @Override
+    public void onRequestReminderAdd(Reminder reminder) {
+        FragmentManager fm = getFragmentManager();
+        ReminderAddEditDialog reminderDialog = ReminderAddEditDialog.newInstance(-1, reminder);
+        reminderDialog.show(fm, "reminder_dialog");
+    }
+
+    @Override
+    public void onRequestReminderEdit(int position, Reminder reminder) {
+        FragmentManager fm = getFragmentManager();
+        ReminderAddEditDialog reminderDialog = ReminderAddEditDialog.newInstance(position, reminder);
+        reminderDialog.show(fm, "reminder_dialog");
+    }
+
+    @Override
+    public void onReminderAdd(Reminder newReminder) {
+        ReminderFragment frag =
+                (ReminderFragment) getFragmentManager().findFragmentById(R.id.container);
+        frag.addReminder(newReminder);
+    }
+
+    @Override
+         public void onReminderUpdate(int position, Reminder reminder) {
+        ReminderFragment frag =
+                (ReminderFragment) getFragmentManager().findFragmentById(R.id.container);
+        frag.updateReminder(position, reminder);
+    }
+
+    @Override
+    public void onReminderDelete(int position, Reminder reminder) {
+        ReminderFragment frag =
+                (ReminderFragment) getFragmentManager().findFragmentById(R.id.container);
+        frag.deleteReminder(position);
+    }
 }

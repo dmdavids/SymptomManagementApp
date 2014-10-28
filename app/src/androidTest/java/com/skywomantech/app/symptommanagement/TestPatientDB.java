@@ -34,6 +34,7 @@ import static com.skywomantech.app.symptommanagement.data.PatientCPContract.Phys
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PrefsEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PrescriptionEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.ReminderEntry;
+import static com.skywomantech.app.symptommanagement.data.PatientCPContract.StatusLogEntry;
 
 public class TestPatientDB extends AndroidTestCase {
 
@@ -227,25 +228,25 @@ public class TestPatientDB extends AndroidTestCase {
     public void testStatusLogInsertRead() {
         PatientDBHelper dbHelper = new PatientDBHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-//
-//        ContentValues testObject =
-//                TestData.createTestStatusLog("This is a test note");
 
-       // long rowId = db.insert(StatusLogEntryFragment.TABLE_NAME, null, testObject);
-       // assertTrue(rowId != -1);
-//        System.out.println("Status Log row id: " + rowId);
-//
-//        Cursor cursor = db.query(
-//                StatusLogEntryFragment.TABLE_NAME,  // Table to Query
-//                null, // all columns
-//                null, // Columns for the "where" clause
-//                null, // Values for the "where" clause
-//                null, // columns to group by
-//                null, // columns to filter by row groups
-//                null // sort order
-//        );
-//        assertTrue(cursor.moveToFirst());
-//        cursor.close();
+        ContentValues testObject =
+                TestData.createTestStatusLog("This is a test note");
+
+       long rowId = db.insert(StatusLogEntry.TABLE_NAME, null, testObject);
+       assertTrue(rowId != -1);
+        System.out.println("Status Log row id: " + rowId);
+
+        Cursor cursor = db.query(
+                StatusLogEntry.TABLE_NAME,  // Table to Query
+                null, // all columns
+                null, // Columns for the "where" clause
+                null, // Values for the "where" clause
+                null, // columns to group by
+                null, // columns to filter by row groups
+                null // sort order
+        );
+        assertTrue(cursor.moveToFirst());
+        cursor.close();
     }
 
     public void testReminderInsertRead() {

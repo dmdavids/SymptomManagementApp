@@ -5,6 +5,9 @@ import android.app.Fragment;
 import android.content.ContentValues;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -24,6 +27,9 @@ import butterknife.InjectView;
 
 public class ReminderFragment extends Fragment {
 
+    public interface Callbacks {
+        public void onRequestReminderAdd(Reminder reminder);
+    }
 
     private String mPatientId;
     ReminderListAdapter mAdapter;
@@ -43,6 +49,7 @@ public class ReminderFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         this.setRetainInstance(true);  // save the fragment state with rotations
     }
 
@@ -52,6 +59,25 @@ public class ReminderFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_reminder, container, false);
         ButterKnife.inject(this, rootView);
         return rootView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.reminder_add_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case R.id.action_add:
+                ((Callbacks) getActivity()).onRequestReminderAdd(new Reminder());
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     // load a list of empty log records for the patient to fill
@@ -64,12 +90,32 @@ public class ReminderFragment extends Fragment {
     private void loadReminderList() {
         // TODO: get actual Reminders for this patient use dummy list for now
         if (mReminders == null) {
-            mReminders = dummyData.toArray(new Reminder[dummyData.size()]);
+            reminders = dummyData;
+            mReminders = reminders.toArray(new Reminder[reminders.size()]);
         }
         mAdapter = new ReminderListAdapter(getActivity(), mReminders);
         mReminderView.setAdapter(mAdapter);
     }
 
+    public void addReminder(Reminder newReminder) {
+        reminders.add(newReminder);
+        mReminders = reminders.toArray(new Reminder[reminders.size()]);
+        mAdapter = new ReminderListAdapter(getActivity(), mReminders);
+        mReminderView.setAdapter(mAdapter);
+        //mAdapter.notifyDataSetChanged();
+    }
+
+    public void deleteReminder(int position ) {
+        reminders.remove(mReminders[position]);
+        mReminders = reminders.toArray(new Reminder[reminders.size()]);
+        mAdapter = new ReminderListAdapter(getActivity(), mReminders);
+        mReminderView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
+    }
+
+    public void updateReminder(int position, Reminder temp) {
+       mAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public void onDestroyView() {
