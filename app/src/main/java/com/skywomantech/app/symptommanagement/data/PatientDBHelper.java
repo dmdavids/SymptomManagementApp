@@ -119,6 +119,7 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         ReminderEntry._ID + " INTEGER PRIMARY KEY," +
                         ReminderEntry.COLUMN_PATIENT_ID + " TEXT NOT NULL, " +
                         ReminderEntry.COLUMN_REMINDER_ID + " BIGINT, " +
+                        ReminderEntry.COLUMN_NAME + " TEXT, " +
                         ReminderEntry.COLUMN_TYPE + " TEXT, " +
                         ReminderEntry.COLUMN_DAY + " INTEGER, " +
                         ReminderEntry.COLUMN_HOUR + " INTEGER, " +

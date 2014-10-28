@@ -4,8 +4,11 @@ import java.math.BigInteger;
 
 public class Reminder {
 	
-	BigInteger Id;
-	private int dayOfWeek;
+	private BigInteger Id;
+    private String name;
+
+
+    private int dayOfWeek;
 	private int hour;
 	private int minutes;
 	private String alarm;
@@ -26,18 +29,31 @@ public class Reminder {
     };
 
     private ReminderType reminderType;
-
 	
 	public Reminder() {
 		super();
+        this.hour = -1;
+        this.minutes = -1;
+        this.isOn = false;
+        this.reminderType = ReminderType.GENERIC;
 	}
+
+    public Reminder(String name) {
+        super();
+        this.name = name;
+        this.hour = -1;
+        this.minutes = -1;
+        this.setOn(false);
+        this.reminderType = ReminderType.GENERIC;
+    }
 	
-	public Reminder(int dayOfWeek, int hour, int minutes, String alarm) {
+	public Reminder(String name, int dayOfWeek, int hour, int minutes, String alarm) {
 		super();
 		this.dayOfWeek = dayOfWeek;
 		this.hour = hour;
 		this.minutes = minutes;
 		this.alarm = alarm;
+        this.reminderType = ReminderType.GENERIC;
 	}
 	
 	public BigInteger getId() {
@@ -87,60 +103,59 @@ public class Reminder {
 		this.reminderType = reminderType;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((Id == null) ? 0 : Id.hashCode());
-		result = prime * result + ((alarm == null) ? 0 : alarm.hashCode());
-		result = prime * result + dayOfWeek;
-		result = prime * result + hour;
-		result = prime * result + (isOn ? 1231 : 1237);
-		result = prime * result + minutes;
-		result = prime * result
-				+ ((reminderType == null) ? 0 : reminderType.hashCode());
-		return result;
-	}
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (!(obj instanceof Reminder))
-			return false;
-		Reminder other = (Reminder) obj;
-		if (Id == null) {
-			if (other.Id != null)
-				return false;
-		} else if (!Id.equals(other.Id))
-			return false;
-		if (alarm == null) {
-			if (other.alarm != null)
-				return false;
-		} else if (!alarm.equals(other.alarm))
-			return false;
-		if (dayOfWeek != other.dayOfWeek)
-			return false;
-		if (hour != other.hour)
-			return false;
-		if (isOn != other.isOn)
-			return false;
-		if (minutes != other.minutes)
-			return false;
-		if (reminderType != other.reminderType)
-			return false;
-		return true;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public String toString() {
-		return "Reminder [Id=" + Id + ", dayOfWeek=" + dayOfWeek + ", hour="
-				+ hour + ", minutes=" + minutes + ", alarm=" + alarm
-				+ ", isOn=" + isOn + ", reminderType=" + reminderType + "]";
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Reminder reminder = (Reminder) o;
+
+        if (dayOfWeek != reminder.dayOfWeek) return false;
+        if (hour != reminder.hour) return false;
+        if (isOn != reminder.isOn) return false;
+        if (minutes != reminder.minutes) return false;
+        if (Id != null ? !Id.equals(reminder.Id) : reminder.Id != null) return false;
+        if (alarm != null ? !alarm.equals(reminder.alarm) : reminder.alarm != null) return false;
+        if (name != null ? !name.equals(reminder.name) : reminder.name != null) return false;
+        if (reminderType != reminder.reminderType) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Id != null ? Id.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + dayOfWeek;
+        result = 31 * result + hour;
+        result = 31 * result + minutes;
+        result = 31 * result + (alarm != null ? alarm.hashCode() : 0);
+        result = 31 * result + (isOn ? 1 : 0);
+        result = 31 * result + (reminderType != null ? reminderType.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Reminder{" +
+                "Id=" + Id +
+                ", name='" + name + '\'' +
+                ", dayOfWeek=" + dayOfWeek +
+                ", hour=" + hour +
+                ", minutes=" + minutes +
+                ", alarm='" + alarm + '\'' +
+                ", isOn=" + isOn +
+                ", reminderType=" + reminderType +
+                '}';
+    }
 
 
-	
 }

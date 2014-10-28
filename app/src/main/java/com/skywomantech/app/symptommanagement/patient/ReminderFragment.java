@@ -1,108 +1,110 @@
 package com.skywomantech.app.symptommanagement.patient;
 
-import android.app.Activity;
+
+import android.app.Fragment;
+import android.content.ContentValues;
 import android.os.Bundle;
-import android.app.ListFragment;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
+
 import android.widget.ListView;
 
 
-import com.skywomantech.app.symptommanagement.dummy.DummyContent;
+import com.skywomantech.app.symptommanagement.R;
 
-/**
- * A fragment representing a list of Items.
- * <p />
- * <p />
- * interface.
- */
-public class ReminderFragment extends ListFragment {
+import com.skywomantech.app.symptommanagement.data.PatientCPContract.ReminderEntry;
+import com.skywomantech.app.symptommanagement.data.Reminder;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+import java.util.Collection;
+import java.util.HashSet;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
-    private OnFragmentInteractionListener mListener;
+public class ReminderFragment extends Fragment {
 
-    // TODO: Rename and change types of parameters
-    public static ReminderFragment newInstance(String param1, String param2) {
-        ReminderFragment fragment = new ReminderFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
+    private String mPatientId;
+    ReminderListAdapter mAdapter;
+    private Collection<Reminder> reminders;
+    Reminder[] mReminders;
+
+    @InjectView(R.id.reminder_list)  ListView mReminderView;
+
+    //TODO:  replace with actual patient's list of reminders
+    private Collection<Reminder> dummyData = makeDummyData();
+
+
     public ReminderFragment() {
+        mPatientId = "123213123"; //TODO: get the real patient id
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.setRetainInstance(true);  // save the fragment state with rotations
+    }
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_reminder, container, false);
+        ButterKnife.inject(this, rootView);
+        return rootView;
+    }
+
+    // load a list of empty log records for the patient to fill
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadReminderList();
+    }
+
+    private void loadReminderList() {
+        // TODO: get actual Reminders for this patient use dummy list for now
+        if (mReminders == null) {
+            mReminders = dummyData.toArray(new Reminder[dummyData.size()]);
         }
-
-        // TODO: Change Adapter to display your content
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS));
+        mAdapter = new ReminderListAdapter(getActivity(), mReminders);
+        mReminderView.setAdapter(mAdapter);
     }
 
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                + " must implement OnFragmentInteractionListener");
-        }
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    private ContentValues createValuesObject(Reminder rem) {
+        ContentValues cv = new ContentValues();
+        cv.put(ReminderEntry.COLUMN_ON, rem.isOn());
+        cv.put(ReminderEntry.COLUMN_HOUR, rem.getHour());
+        cv.put(ReminderEntry.COLUMN_PATIENT_ID, mPatientId);
+        cv.put(ReminderEntry.COLUMN_MINUTES, rem.getMinutes());
+        cv.put(ReminderEntry.COLUMN_NAME, rem.getName());
+        cv.put(ReminderEntry.COLUMN_CREATED, System.currentTimeMillis());
+        return cv;
     }
 
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
+    private static Collection<Reminder> makeDummyData() {
+        Collection<Reminder> reminders = new HashSet<Reminder>();
 
-        if (null != mListener) {
-            // Notify the active callbacks interface (the activity, if the
-            // fragment is attached to one) that an item has been selected.
-            mListener.onFragmentInteraction(DummyContent.ITEMS.get(position).id);
-        }
-    }
+        Reminder daytime = new Reminder("Daytime Alarm");
+        daytime.setHour(6);
+        daytime.setMinutes(30);
+        daytime.setOn(true);
+        reminders.add(daytime);
 
-    /**
-    * This interface must be implemented by activities that contain this
-    * fragment to allow an interaction in this fragment to be communicated
-    * to the activity and potentially other fragments contained in that
-    * activity.
-    * <p>
-    * See the Android Training lesson <a href=
-    * "http://developer.android.com/training/basics/fragments/communicating.html"
-    * >Communicating with Other Fragments</a> for more information.
-    */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(String id);
+        Reminder night = new Reminder("Night Time Alarm");
+        night.setHour(10);
+        night.setMinutes(30);
+        night.setOn(true);
+        reminders.add(night);
+
+        return reminders;
     }
 
 }

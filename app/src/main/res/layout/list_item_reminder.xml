@@ -5,50 +5,58 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
+    <CheckBox
+        android:id="@+id/reminder_turned_on"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:padding="4dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/reminder_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dinner Alarm"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/reminder_time_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="6:00 PM"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="8dp">
 
-    <TextView
-        android:id="@+id/reminder_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
 
-        android:text="Dinner Alarm"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <ImageButton
+            android:id="@+id/reminder_edit_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:layout_weight="3"
+            android:src="@android:drawable/ic_menu_edit" />
 
-    <TextView
-        android:id="@+id/reminder_time_summary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="6:00 PM"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <ImageButton
+            android:id="@+id/reminder_delete_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:src="@android:drawable/ic_menu_delete" />
+
     </LinearLayout>
-
-    <CheckBox
-        android:id="@+id/reminder_turned_on"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:contentDescription="Delete"
-        android:checked="false"
-        android:padding="4dp" />
-
-    <ImageButton
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:src="@android:drawable/ic_menu_edit"/>
-
-
-    <ImageButton
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:src="@android:drawable/ic_menu_delete"/>
-
 </LinearLayout>

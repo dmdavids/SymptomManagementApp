@@ -167,6 +167,7 @@ public class PatientCPContract {
         public static final String TABLE_NAME = "reminders";
         public static final String COLUMN_PATIENT_ID = "patient_id"; // server id
         public static final String COLUMN_REMINDER_ID = "reminder_id"; // server id
+        public static final String COLUMN_NAME = "name";
         public static final String COLUMN_TYPE = "type";
         public static final String COLUMN_DAY = "day";
         public static final String COLUMN_HOUR = "hour";

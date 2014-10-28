@@ -84,7 +84,7 @@ public class PatientStatusLogFragment extends Fragment {
             Log.d(LOG_TAG, "file path being opened in view : " + mLog.getImage_location());
             Picasso.with(getActivity())
                     .load(mLog.getImage_location())
-                    .resize(500, 500)
+                    .resize(800, 800)
                     .centerInside()
                     .into(imageView);
             imageView.setVisibility(View.VISIBLE);

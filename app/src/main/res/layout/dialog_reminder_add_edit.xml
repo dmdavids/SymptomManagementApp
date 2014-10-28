@@ -15,15 +15,6 @@
         android:layout_height="fill_parent">
 
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Reminder Details :"
-            android:height="@android:dimen/app_icon_size"
-            android:id="@+id/reminder_heading" />
-
-
         <EditText
             android:id="@+id/reminder_name"
             android:layout_width="match_parent"
@@ -39,16 +30,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/timePicker"
             android:layout_gravity="center_horizontal"
-            android:padding="16dp" />
-
-        <Button
-            android:id="@+id/save_reminder_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Save Reminder"
-            android:padding="16dp">
-        </Button>
+            android:padding="8dp" />
 
     </LinearLayout>
 </ScrollView>
