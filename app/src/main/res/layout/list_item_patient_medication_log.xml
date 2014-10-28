@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:divider="#ff392fff"
+    android:showDividers="beginning|none|middle|end"
+    android:baselineAligned="false">
+
+    <CheckBox
+        android:id="@+id/patient_medication_check_answer"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="7"
+        android:contentDescription="Medication Check Answer"
+        android:checked="false"
+        android:padding="16dp"
+        android:gravity="left" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:gravity="right">
+
+        <TextView
+            android:id="@+id/patient_medication_check_question"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Did you  take OxyContin?"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#ff9829ff" />
+
+        <TextView
+            android:id="@+id/patient_medication_check_summary"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Taken at 2:00 PM"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#ffb714ff" />
+    </LinearLayout>
+
+
+</LinearLayout>

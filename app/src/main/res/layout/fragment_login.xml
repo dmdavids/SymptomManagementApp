@@ -4,8 +4,8 @@
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
     tools:context=".Login$PlaceholderFragment">
 
     <TextView
@@ -32,9 +32,8 @@
         android:layout_height="wrap_content"
         android:text="Physician"
         android:id="@+id/physician_button"
-        android:layout_below="@+id/patient_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="84dp" />
+        android:layout_below="@+id/checkin_button"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -42,7 +41,15 @@
         android:text="Admin"
         android:id="@+id/admin_button"
         android:layout_below="@+id/physician_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="98dp" />
+        android:layout_alignRight="@+id/patient_button"
+        android:layout_alignEnd="@+id/patient_button" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Patient CheckIn"
+        android:id="@+id/checkin_button"
+        android:layout_below="@+id/patient_button"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

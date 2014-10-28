@@ -1,11 +1,12 @@
 package com.skywomantech.app.symptommanagement.data;
 
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
-public class MedicationLog {
+public class MedicationLog  {
 
 	private BigInteger id;
 	private long created;

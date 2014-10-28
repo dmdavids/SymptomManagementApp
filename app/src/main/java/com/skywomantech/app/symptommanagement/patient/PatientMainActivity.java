@@ -1,28 +1,38 @@
 package com.skywomantech.app.symptommanagement.patient;
 
 import android.app.Activity;
+import android.app.FragmentManager;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.skywomantech.app.symptommanagement.R;
 
 
-public class PatientMainActivity extends Activity  {
+public class PatientMainActivity extends Activity
+        implements
+        MedicationLogListAdapter.Callbacks,
+        MedicationTimeDialog.Callbacks,
+        PatientPainLogFragment.Callbacks {
 
-    public static final String PATIENT_ID_KEY = "patient_id_key";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_main);
         if (savedInstanceState == null) {
-            Bundle arguments = new Bundle();
-            arguments.putString(PATIENT_ID_KEY,
-                    getIntent().getStringExtra(PATIENT_ID_KEY));
-            getFragmentManager().beginTransaction()
-                    .add(R.id.container, new PatientMainFragment())
-                    .commit();
+            if (isCheckIn()) {
+                getFragmentManager().beginTransaction()
+                        .add(R.id.container, new PatientPainLogFragment())
+                        .commit();
+            } else {
+                getFragmentManager().beginTransaction()
+                        .add(R.id.container, new PatientMainFragment())
+                        .commit();
+            }
         }
     }
 
@@ -45,5 +55,71 @@ public class PatientMainActivity extends Activity  {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    // default to no checkin if the preference is not found
+    private boolean isCheckIn() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("isCheckin", false);
+    }
+
+    public void setCheckIn(boolean value) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("isCheckin", value);
+        editor.apply();
+    }
+
+    @Override
+    public boolean onPainLogComplete() {
+        if (isCheckIn()) {
+            // replace fragment with the medication log fragment
+            setCheckIn(false);  // we go to the med logs and then back to the regular process
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.container, new PatientMedicationLogFragment())
+                    .commit();
+            // do we add to backstack here?
+            return true;
+        }
+        return false;
+    }
+
+    // this should be called when the timer goes off
+    // timer can set the CheckIn value to be true too
+    public void startCheckInProcess() {
+        setCheckIn(true);
+        getFragmentManager().beginTransaction()
+                    .replace(R.id.container, new PatientPainLogFragment())
+                    .commit();
+        // do we add to backstack here?
+    }
+
+    // Handling the Date Time Pickers in a Dialog
+    // if the box is checked then the list adapter requests the date and
+    // time for the log in "position"
+    // when the time and date dialog ends then it tells the
+    // activity to update the medication log at position with then
+    // time entered or to put 0L for a cancel
+
+    @Override
+    public void onRequestDateTime(int position) {
+        FragmentManager fm = getFragmentManager();
+        MedicationTimeDialog timeDialog = MedicationTimeDialog.newInstance(position);
+        timeDialog.show(fm, "med_time_date_dialog");
+    }
+
+    @Override
+    public void onPositiveResult(long msTime, int position) {
+        PatientMedicationLogFragment frag =
+                (PatientMedicationLogFragment) getFragmentManager().findFragmentById(R.id.container);
+        frag.updateMedicationLogTimeTaken(msTime, position);
+    }
+
+    @Override
+    public void onNegativeResult(long msTime, int position) {
+        PatientMedicationLogFragment frag =
+                (PatientMedicationLogFragment) getFragmentManager().findFragmentById(R.id.container);
+        frag.updateMedicationLogTimeTaken(0L, position);
+    }
+
 
 }

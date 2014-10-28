@@ -1,7 +1,6 @@
 package com.skywomantech.app.symptommanagement.admin.Patient;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +43,7 @@ public class PhysicianEditListAdapter extends ArrayAdapter<Physician> {
     }
 
     public PhysicianEditListAdapter(Context context, Physician[] physicians) {
-        super(context, R.layout.physician_edit_list_item, physicians);
+        super(context, R.layout.list_item_physician_edit, physicians);
         this.context = context;
         this.physicians = physicians;
     }
@@ -56,7 +55,7 @@ public class PhysicianEditListAdapter extends ArrayAdapter<Physician> {
         if (convertView == null) {
             LayoutInflater inflater =
                     (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View rowView = inflater.inflate(R.layout.physician_edit_list_item, parent, false);
+            View rowView = inflater.inflate(R.layout.list_item_physician_edit, parent, false);
             final ViewHolder viewHolder = new ViewHolder(rowView);
             viewHolder.physician = physicians[position];
             viewHolder.textView.setText(physicians[position].toString());

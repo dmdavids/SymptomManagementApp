@@ -20,8 +20,9 @@ import butterknife.OnClick;
  */
 public class PatientPainLogFragment extends Fragment {
 
-    // keep track of our application environment context
-    private final Context mContext;
+    public interface Callbacks {
+        public boolean onPainLogComplete();
+    }
 
     private PainLog mLog;
     private String mPatientId;
@@ -30,13 +31,12 @@ public class PatientPainLogFragment extends Fragment {
         mLog = new PainLog();
         mLog.setSeverity(PainLog.Severity.NOT_DEFINED);
         mLog.setEating(PainLog.Eating.NOT_DEFINED);
-        mContext = getActivity();
         mPatientId = "234234234"; //TODO: get the actual patient id
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_pain_log, container, false);
         ButterKnife.inject(this, rootView);
         return rootView;
@@ -73,11 +73,14 @@ public class PatientPainLogFragment extends Fragment {
     }
 
     @OnClick(R.id.pain_log_done_button)
-    public void savePainLog(){
+    public void savePainLog() {
         ContentValues cv = createValuesObject(mLog);
         // TODO: Put the log into the database via the content provider
-        getActivity().onBackPressed();  // TODO: is this flow always correct?
-
+        // tell the activity we're done
+        boolean isCheckIn = ((Callbacks) getActivity()).onPainLogComplete();
+        if (!isCheckIn) {
+            getActivity().onBackPressed();
+        }
     }
 
     private ContentValues createValuesObject(PainLog log) {

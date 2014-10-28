@@ -3,6 +3,7 @@ package com.skywomantech.app.symptommanagement;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -72,7 +73,7 @@ public class Login extends Activity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_login, container, false);
             ButterKnife.inject(this, rootView);
             return rootView;
@@ -93,10 +94,23 @@ public class Login extends Activity {
         /// TODO: Patient Login
         @OnClick(R.id.patient_button)
         public void loginPatient() {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("isCheckin", false);
+            editor.apply();
+            startActivity(new Intent(getActivity(), PatientMainActivity.class));
+        }
+
+        // Do the Check IN process
+        @OnClick(R.id.checkin_button)
+        public void loginPatientCheckin() {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putBoolean("isCheckin", true);
+            editor.apply();
             startActivity(new Intent(getActivity(), PatientMainActivity.class));
         }
     }
-
 
 
 }

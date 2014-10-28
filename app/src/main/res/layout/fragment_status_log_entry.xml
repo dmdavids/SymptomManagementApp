@@ -13,14 +13,18 @@
         android:text="Enter Symptom Notes"
         android:id="@+id/symptom_note_header"
         android:layout_gravity="center_horizontal"
-        android:padding="16dp" />
+        android:padding="16dp"
+        />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:scrollbars="vertical"
         android:inputType="textMultiLine"
         android:ems="10"
-        android:id="@+id/symptom_note_textview"
+        android:lines="3"
+        android:id="@+id/symptom_note"
+        android:gravity="left|top"
         android:layout_gravity="center_horizontal"
         android:text="My throat is very sore and red."
         android:padding="24dp" />
@@ -28,10 +32,11 @@
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton"
+        android:id="@+id/status_imageButton"
         android:layout_gravity="center_horizontal"
         android:src="@android:drawable/ic_menu_camera"
-        android:padding="12dp" />
+        android:layout_margin="8dp"
+        android:padding="16dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -40,13 +45,13 @@
         android:text="No Image for this Note"
         android:id="@+id/image_status"
         android:layout_gravity="center_horizontal"
-        android:padding="24dp" />
+        android:padding="16dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="OK"
-        android:id="@+id/ok_button"
+        android:text="Save"
+        android:id="@+id/status_save_button"
         android:layout_gravity="center_horizontal" />
 
 </LinearLayout>
