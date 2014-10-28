@@ -1,3 +1,6 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
 <LinearLayout
     android:orientation="vertical"
     android:layout_width="fill_parent"
@@ -35,8 +38,14 @@
         android:id="@+id/status_imageButton"
         android:layout_gravity="center_horizontal"
         android:src="@android:drawable/ic_menu_camera"
-        android:layout_margin="8dp"
-        android:padding="16dp" />
+        android:padding="8dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/camera_picture_view"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="8dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,13 +54,18 @@
         android:text="No Image for this Note"
         android:id="@+id/image_status"
         android:layout_gravity="center_horizontal"
-        android:padding="16dp" />
+        android:padding="8dp" />
+
+
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
         android:id="@+id/status_save_button"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:padding="8dp"
+        android:layout_margin="8dp"/>
 
 </LinearLayout>
+</ScrollView>

@@ -3,20 +3,31 @@ package com.skywomantech.app.symptommanagement.patient;
 import android.app.Activity;
 import android.app.FragmentManager;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.R;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class PatientMainActivity extends Activity
         implements
         MedicationLogListAdapter.Callbacks,
         MedicationTimeDialog.Callbacks,
-        PatientPainLogFragment.Callbacks {
+        PatientPainLogFragment.Callbacks  {
 
 
     @Override
@@ -120,6 +131,5 @@ public class PatientMainActivity extends Activity
                 (PatientMedicationLogFragment) getFragmentManager().findFragmentById(R.id.container);
         frag.updateMedicationLogTimeTaken(0L, position);
     }
-
 
 }
