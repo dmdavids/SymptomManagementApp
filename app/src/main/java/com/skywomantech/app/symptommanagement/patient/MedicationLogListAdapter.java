@@ -84,9 +84,10 @@ public class MedicationLogListAdapter extends ArrayAdapter<MedicationLog> {
         holder.question.setText(question);
         holder.summary.setText("");
         if (logs[position].getTaken() > 0) {
-            String summaryText = "Taken on " +
+            String summaryText = "Last Taken on " +
                     logs[position].getTakenDateFormattedString("E, MMM d yyyy 'at' hh:mm a");
             holder.summary.setText(summaryText);
+            holder.isTaken.setVisibility(View.INVISIBLE);
         }
         holder.isTaken.setChecked(logs[position].getTaken() > 0);
 

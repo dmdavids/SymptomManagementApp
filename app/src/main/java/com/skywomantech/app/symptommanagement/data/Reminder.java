@@ -4,7 +4,9 @@ import java.math.BigInteger;
 
 public class Reminder {
 	
-	private BigInteger Id;
+	private BigInteger Id;   // mongo db id
+    private transient long dbId;  // local database id
+
     private String name;
 
 
@@ -111,6 +113,14 @@ public class Reminder {
         this.name = name;
     }
 
+    public long getDbId() {
+        return dbId;
+    }
+
+    public void setDbId(long dbId) {
+        this.dbId = dbId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -118,27 +128,16 @@ public class Reminder {
 
         Reminder reminder = (Reminder) o;
 
-        if (dayOfWeek != reminder.dayOfWeek) return false;
-        if (hour != reminder.hour) return false;
-        if (isOn != reminder.isOn) return false;
-        if (minutes != reminder.minutes) return false;
-        if (Id != null ? !Id.equals(reminder.Id) : reminder.Id != null) return false;
-        if (alarm != null ? !alarm.equals(reminder.alarm) : reminder.alarm != null) return false;
+        if (dbId != reminder.dbId) return false;
         if (name != null ? !name.equals(reminder.name) : reminder.name != null) return false;
-        if (reminderType != reminder.reminderType) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = Id != null ? Id.hashCode() : 0;
+        int result = (int) (dbId ^ (dbId >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + dayOfWeek;
-        result = 31 * result + hour;
-        result = 31 * result + minutes;
-        result = 31 * result + (alarm != null ? alarm.hashCode() : 0);
-        result = 31 * result + (isOn ? 1 : 0);
         result = 31 * result + (reminderType != null ? reminderType.hashCode() : 0);
         return result;
     }

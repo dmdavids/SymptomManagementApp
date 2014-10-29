@@ -1,16 +1,19 @@
 package com.skywomantech.app.symptommanagement.patient;
 
 import android.app.Fragment;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.PainLog;
-import com.skywomantech.app.symptommanagement.data.PatientCPContract;
+import com.skywomantech.app.symptommanagement.data.PatientCPContract.PainLogEntry;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -19,6 +22,8 @@ import butterknife.OnClick;
  * A placeholder fragment containing a simple view.
  */
 public class PatientPainLogFragment extends Fragment {
+
+    public final static String LOG_TAG = PatientPainLogFragment.class.getSimpleName();
 
     public interface Callbacks {
         public boolean onPainLogComplete();
@@ -80,9 +85,14 @@ public class PatientPainLogFragment extends Fragment {
 
     @OnClick(R.id.pain_log_done_button)
     public void savePainLog() {
+        // save Pain Log to the CP
         ContentValues cv = createValuesObject(mLog);
-        // TODO: Put the log into the database via the content provider
-        // tell the activity we're done
+        Uri uri = getActivity().getContentResolver().insert(PainLogEntry.CONTENT_URI, cv);
+        long objectId = ContentUris.parseId(uri);
+        if (objectId < 0) {
+            Log.e(LOG_TAG, "Pain Log Insert Failed.");
+        }
+        // tell the activity we're done and if check-in put up the med log fragment
         boolean isCheckIn = ((Callbacks) getActivity()).onPainLogComplete();
         if (!isCheckIn) {
             getActivity().onBackPressed();
@@ -91,10 +101,10 @@ public class PatientPainLogFragment extends Fragment {
 
     private ContentValues createValuesObject(PainLog log) {
         ContentValues cv = new ContentValues();
-        cv.put(PatientCPContract.PainLogEntry.COLUMN_EATING, log.getEating().getValue());
-        cv.put(PatientCPContract.PainLogEntry.COLUMN_SEVERITY, log.getSeverity().getValue());
-        cv.put(PatientCPContract.PainLogEntry.COLUMN_PATIENT_ID, mPatientId);
-        cv.put(PatientCPContract.PainLogEntry.COLUMN_CREATED, System.currentTimeMillis());
+        cv.put(PainLogEntry.COLUMN_EATING, log.getEating().getValue());
+        cv.put(PainLogEntry.COLUMN_SEVERITY, log.getSeverity().getValue());
+        cv.put(PainLogEntry.COLUMN_PATIENT_ID, mPatientId);
+        cv.put(PainLogEntry.COLUMN_CREATED, System.currentTimeMillis());
         return cv;
     }
 }

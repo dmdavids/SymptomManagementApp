@@ -15,6 +15,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
         <activity
             android:name=".Login"
             android:label="@string/app_name" >
@@ -24,6 +25,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".data.PatientContentProvider"
+            android:authorities="@string/content_authority"
+            android:exported="false"
+            android:syncable="true" />
+
         <activity
             android:name=".SetPreferenceActivity"
             android:label="@string/action_settings"
@@ -96,12 +104,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skywomantech.app.symptommanagement.adminmedicationListActivity" />
         </activity>
-
-        <provider
-            android:name=".data.PatientContentProvider"
-            android:authorities="@string/content_authority"
-            android:exported="false"
-            android:syncable="true" />
 
         <activity
             android:name=".patient.PatientMainActivity"

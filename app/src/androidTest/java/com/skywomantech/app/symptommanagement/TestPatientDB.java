@@ -21,7 +21,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
 
 import com.skywomantech.app.symptommanagement.data.PatientDBHelper;
-import com.skywomantech.app.symptommanagement.patient.StatusLogEntryFragment;
 
 
 import java.util.Map;

@@ -30,6 +30,7 @@ public class ReminderAddEditDialog extends DialogFragment {
     private static int mHour;
     private static int mMinutes;
     private static String mName;
+    private static long mDbId;
     private static Reminder mReminder;
     private static int mPosition;
 
@@ -45,6 +46,7 @@ public class ReminderAddEditDialog extends DialogFragment {
         mHour = reminder.getHour();
         mMinutes = reminder.getMinutes();
         mName = reminder.getName();
+        mDbId = reminder.getDbId();
         return frag;
     }
 
@@ -71,6 +73,7 @@ public class ReminderAddEditDialog extends DialogFragment {
                             mReminder.setHour(mHour);
                             mReminder.setMinutes(mMinutes);
                             mReminder.setName(mName);
+                            mReminder.setDbId(mDbId);
                             ((Callbacks) getActivity()).onReminderUpdate(mPosition, mReminder);
                         }
                     }

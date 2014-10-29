@@ -3,7 +3,6 @@ package com.skywomantech.app.symptommanagement;
 import android.content.ContentValues;
 
 
-import com.skywomantech.app.symptommanagement.patient.StatusLogEntryFragment;
 
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.MedLogEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PainLogEntry;

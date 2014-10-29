@@ -1,9 +1,12 @@
 package com.skywomantech.app.symptommanagement.patient;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
+
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +27,8 @@ import butterknife.InjectView;
  * A placeholder fragment containing a simple view.
  */
 public class PatientMedicationLogFragment extends Fragment {
+
+    public final static String LOG_TAG = PatientMedicationLogFragment.class.getSimpleName();
 
     private String mPatientId;
     MedicationLogListAdapter mAdapter;
@@ -82,6 +87,15 @@ public class PatientMedicationLogFragment extends Fragment {
     // callback for the list adapter
     public void updateMedicationLogTimeTaken(long msTime, int position) {
         mLogList[position].setTaken(msTime);
+
+        // save this one to the database
+        ContentValues cv = createValuesObject(mLogList[position]);
+        Uri uri = getActivity().getContentResolver().insert(MedLogEntry.CONTENT_URI, cv);
+        long objectId = ContentUris.parseId(uri);
+        if (objectId < 0) {
+            Log.e(LOG_TAG, "Medication Log Insert Failed.");
+        }
+
         mAdapter.notifyDataSetChanged();
     }
 

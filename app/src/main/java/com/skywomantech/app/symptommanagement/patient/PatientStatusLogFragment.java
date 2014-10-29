@@ -2,6 +2,7 @@ package com.skywomantech.app.symptommanagement.patient;
 
 import android.app.Dialog;
 import android.app.Fragment;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.R;
+import com.skywomantech.app.symptommanagement.data.PatientCPContract;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.StatusLogEntry;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
 import com.squareup.picasso.Picasso;
@@ -158,7 +160,11 @@ public class PatientStatusLogFragment extends Fragment {
     public void saveStatusLog() {
         mLog.setNote(note.getText().toString()); // save the text from the note edit text
         ContentValues cv = createValuesObject(mLog);
-        // TODO: Put the log into the database via the content provider
+        Uri uri = getActivity().getContentResolver().insert(StatusLogEntry.CONTENT_URI, cv);
+        long objectId = ContentUris.parseId(uri);
+        if (objectId < 0) {
+            Log.e(LOG_TAG, "Status Log Insert Failed.");
+        }
         getActivity().onBackPressed();
     }
 

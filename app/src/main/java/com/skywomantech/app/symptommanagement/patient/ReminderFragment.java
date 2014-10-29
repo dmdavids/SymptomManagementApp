@@ -2,8 +2,12 @@ package com.skywomantech.app.symptommanagement.patient;
 
 
 import android.app.Fragment;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ListView;
+import android.widget.Toast;
 
 
 import com.skywomantech.app.symptommanagement.R;
@@ -27,6 +32,8 @@ import butterknife.InjectView;
 
 public class ReminderFragment extends Fragment {
 
+    public final static String LOG_TAG = ReminderFragment.class.getSimpleName();
+
     public interface Callbacks {
         public void onRequestReminderAdd(Reminder reminder);
     }
@@ -37,9 +44,6 @@ public class ReminderFragment extends Fragment {
     Reminder[] mReminders;
 
     @InjectView(R.id.reminder_list)  ListView mReminderView;
-
-    //TODO:  replace with actual patient's list of reminders
-    private Collection<Reminder> dummyData = makeDummyData();
 
 
     public ReminderFragment() {
@@ -88,9 +92,21 @@ public class ReminderFragment extends Fragment {
     }
 
     private void loadReminderList() {
-        // TODO: get actual Reminders for this patient use dummy list for now
         if (mReminders == null) {
-            reminders = dummyData;
+            reminders = new HashSet<Reminder>();
+            // search the local storage for the item id
+            Cursor cursor = getActivity().getContentResolver()
+                    .query(ReminderEntry.CONTENT_URI, null, null, null,null);
+            while (cursor.moveToNext()) {
+                Reminder item = new Reminder();
+                item.setDbId(cursor.getLong(cursor.getColumnIndex(ReminderEntry._ID)));
+                item.setName(cursor.getString(cursor.getColumnIndex(ReminderEntry.COLUMN_NAME)));
+                item.setHour(cursor.getInt(cursor.getColumnIndex(ReminderEntry.COLUMN_HOUR)));
+                item.setMinutes(cursor.getInt(cursor.getColumnIndex(ReminderEntry.COLUMN_MINUTES)));
+                item.setOn((cursor.getInt(cursor.getColumnIndex(ReminderEntry.COLUMN_ON)) == 0 ? false : true));
+                reminders.add(item);
+            }
+            cursor.close();
             mReminders = reminders.toArray(new Reminder[reminders.size()]);
         }
         mAdapter = new ReminderListAdapter(getActivity(), mReminders);
@@ -98,14 +114,34 @@ public class ReminderFragment extends Fragment {
     }
 
     public void addReminder(Reminder newReminder) {
-        reminders.add(newReminder);
-        mReminders = reminders.toArray(new Reminder[reminders.size()]);
-        mAdapter = new ReminderListAdapter(getActivity(), mReminders);
-        mReminderView.setAdapter(mAdapter);
-        //mAdapter.notifyDataSetChanged();
+        // add to database first
+        ContentValues cv = createValuesObject(newReminder);
+        Uri uri = getActivity().getContentResolver().insert(ReminderEntry.CONTENT_URI, cv);
+        long objectId = ContentUris.parseId(uri);
+        if (objectId < 0) {
+            Log.e(LOG_TAG, "New Reminder Insert Failed.");
+            Toast.makeText(getActivity(), "Failed to Add Reminder.", Toast.LENGTH_LONG).show();
+
+        } else {
+            newReminder.setDbId(objectId);
+            // if database add successful then
+            reminders.add(newReminder);
+            mReminders = reminders.toArray(new Reminder[reminders.size()]);
+            mAdapter = new ReminderListAdapter(getActivity(), mReminders);
+            mReminderView.setAdapter(mAdapter);
+        }
     }
 
     public void deleteReminder(int position ) {
+        // remove from database first
+        if (mReminders[position].getDbId() >= 0) {
+            // TODO: deletes all rows, need to only delete one, write testcase
+            String selection =
+                    ReminderEntry._ID + "=" + Long.toString(mReminders[position].getDbId());
+            int rowsDeleted = getActivity().getContentResolver()
+                    .delete(ReminderEntry.CONTENT_URI, selection, null);
+            Log.v(LOG_TAG, "Reminder rows deleted : " + Integer.toString(rowsDeleted));
+        }
         reminders.remove(mReminders[position]);
         mReminders = reminders.toArray(new Reminder[reminders.size()]);
         mAdapter = new ReminderListAdapter(getActivity(), mReminders);
@@ -114,7 +150,16 @@ public class ReminderFragment extends Fragment {
     }
 
     public void updateReminder(int position, Reminder temp) {
-       mAdapter.notifyDataSetChanged();
+       // update the one in the database first
+        if (mReminders[position].getDbId() >= 0) {
+            ContentValues cv = createValuesObject(temp);
+            String selection =
+                    ReminderEntry._ID + "=" + Long.toString(mReminders[position].getDbId());
+            int rowsUpdated = getActivity().getContentResolver()
+                    .update(ReminderEntry.CONTENT_URI, cv, selection, null);
+            Log.v(LOG_TAG, "Reminder rows updated : " + Integer.toString(rowsUpdated));
+        }
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -125,32 +170,12 @@ public class ReminderFragment extends Fragment {
 
     private ContentValues createValuesObject(Reminder rem) {
         ContentValues cv = new ContentValues();
-        cv.put(ReminderEntry.COLUMN_ON, rem.isOn());
+        cv.put(ReminderEntry.COLUMN_ON, (rem.isOn() ? 1 : 0));
         cv.put(ReminderEntry.COLUMN_HOUR, rem.getHour());
         cv.put(ReminderEntry.COLUMN_PATIENT_ID, mPatientId);
         cv.put(ReminderEntry.COLUMN_MINUTES, rem.getMinutes());
         cv.put(ReminderEntry.COLUMN_NAME, rem.getName());
-        cv.put(ReminderEntry.COLUMN_CREATED, System.currentTimeMillis());
         return cv;
-    }
-
-
-    private static Collection<Reminder> makeDummyData() {
-        Collection<Reminder> reminders = new HashSet<Reminder>();
-
-        Reminder daytime = new Reminder("Daytime Alarm");
-        daytime.setHour(6);
-        daytime.setMinutes(30);
-        daytime.setOn(true);
-        reminders.add(daytime);
-
-        Reminder night = new Reminder("Night Time Alarm");
-        night.setHour(10);
-        night.setMinutes(30);
-        night.setOn(true);
-        reminders.add(night);
-
-        return reminders;
     }
 
 }
