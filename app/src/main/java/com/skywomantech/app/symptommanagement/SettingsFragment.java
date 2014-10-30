@@ -24,10 +24,6 @@ public class SettingsFragment extends PreferenceFragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
-        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_enable_auto_login_key)));
-        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_enable_med_reminders_key)));
-        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_enable_notifications_key)));
-        bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_enable_reminders_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_login_name_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_login_password_key)));
     }
@@ -59,12 +55,7 @@ public class SettingsFragment extends PreferenceFragment
         String stringValue = value.toString();
 
         if (!mBindingPreference) {
-            if ( preference.getKey().equals(getString(R.string.pref_enable_reminders_key))
-                || preference.getKey().equals(getString(R.string.pref_enable_med_reminders_key))) {
-                // TODO: process changing of the alerts here
-                Log.v(LOG_TAG, "Resetting the alert timers because of preference changes.");
-
-            } else if (preference.getKey().equals(getString(R.string.pref_enable_notifications_key))) {
+             if (preference.getKey().equals(getString(R.string.pref_enable_notifications_key))) {
                 Log.v(LOG_TAG, "Resetting the notifications because of preference changes.");
             }if ( preference.getKey().equals(getString(R.string.pref_login_name_key))
                   || preference.getKey().equals(getString(R.string.pref_login_password_key))

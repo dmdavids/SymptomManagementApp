@@ -19,20 +19,10 @@
     <string name="pref_login_password_key">password_key</string>
     <string name="pref_login_password_default"></string>
     <string name="pref_enable_notifications_key" translatable="false">enable_notifications</string>
-    <string name="pref_enable_notifications_label">Notifications</string>
+    <string name="pref_enable_notifications_label">Check-In Notifications</string>
     <string name="pref_enable_notifications_default" translatable="false">true</string>
     <string name="pref_enable_notifications_true">Enabled</string>
     <string name="pref_enable_notifications_false">Not Enabled</string>
-    <string name="pref_enable_reminders_key" translatable="false">enable_reminders</string>
-    <string name="pref_enable_reminders_label">Pain Log Reminders</string>
-    <string name="pref_enable_reminders_default" translatable="false">true</string>
-    <string name="pref_enable_reminders_true">Enabled</string>
-    <string name="pref_enable_reminders_false">Not Enabled</string>
-    <string name="pref_enable_med_reminders_key" translatable="false">enable_reminders</string>
-    <string name="pref_enable_med_reminders_label">Medication Reminders</string>
-    <string name="pref_enable_med_reminders_default" translatable="false">true</string>
-    <string name="pref_enable_med_reminders_true">Enabled</string>
-    <string name="pref_enable_med_reminders_false">Not Enabled</string>
     <string name="title_admin_patient_list">Admin Patients</string>
     <string name="title_admin_patient_detail">Admin Patient Details</string>
     <string name="title_admin_physician_list">Admin Physicians</string>
@@ -52,5 +42,15 @@
     <string name="title_activity_medication_list">Medication List</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_patient_options">PatientOptionsActivity</string>
+    <string name="pref_enable_reminder_snooze">Snooze Reminders</string>
+    <string name="pref_enable_reminder_snooze_key">reminder_snooze</string>
+    <string name="pref_enable_reminder_snooze_false">Not Enabled</string>
+    <string name="pref_enable_reminder_snooze_true">Enabled</string>
+    <string name="pref_enable_reminder_snooze_default" translatable="false">false</string>
+    <string name="pref_popup_reminder">Pop-Up Reminders</string>
+    <string name="pref_popup_reminder_key">reminder_popup</string>
+    <string name="pref_popup_reminder_false">Not Enabled</string>
+    <string name="pref_popup_reminder_true">Enabled</string>
+    <string name="pref_popup_reminder_default" translatable="false">false</string>
 
 </resources>

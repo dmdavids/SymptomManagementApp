@@ -32,7 +32,6 @@ public class PatientMedicationLogFragment extends Fragment {
 
     public final static String LOG_TAG = PatientMedicationLogFragment.class.getSimpleName();
 
-    private String mPatientId = Login.getPatientId(getActivity());
     MedicationLogListAdapter mAdapter;
     private Collection<MedicationLog> medicationLogs;
     MedicationLog[] mLogList;
@@ -43,7 +42,6 @@ public class PatientMedicationLogFragment extends Fragment {
     private Collection<Medication> dummyMedications = makeDummyMedicationList();
 
     public PatientMedicationLogFragment() {
-        mPatientId = "123213123"; //TODO: get the real patient id
     }
 
     @Override
@@ -91,6 +89,7 @@ public class PatientMedicationLogFragment extends Fragment {
         mLogList[position].setTaken(msTime);
 
         // save this one to the database
+        String mPatientId = Login.getPatientId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLogList[position]);
         Uri uri = getActivity().getContentResolver().insert(MedLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);

@@ -40,7 +40,6 @@ public class ReminderFragment extends Fragment {
         public void onRequestReminderAdd(Reminder reminder);
     }
 
-    private String mPatientId = Login.getPatientId(getActivity());
     ReminderListAdapter mAdapter;
     private Collection<Reminder> reminders;
     Reminder[] mReminders;
@@ -49,7 +48,7 @@ public class ReminderFragment extends Fragment {
 
 
     public ReminderFragment() {
-        mPatientId = "123213123"; //TODO: get the real patient id
+
     }
 
     @Override
@@ -117,6 +116,7 @@ public class ReminderFragment extends Fragment {
 
     public void addReminder(Reminder newReminder) {
         // add to database first
+        String mPatientId = Login.getPatientId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, newReminder);
         Uri uri = getActivity().getContentResolver().insert(ReminderEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);
@@ -154,6 +154,7 @@ public class ReminderFragment extends Fragment {
     public void updateReminder(int position, Reminder temp) {
        // update the one in the database first
         if (mReminders[position].getDbId() >= 0) {
+            String mPatientId = Login.getPatientId(getActivity());
             ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, temp);
             String selection =
                     ReminderEntry._ID + "=" + Long.toString(mReminders[position].getDbId());

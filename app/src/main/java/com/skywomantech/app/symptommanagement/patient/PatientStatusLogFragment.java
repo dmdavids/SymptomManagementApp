@@ -41,7 +41,6 @@ public class PatientStatusLogFragment extends Fragment {
     public final static String LOG_TAG = PatientStatusLogFragment.class.getSimpleName();
 
     private StatusLog mLog;
-    private String mPatientId = Login.getPatientId(getActivity());
 
     @InjectView(R.id.symptom_note)
     EditText note;
@@ -59,7 +58,8 @@ public class PatientStatusLogFragment extends Fragment {
     public static final int CAMERA_PIC_REQUEST = 99;
 
     public PatientStatusLogFragment() {
-        mPatientId = "12345";  //TODO: get the actual patient id
+
+
     }
 
     @Override
@@ -160,6 +160,7 @@ public class PatientStatusLogFragment extends Fragment {
     @OnClick(R.id.status_save_button)
     public void saveStatusLog() {
         mLog.setNote(note.getText().toString()); // save the text from the note edit text
+        String mPatientId = Login.getPatientId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLog);
         Uri uri = getActivity().getContentResolver().insert(StatusLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);

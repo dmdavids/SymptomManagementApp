@@ -32,13 +32,12 @@ public class PatientPainLogFragment extends Fragment {
     }
 
     private PainLog mLog;
-    private String mPatientId = Login.getPatientId(getActivity());
+    private String mPatientId;
 
     public PatientPainLogFragment() {
         mLog = new PainLog();
         mLog.setSeverity(PainLog.Severity.NOT_DEFINED);
         mLog.setEating(PainLog.Eating.NOT_DEFINED);
-        mPatientId = "234234234"; //TODO: get the actual patient id
     }
 
     @Override
@@ -88,6 +87,7 @@ public class PatientPainLogFragment extends Fragment {
     @OnClick(R.id.pain_log_done_button)
     public void savePainLog() {
         // save Pain Log to the CP
+        mPatientId = Login.getPatientId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLog);
         Uri uri = getActivity().getContentResolver().insert(PainLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);

@@ -3,6 +3,10 @@
     tools:context="com.skywomantech.app.symptommanagement.patient.PatientMainActivity" >
     <item android:id="@+id/action_settings"
         android:title="Reminders"
-        android:orderInCategory="100"
+        android:orderInCategory="90"
         android:showAsAction="never"/>
+    <item android:id="@+id/action_prefs"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
 </menu>

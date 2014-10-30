@@ -155,6 +155,7 @@ public class Login extends Activity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+
             View rootView = inflater.inflate(R.layout.fragment_login, container, false);
             ButterKnife.inject(this, rootView);
             return rootView;
@@ -162,6 +163,7 @@ public class Login extends Activity {
 
         @OnClick(R.id.admin_button)
         public void loginAdministrator() {
+            ((Login)getActivity()).setUserType(LoginType.ADMIN);
             mHasAdmin = true;
             mIsPatient = false;
             mPatientId = "";
@@ -172,6 +174,7 @@ public class Login extends Activity {
         // TODO: Doctor Login
         @OnClick(R.id.physician_button)
         public void loginPhysician() {
+            ((Login)getActivity()).setUserType(LoginType.PHYSICIAN);
             mHasAdmin = false;
             mIsPatient = false;
             mIsLoggedIn = true;
@@ -180,6 +183,7 @@ public class Login extends Activity {
         /// TODO: Patient Login
         @OnClick(R.id.patient_button)
         public void loginPatient() {
+            ((Login)getActivity()).setUserType(LoginType.PATIENT);
             mHasAdmin = false;
             mIsLoggedIn = true;
             setCheckin(getActivity(), false);
@@ -190,6 +194,7 @@ public class Login extends Activity {
         // Do the Check IN process
         @OnClick(R.id.checkin_button)
         public void loginPatientCheckin() {
+            ((Login)getActivity()).setUserType(LoginType.PATIENT);
             mHasAdmin = false;
             mIsLoggedIn = true;
             setCheckin(getActivity(), true);
