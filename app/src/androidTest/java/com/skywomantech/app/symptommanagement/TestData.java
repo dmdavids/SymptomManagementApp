@@ -87,7 +87,7 @@ public class TestData {
     static ContentValues createTestMedLog( String med ){
         ContentValues values = new ContentValues();
         values.put(MedLogEntry.COLUMN_PATIENT_ID, id);
-        values.put(MedLogEntry.COLUMN_MED, med);
+        values.put(MedLogEntry.COLUMN_MED_NAME, med);
         values.put(MedLogEntry.COLUMN_TAKEN, System.currentTimeMillis());
         values.put(MedLogEntry.COLUMN_CREATED, System.currentTimeMillis());
         return values;

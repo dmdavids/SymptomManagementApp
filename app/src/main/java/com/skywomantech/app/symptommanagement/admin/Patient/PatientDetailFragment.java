@@ -29,7 +29,6 @@ import com.skywomantech.app.symptommanagement.data.Physician;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
@@ -135,7 +134,7 @@ public class PatientDetailFragment extends Fragment {
 
                 @Override
                 public void success(Patient result) {
-                    Log.d(LOG_TAG, "Found Patient :" + result.toString());
+                    Log.d(LOG_TAG, "Found Patient :" + result.toDebugString());
                     mPatient = result;
                     mTextView.setText(mPatient.getName());
                     mBirthdate.setText(mPatient.getFormattedBirthdate());

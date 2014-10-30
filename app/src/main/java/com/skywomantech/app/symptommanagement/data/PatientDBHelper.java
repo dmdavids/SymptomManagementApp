@@ -96,8 +96,8 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + MedLogEntry.TABLE_NAME + " (" +
                         MedLogEntry._ID + " INTEGER PRIMARY KEY," +
                         MedLogEntry.COLUMN_PATIENT_ID + " TEXT NOT NULL, " +
-                        MedLogEntry.COLUMN_MED_LOG_ID + " BIGINT, " +
-                        MedLogEntry.COLUMN_MED + " TEXT NOT NULL, " +
+                        MedLogEntry.COLUMN_MED_ID + " BIGINT, " +
+                        MedLogEntry.COLUMN_MED_NAME + " TEXT NOT NULL, " +
                         MedLogEntry.COLUMN_TAKEN + " REAL NOT NULL, " +
                         MedLogEntry.COLUMN_CREATED + " REAL NOT NULL " +
                         " );";

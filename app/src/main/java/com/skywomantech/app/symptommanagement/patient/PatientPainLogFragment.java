@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.PainLog;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.PainLogEntry;
+import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -86,7 +87,7 @@ public class PatientPainLogFragment extends Fragment {
     @OnClick(R.id.pain_log_done_button)
     public void savePainLog() {
         // save Pain Log to the CP
-        ContentValues cv = createValuesObject(mLog);
+        ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLog);
         Uri uri = getActivity().getContentResolver().insert(PainLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);
         if (objectId < 0) {
@@ -97,14 +98,5 @@ public class PatientPainLogFragment extends Fragment {
         if (!isCheckIn) {
             getActivity().onBackPressed();
         }
-    }
-
-    private ContentValues createValuesObject(PainLog log) {
-        ContentValues cv = new ContentValues();
-        cv.put(PainLogEntry.COLUMN_EATING, log.getEating().getValue());
-        cv.put(PainLogEntry.COLUMN_SEVERITY, log.getSeverity().getValue());
-        cv.put(PainLogEntry.COLUMN_PATIENT_ID, mPatientId);
-        cv.put(PainLogEntry.COLUMN_CREATED, System.currentTimeMillis());
-        return cv;
     }
 }

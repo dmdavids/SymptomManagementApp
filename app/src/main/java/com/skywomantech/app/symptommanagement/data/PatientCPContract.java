@@ -121,8 +121,8 @@ public class PatientCPContract {
 
             public static final String TABLE_NAME = "medlogs";
         public static final String COLUMN_PATIENT_ID = "patient_id"; // server id
-            public static final String COLUMN_MED_LOG_ID = "log_id"; // server id
-            public static final String COLUMN_MED = "med";
+            public static final String COLUMN_MED_ID = "med_id"; // server id
+            public static final String COLUMN_MED_NAME = "med_name";
             public static final String COLUMN_TAKEN = "taken";
             public static final String COLUMN_CREATED = "created";
 

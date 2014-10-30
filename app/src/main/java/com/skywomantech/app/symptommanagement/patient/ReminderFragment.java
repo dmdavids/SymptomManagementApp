@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.skywomantech.app.symptommanagement.R;
 
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.ReminderEntry;
+import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 import com.skywomantech.app.symptommanagement.data.Reminder;
 
 import java.util.Collection;
@@ -115,7 +116,7 @@ public class ReminderFragment extends Fragment {
 
     public void addReminder(Reminder newReminder) {
         // add to database first
-        ContentValues cv = createValuesObject(newReminder);
+        ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, newReminder);
         Uri uri = getActivity().getContentResolver().insert(ReminderEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);
         if (objectId < 0) {
@@ -152,7 +153,7 @@ public class ReminderFragment extends Fragment {
     public void updateReminder(int position, Reminder temp) {
        // update the one in the database first
         if (mReminders[position].getDbId() >= 0) {
-            ContentValues cv = createValuesObject(temp);
+            ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, temp);
             String selection =
                     ReminderEntry._ID + "=" + Long.toString(mReminders[position].getDbId());
             int rowsUpdated = getActivity().getContentResolver()
@@ -167,15 +168,4 @@ public class ReminderFragment extends Fragment {
         super.onDestroyView();
         ButterKnife.reset(this);
     }
-
-    private ContentValues createValuesObject(Reminder rem) {
-        ContentValues cv = new ContentValues();
-        cv.put(ReminderEntry.COLUMN_ON, (rem.isOn() ? 1 : 0));
-        cv.put(ReminderEntry.COLUMN_HOUR, rem.getHour());
-        cv.put(ReminderEntry.COLUMN_PATIENT_ID, mPatientId);
-        cv.put(ReminderEntry.COLUMN_MINUTES, rem.getMinutes());
-        cv.put(ReminderEntry.COLUMN_NAME, rem.getName());
-        return cv;
-    }
-
 }

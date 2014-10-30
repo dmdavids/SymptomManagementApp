@@ -16,6 +16,7 @@ import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.MedicationLog;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.MedLogEntry;
+import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -89,7 +90,7 @@ public class PatientMedicationLogFragment extends Fragment {
         mLogList[position].setTaken(msTime);
 
         // save this one to the database
-        ContentValues cv = createValuesObject(mLogList[position]);
+        ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLogList[position]);
         Uri uri = getActivity().getContentResolver().insert(MedLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);
         if (objectId < 0) {
@@ -105,15 +106,7 @@ public class PatientMedicationLogFragment extends Fragment {
         ButterKnife.reset(this);
     }
 
-    private ContentValues createValuesObject(MedicationLog log) {
-        ContentValues cv = new ContentValues();
-        cv.put(MedLogEntry.COLUMN_MED, log.getMed().getName());
-        cv.put(MedLogEntry.COLUMN_MED_LOG_ID, log.getMed().getId());
-        cv.put(MedLogEntry.COLUMN_PATIENT_ID, mPatientId);
-        cv.put(MedLogEntry.COLUMN_TAKEN, log.getTaken());
-        cv.put(MedLogEntry.COLUMN_CREATED, System.currentTimeMillis());
-        return cv;
-    }
+
 
     private static Collection<Medication> makeDummyMedicationList() {
         Collection<Medication> meds = new HashSet<Medication>();

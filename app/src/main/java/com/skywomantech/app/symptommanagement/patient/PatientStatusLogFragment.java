@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.StatusLogEntry;
+import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
 import com.squareup.picasso.Picasso;
 
@@ -159,7 +160,7 @@ public class PatientStatusLogFragment extends Fragment {
     @OnClick(R.id.status_save_button)
     public void saveStatusLog() {
         mLog.setNote(note.getText().toString()); // save the text from the note edit text
-        ContentValues cv = createValuesObject(mLog);
+        ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLog);
         Uri uri = getActivity().getContentResolver().insert(StatusLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);
         if (objectId < 0) {
@@ -167,16 +168,6 @@ public class PatientStatusLogFragment extends Fragment {
         }
         getActivity().onBackPressed();
     }
-
-    private ContentValues createValuesObject(StatusLog log) {
-        ContentValues cv = new ContentValues();
-        cv.put(StatusLogEntry.COLUMN_NOTE, log.getNote());
-        cv.put(StatusLogEntry.COLUMN_IMAGE, log.getImage_location());
-        cv.put(StatusLogEntry.COLUMN_PATIENT_ID, mPatientId);
-        cv.put(StatusLogEntry.COLUMN_CREATED, System.currentTimeMillis());
-        return cv;
-    }
-
 
     private  Uri getOutputMediaFileUri() {
         File newFile = getOutputMediaFile();

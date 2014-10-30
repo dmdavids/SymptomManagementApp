@@ -28,6 +28,15 @@ public class Reminder {
         public int getValue() {
             return value;
         }
+
+        public static ReminderType findByValue(int val){
+            for(ReminderType r : values()){
+                if( r.getValue() == val ){
+                    return r;
+                }
+            }
+            return GENERIC;
+        }
     };
 
     private ReminderType reminderType;
@@ -146,6 +155,7 @@ public class Reminder {
     public String toString() {
         return "Reminder{" +
                 "Id=" + Id +
+                ", dbId=" + dbId +
                 ", name='" + name + '\'' +
                 ", dayOfWeek=" + dayOfWeek +
                 ", hour=" + hour +
@@ -155,6 +165,4 @@ public class Reminder {
                 ", reminderType=" + reminderType +
                 '}';
     }
-
-
 }
