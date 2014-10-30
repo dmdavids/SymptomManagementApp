@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.skywomantech.app.symptommanagement.R;
@@ -87,10 +88,10 @@ public class ReminderAddEditDialog extends DialogFragment {
                 });
 
         // set up the widgets to get the selections from
-        timePicker = (TimePicker) view.findViewById(R.id.timePicker);
+        timePicker = (TimePicker) view.findViewById(R.id.reminder_timePicker);
         if (mHour >= 0) timePicker.setCurrentHour(mHour);
         if (mMinutes >= 0) timePicker.setCurrentMinute(mMinutes);
-        reminderName = (EditText) view.findViewById(R.id.reminder_name);
+        reminderName = (EditText) view.findViewById(R.id.reminder_name_edit);
         if (mName != null) reminderName.setText(mName);
         return builder.create();
     }

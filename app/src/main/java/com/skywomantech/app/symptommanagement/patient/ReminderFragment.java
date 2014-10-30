@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
+import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
 
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.ReminderEntry;
@@ -39,7 +40,7 @@ public class ReminderFragment extends Fragment {
         public void onRequestReminderAdd(Reminder reminder);
     }
 
-    private String mPatientId;
+    private String mPatientId = Login.getPatientId(getActivity());
     ReminderListAdapter mAdapter;
     private Collection<Reminder> reminders;
     Reminder[] mReminders;

@@ -180,6 +180,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         Patient patientRecord = getPatientRecordFromCloud();
         updatePrescriptionsToCP(patientRecord.getPrescriptions()); // warning! do this first before updating the server
         updateLogsFromCP(patientRecord);
+        // update the reminders
         patientRecord.getPrefs().setAlerts(getUpdatedReminders());
         sendPatientRecordToCloud(patientRecord);
     }

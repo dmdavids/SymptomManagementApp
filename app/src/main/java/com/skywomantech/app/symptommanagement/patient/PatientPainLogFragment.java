@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.PainLog;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.PainLogEntry;
@@ -31,7 +32,7 @@ public class PatientPainLogFragment extends Fragment {
     }
 
     private PainLog mLog;
-    private String mPatientId;
+    private String mPatientId = Login.getPatientId(getActivity());
 
     public PatientPainLogFragment() {
         mLog = new PainLog();

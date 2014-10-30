@@ -70,8 +70,8 @@ public class MedicationTimeDialog extends DialogFragment {
                 });
 
         // set up the widgets to get the selections from
-        timePicker = (TimePicker) view.findViewById(R.id.timePicker);
-        datePicker = (DatePicker) view.findViewById(R.id.datePicker);
+        timePicker = (TimePicker) view.findViewById(R.id.medication_timePicker);
+        datePicker = (DatePicker) view.findViewById(R.id.medication_datePicker);
 
         return builder.create();
     }

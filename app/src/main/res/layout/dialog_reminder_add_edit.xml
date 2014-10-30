@@ -16,7 +16,7 @@
 
 
         <EditText
-            android:id="@+id/reminder_name"
+            android:id="@+id/reminder_name_edit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Reminder Name"
@@ -28,7 +28,7 @@
         <TimePicker
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/timePicker"
+            android:id="@+id/reminder_timePicker"
             android:layout_gravity="center_horizontal"
             android:padding="8dp" />
 

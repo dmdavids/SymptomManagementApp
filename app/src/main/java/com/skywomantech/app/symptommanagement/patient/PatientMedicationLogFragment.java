@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.MedicationLog;
@@ -31,7 +32,7 @@ public class PatientMedicationLogFragment extends Fragment {
 
     public final static String LOG_TAG = PatientMedicationLogFragment.class.getSimpleName();
 
-    private String mPatientId;
+    private String mPatientId = Login.getPatientId(getActivity());
     MedicationLogListAdapter mAdapter;
     private Collection<MedicationLog> medicationLogs;
     MedicationLog[] mLogList;

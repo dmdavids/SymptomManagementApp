@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.StatusLogEntry;
@@ -40,7 +41,7 @@ public class PatientStatusLogFragment extends Fragment {
     public final static String LOG_TAG = PatientStatusLogFragment.class.getSimpleName();
 
     private StatusLog mLog;
-    private String mPatientId;
+    private String mPatientId = Login.getPatientId(getActivity());
 
     @InjectView(R.id.symptom_note)
     EditText note;
@@ -54,7 +55,6 @@ public class PatientStatusLogFragment extends Fragment {
     @InjectView(R.id.camera_picture_view) ImageView imageView;
 
     Uri imagePath;
-    String location;
     Uri imageFile = null;
     public static final int CAMERA_PIC_REQUEST = 99;
 
