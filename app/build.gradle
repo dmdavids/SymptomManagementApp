@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.skywomantech.app.symptommanagement"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 20
         versionCode 1
         versionName "1.0"

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:divider="#ff392fff"
+    android:showDividers="beginning|none|middle|end"
+    android:baselineAligned="false">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/log_type_icon"
+        android:layout_weight="7"
+        android:contentDescription="log type icon"
+        android:padding="16dp"
+        android:gravity="left" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:gravity="right">
+
+        <TextView
+            android:id="@+id/history_log_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pain SEVERE - Not Eating"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#ff9829ff" />
+
+        <TextView
+            android:id="@+id/history_log_created"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Logged On 2:00 PM Monday June 26, 2014"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="#ffb714ff" />
+    </LinearLayout>
+</LinearLayout>

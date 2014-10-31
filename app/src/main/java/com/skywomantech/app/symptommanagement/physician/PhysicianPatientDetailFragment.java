@@ -58,9 +58,6 @@ public class PhysicianPatientDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(PATIENT_ID_KEY)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
             mPatientId = getArguments().getString(PATIENT_ID_KEY);
         }
     }

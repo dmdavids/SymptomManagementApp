@@ -7,4 +7,11 @@
         android:title="Medications"
         android:icon="@drawable/ic_action_healthcare_pill_icon"/>
 
+    <item
+        android:id="@+id/action_history_log"
+        android:orderInCategory="10"
+        android:showAsAction="ifRoom|withText"
+        android:title="History"
+        android:icon="@drawable/ic_action_status_log"/>
+
 </menu>

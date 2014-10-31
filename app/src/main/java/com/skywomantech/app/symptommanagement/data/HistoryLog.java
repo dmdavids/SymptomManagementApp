@@ -1,6 +1,9 @@
 package com.skywomantech.app.symptommanagement.data;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class HistoryLog {
 
     private long id;  // if from CP store the id else ignore?
@@ -103,5 +106,17 @@ public class HistoryLog {
                 ", info='" + info + '\'' +
                 ", created=" + created +
                 '}';
+    }
+
+    public String getFormattedDate(long dt, String fmt) {
+        if (dt <= 0L) return "";
+        Date date = new Date(dt);
+        SimpleDateFormat format = new SimpleDateFormat(fmt);
+        return format.format(date);
+    }
+
+    // TODO: put the guts in this one
+    public String getFormattedCreatedDate() {
+        return getFormattedDate(this.created, "E, MMM d yyyy 'at' hh:mm a" );
     }
 }
