@@ -25,7 +25,7 @@ public class Login extends Activity {
     public final static String LOG_TAG = Login.class.getSimpleName();
 
     public final static String SERVER_ADDRESS = "http://192.168.0.34:8080";
-    private static String mPatientId = "9203420938402938403289";
+    private static String mPatientId = "5445d476ca4c027d60d2b1fa";
 
 
     // TODO: needs better design
@@ -130,7 +130,7 @@ public class Login extends Activity {
     private void setUserType(LoginType type) {
         mIsPatient = false;
         if (type == LoginType.PATIENT) {
-            setPatientId(this, "12323123123");
+            setPatientId(this, mPatientId);
             mIsPatient = true;
         }
     }
@@ -166,8 +166,8 @@ public class Login extends Activity {
             ((Login)getActivity()).setUserType(LoginType.ADMIN);
             mHasAdmin = true;
             mIsPatient = false;
-            mPatientId = "";
             mIsLoggedIn = true;
+            setPatientId(getActivity(), mPatientId); // for sync testing purposes
             startActivity(new Intent(getActivity(), AdminMain.class));
         }
 

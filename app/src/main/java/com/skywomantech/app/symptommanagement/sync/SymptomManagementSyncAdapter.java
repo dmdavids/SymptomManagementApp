@@ -28,6 +28,7 @@ import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.PrescriptionEntry;
 import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
+import com.skywomantech.app.symptommanagement.data.PatientPrefs;
 import com.skywomantech.app.symptommanagement.data.Reminder;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
 
@@ -45,14 +46,14 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     // keep track of our application environment context
     private final Context mContext;
 
-    // Try to sync the data at approximately 20 minute intervals
+    // Try to sync the data at approximately 5 minute intervals
     // it can range plus or minus 6ish minutes
-    private static final int SYNC_INTERVAL = 60 * 20;  //  20 minutes
+    private static final int SYNC_INTERVAL = 60 * 5;  //  5 minutes
     private static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
     private final boolean mPatientDevice = true;
     private final boolean mPhysicianLoggedIn = false;
-    private final String mPatientId = "2084098340928"; // TODO: needs a real id from db to work
+    private String mPatientId = "2084098340928"; // TODO: needs a real id from db to work
     private Patient mPatient;
 
 
@@ -178,14 +179,26 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(LOG_TAG, "Patient sync");
 
         Patient patientRecord = getPatientRecordFromCloud();
-        updatePrescriptionsToCP(patientRecord.getPrescriptions()); // warning! do this first before updating the server
+        if (patientRecord == null) {
+            Log.d(LOG_TAG, "NO PATIENT RECORD YET!");
+            return;
+        }
+
+        if (patientRecord.getPrescriptions() != null ) {
+            updatePrescriptionsToCP(patientRecord.getPrescriptions()); // warning! do this first before updating the server
+        }
         updateLogsFromCP(patientRecord);
         // update the reminders
+        if (patientRecord.getPrefs() == null) {
+            patientRecord.setPrefs(new PatientPrefs());
+        }
         patientRecord.getPrefs().setAlerts(getUpdatedReminders());
+
         sendPatientRecordToCloud(patientRecord);
     }
 
     private void sendPatientRecordToCloud(final Patient patientRecord) {
+        mPatientId = Login.getPatientId(mContext);
         // hardcoded for my local host (see ipconfig for values) at port 8080
         // need to put this is prefs or somewhere it can me modified
         final SymptomManagementApi svc =
@@ -217,6 +230,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private Patient getPatientRecordFromCloud() {
+        mPatientId = Login.getPatientId(mContext);
         Log.d(LOG_TAG, "getPatientRecordFromCloud - Patient ID is : " + mPatientId);
 
         // hardcoded for my local host (see ipconfig for values) at port 8080
@@ -253,6 +267,9 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
     private void updatePrescriptionsToCP(Collection<Medication> prescriptions) {
+        if (prescriptions == null) return;
+
+        mPatientId = Login.getPatientId(mContext);
         // delete all of the patient's prescriptions
         mContext.getContentResolver().delete(PrescriptionEntry.CONTENT_URI, null, null);
 
@@ -278,7 +295,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         Set<PainLog> logs = new HashSet<PainLog>();
         Cursor cursor = mContext.getContentResolver().query(
                 PatientCPContract.PainLogEntry.CONTENT_URI, null, null, null, null);
-        if (cursor.moveToFirst()) {
+        while (cursor.moveToNext()){
             PainLog log = new PainLog();
             log.setEating(PainLog.Eating.findByValue(cursor.getInt(cursor.getColumnIndex(PatientCPContract.PainLogEntry.COLUMN_EATING))));
             log.setSeverity(PainLog.Severity.findByValue(cursor.getInt(cursor.getColumnIndex(PatientCPContract.PainLogEntry.COLUMN_SEVERITY))));
@@ -293,8 +310,9 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         Set<MedicationLog> logs = new HashSet<MedicationLog>();
         Cursor cursor = mContext.getContentResolver().query(
                 PatientCPContract.MedLogEntry.CONTENT_URI, null, null, null, null);
-        if (cursor.moveToFirst()) {
+        while (cursor.moveToNext()) {
             MedicationLog log = new MedicationLog();
+            log.setMed(new Medication());
             log.getMed().setId(cursor.getString(cursor.getColumnIndex(PatientCPContract.MedLogEntry.COLUMN_MED_ID)));
             log.getMed().setName(cursor.getString(cursor.getColumnIndex(PatientCPContract.MedLogEntry.COLUMN_MED_NAME)));
             log.setTaken(cursor.getLong(cursor.getColumnIndex(PatientCPContract.MedLogEntry.COLUMN_TAKEN)));
@@ -309,7 +327,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         Set<StatusLog> logs = new HashSet<StatusLog>();
         Cursor cursor = mContext.getContentResolver().query(
                 PatientCPContract.StatusLogEntry.CONTENT_URI, null, null, null, null);
-        if (cursor.moveToFirst()) {
+        while (cursor.moveToNext()){
             StatusLog log = new StatusLog();
             log.setNote(cursor.getString(cursor.getColumnIndex(PatientCPContract.StatusLogEntry.COLUMN_NOTE)));
             log.setImage_location(cursor.getString(cursor.getColumnIndex(PatientCPContract.StatusLogEntry.COLUMN_IMAGE)));
@@ -324,7 +342,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         Set<Reminder> reminders = new HashSet<Reminder>();
         Cursor cursor = mContext.getContentResolver().query(
                 PatientCPContract.ReminderEntry.CONTENT_URI, null, null, null, null);
-        if (cursor.moveToFirst()) {
+        while (cursor.moveToNext()) {
             Reminder log = new Reminder();
             log.setHour(cursor.getInt(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_HOUR)));
             log.setMinutes(cursor.getInt(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_MINUTES)));

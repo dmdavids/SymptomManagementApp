@@ -52,5 +52,6 @@
     <string name="pref_popup_reminder_false">Not Enabled</string>
     <string name="pref_popup_reminder_true">Enabled</string>
     <string name="pref_popup_reminder_default" translatable="false">false</string>
+    <string name="action_refresh">Sync Data</string>
 
 </resources>

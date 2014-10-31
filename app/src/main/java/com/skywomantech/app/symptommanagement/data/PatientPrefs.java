@@ -9,17 +9,17 @@ public class PatientPrefs {
 	BigInteger id;
 	private TimeZone timezone;
 	private Collection<Reminder> alerts;
-	private boolean isNotificationOn;
+	private boolean notificationOn;
 	
 	public PatientPrefs() {
 		super();
 	}
 	public PatientPrefs(TimeZone timezone, Collection<Reminder> alerts,
-			boolean isNotificationOn) {
+			boolean notificationOn) {
 		super();
 		this.timezone = timezone;
 		this.alerts = alerts;
-		this.isNotificationOn = isNotificationOn;
+		this.notificationOn = notificationOn;
 	}
 	public TimeZone getTimezone() {
 		return timezone;
@@ -34,10 +34,10 @@ public class PatientPrefs {
 		this.alerts = alerts;
 	}
 	public boolean isNotificationOn() {
-		return isNotificationOn;
+		return notificationOn;
 	}
-	public void setNotificationOn(boolean isNotificationOn) {
-		this.isNotificationOn = isNotificationOn;
+	public void setNotificationOn(boolean notificationOn) {
+		this.notificationOn = notificationOn;
 	}
 	public BigInteger getId() {
 		return id;
@@ -71,8 +71,8 @@ public class PatientPrefs {
 	@Override
 	public String toString() {
 		return "PatientPrefs [id=" + id + ", timezone=" + timezone
-				+ ", alerts=" + alerts + ", isNotificationOn="
-				+ isNotificationOn + "]";
+				+ ", alerts=" + alerts + ", notificationOn="
+				+ notificationOn + "]";
 	}
 	
 }
