@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.SetPreferenceActivity;
 import com.skywomantech.app.symptommanagement.data.Reminder;
+import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -75,6 +76,9 @@ public class PatientMainActivity extends Activity
         }
         else if (id == R.id.action_prefs) {
             startActivity(new Intent(this, SetPreferenceActivity.class));
+            return true;
+        } else if (id == R.id.action_refresh) {
+            SymptomManagementSyncAdapter.syncImmediately(this);
             return true;
         }
         return super.onOptionsItemSelected(item);
