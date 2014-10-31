@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 
 import com.skywomantech.app.symptommanagement.admin.AdminMain;
 import com.skywomantech.app.symptommanagement.patient.PatientMainActivity;
+import com.skywomantech.app.symptommanagement.physician.PhysicianListPatientsActivity;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -167,7 +168,6 @@ public class Login extends Activity {
             mHasAdmin = true;
             mIsPatient = false;
             mIsLoggedIn = true;
-            setPatientId(getActivity(), mPatientId); // for sync testing purposes
             startActivity(new Intent(getActivity(), AdminMain.class));
         }
 
@@ -178,29 +178,31 @@ public class Login extends Activity {
             mHasAdmin = false;
             mIsPatient = false;
             mIsLoggedIn = true;
+            startActivity(new Intent(getActivity(), PhysicianListPatientsActivity.class));
         }
 
         /// TODO: Patient Login
         @OnClick(R.id.patient_button)
         public void loginPatient() {
-            ((Login)getActivity()).setUserType(LoginType.PATIENT);
-            mHasAdmin = false;
-            mIsLoggedIn = true;
-            setCheckin(getActivity(), false);
-            setPatientId(getActivity(), mPatientId);
-            startActivity(new Intent(getActivity(), PatientMainActivity.class));
+            loginPatient(false);
         }
 
         // Do the Check IN process
         @OnClick(R.id.checkin_button)
         public void loginPatientCheckin() {
+            loginPatient(true);
+        }
+
+        private void loginPatient(boolean checkin) {
             ((Login)getActivity()).setUserType(LoginType.PATIENT);
             mHasAdmin = false;
             mIsLoggedIn = true;
-            setCheckin(getActivity(), true);
+            mIsPatient = true;
+            setCheckin(getActivity(), checkin);
             setPatientId(getActivity(), mPatientId);
             startActivity(new Intent(getActivity(), PatientMainActivity.class));
         }
+
     }
 
 }

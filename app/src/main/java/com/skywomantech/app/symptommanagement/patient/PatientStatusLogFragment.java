@@ -42,6 +42,10 @@ public class PatientStatusLogFragment extends Fragment {
 
     private StatusLog mLog;
 
+    public interface Callbacks {
+        public boolean onStatusLogComplete();
+    }
+
     @InjectView(R.id.symptom_note)
     EditText note;
 
@@ -58,8 +62,6 @@ public class PatientStatusLogFragment extends Fragment {
     public static final int CAMERA_PIC_REQUEST = 99;
 
     public PatientStatusLogFragment() {
-
-
     }
 
     @Override
@@ -166,6 +168,8 @@ public class PatientStatusLogFragment extends Fragment {
         long objectId = ContentUris.parseId(uri);
         if (objectId < 0) {
             Log.e(LOG_TAG, "Status Log Insert Failed.");
+        } else {
+            ((Callbacks) getActivity()).onStatusLogComplete();
         }
         getActivity().onBackPressed();
     }

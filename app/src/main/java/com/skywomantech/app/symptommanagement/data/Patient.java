@@ -11,11 +11,13 @@ import java.util.TimeZone;
 public class Patient {
 
     private String id;
+    private transient long dbId;  // local database id
+
     private String firstName;
     private String lastName;
     private long birthdate = 0L;
     private long lastLogin = 0L;
-    private Boolean isActive = true;
+    private Boolean active = true;
 
     private Set<Medication> prescriptions;
     private Set<Physician> physicians;
@@ -46,7 +48,7 @@ public class Patient {
     }
 
     public Patient( String firstName, String lastName, long birthdate, long lastLogin,
-                    Boolean isActive, Set<Medication> prescriptions,
+                    Boolean active, Set<Medication> prescriptions,
                     Set<Physician> physicians, Set<PainLog> painLog,
                     Set<MedicationLog> medLog, Set<StatusLog> statusLog, PatientPrefs prefs) {
         super();
@@ -54,7 +56,7 @@ public class Patient {
         this.lastName = lastName;
         this.birthdate = birthdate;
         this.lastLogin = lastLogin;
-        this.isActive = isActive;
+        this.active = active;
         this.prescriptions = prescriptions;
         this.physicians = physicians;
         this.painLog = painLog;
@@ -69,6 +71,14 @@ public class Patient {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public long getDbId() {
+        return dbId;
+    }
+
+    public void setDbId(long dbId) {
+        this.dbId = dbId;
     }
 
     public String getName() {
@@ -111,12 +121,12 @@ public class Patient {
         this.lastLogin = lastLogin;
     }
 
-    public Boolean getIsActive() {
-        return isActive;
+    public Boolean isActive() {
+        return active;
     }
 
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public Set<Medication> getPrescriptions() {
@@ -210,9 +220,10 @@ public class Patient {
     }
 
     public String toDebugString() {
-        return "Patient [id=" + id + ", firstName=" + firstName + ", lastName="
+        return "Patient [id=" + id + ", " +  ", dbId=" + dbId +
+                "firstName=" + firstName + ", lastName="
                 + lastName + ", birthdate=" + birthdate + ", lastLogin="
-                + lastLogin + ", isActive=" + isActive + ", prescriptions="
+                + lastLogin + ", active=" + active + ", prescriptions="
                 + prescriptions + ", physicians=" + physicians + ", painLog="
                 + painLog + ", medLog=" + medLog + ", statusLog=" + statusLog
                 + ", prefs=" + prefs + "]";
@@ -245,5 +256,11 @@ public class Patient {
         cal.setTime(dt);
         return cal.getTimeInMillis();
     }
+
+    // TODO: put the guts in this one
+    public String getFormattedLastLogged() {
+        return "10:22 PM on Mon Jan 31 2014";
+    }
+
 
 }

@@ -3,12 +3,25 @@ package com.skywomantech.app.symptommanagement.physician;
 import android.app.Activity;
 import android.os.Bundle;
 import android.app.ListFragment;
+import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
 
-import com.skywomantech.app.symptommanagement.physician.dummy.DummyContent;
+import com.skywomantech.app.symptommanagement.client.CallableTask;
+import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
+import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
+import com.skywomantech.app.symptommanagement.client.TaskCallback;
+import com.skywomantech.app.symptommanagement.data.Patient;
+import com.skywomantech.app.symptommanagement.data.Physician;
+
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.concurrent.Callable;
 
 /**
  * A list fragment representing a list of PhysicianPatients. This fragment
@@ -19,19 +32,19 @@ import com.skywomantech.app.symptommanagement.physician.dummy.DummyContent;
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
-public class PhysicianPatientListFragment extends ListFragment {
+public class PhysicianListPatientsFragment extends ListFragment {
 
+    private static final String LOG_TAG = PhysicianListPatientsFragment.class.getSimpleName();
+
+    String mPhysicianId = "5445d3f9ca4c027d60d2b1f7";
+    PatientListAdapter mAdapter;
+    private Collection<Patient> patients;
+    Patient[] patient;
     /**
      * The serialization (saved instance state) Bundle key representing the
      * activated item position. Only used on tablets.
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
-
-    /**
-     * The fragment's current callback object, which is notified of list item
-     * clicks.
-     */
-    private Callbacks mCallbacks = sDummyCallbacks;
 
     /**
      * The current activated item position. Only used on tablets.
@@ -51,43 +64,33 @@ public class PhysicianPatientListFragment extends ListFragment {
     }
 
     /**
-     * A dummy implementation of the {@link Callbacks} interface that does
-     * nothing. Used only when this fragment is not attached to an activity.
-     */
-    private static Callbacks sDummyCallbacks = new Callbacks() {
-        @Override
-        public void onItemSelected(String id) {
-        }
-    };
-
-    /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public PhysicianPatientListFragment() {
+    public PhysicianListPatientsFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                DummyContent.ITEMS));
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        setRetainInstance(true); // save fragment across config changes
+        setEmptyText(getString(R.string.empty_list_text));
         // Restore the previously serialized activated item position.
         if (savedInstanceState != null
                 && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
             setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
         }
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setEmptyText(getString(R.string.empty_list_text));
     }
 
     @Override
@@ -98,25 +101,29 @@ public class PhysicianPatientListFragment extends ListFragment {
         if (!(activity instanceof Callbacks)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
-
-        mCallbacks = (Callbacks) activity;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+    }
 
-        // Reset the active callbacks interface to the dummy implementation.
-        mCallbacks = sDummyCallbacks;
+    @Override
+    public void onResume() {
+        super.onResume();
+        refreshAllPatients();
     }
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
-        super.onListItemClick(listView, view, position, id);
 
-        // Notify the active callbacks interface (the activity, if the
-        // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+        Patient patient =
+                (Patient) getListAdapter().getItem(position);
+        Log.d(LOG_TAG, "Patient name selected is " + patient.getName()
+                + " id is : " + patient.getId());
+        String patientId = patient.getId();
+        Log.d(LOG_TAG, " String id value is : " + patientId);
+        ((Callbacks) getActivity()).onItemSelected(patientId);
     }
 
     @Override
@@ -148,5 +155,43 @@ public class PhysicianPatientListFragment extends ListFragment {
         }
 
         mActivatedPosition = position;
+    }
+
+    private void refreshAllPatients() {
+
+        // hardcoded for my local host (see ipconfig for values) at port 8080
+        // need to put this is prefs or somewhere it can me modified
+        final SymptomManagementApi svc =
+                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+
+        if (svc != null) {
+            CallableTask.invoke(new Callable<Physician>() {
+
+                @Override
+                public Physician call() throws Exception {
+                    Log.d(LOG_TAG, "getting physician");
+                    return svc.getPhysician(mPhysicianId);
+                }
+            }, new TaskCallback<Physician>() {
+
+                @Override
+                public void success(Physician result) {
+                    Log.d(LOG_TAG, "creating list of all patients assigned to physician");
+                    Patient[] plist = null;
+                    if (result != null && result.getPatients() != null ) {
+                        plist = result.getPatients().toArray(new Patient[result.getPatients().size()]);
+                    }
+                    setListAdapter(new PatientListAdapter(getActivity(), plist));
+                }
+
+                @Override
+                public void error(Exception e) {
+                    Toast.makeText(
+                            getActivity(),
+                            "Unable to fetch the Physician data. Please check Internet connection.",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 }

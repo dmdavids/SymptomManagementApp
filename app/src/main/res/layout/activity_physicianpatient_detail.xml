@@ -1,6 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/physicianpatient_detail_container"
+    android:id="@+id/physician_patient_detail_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailActivity"

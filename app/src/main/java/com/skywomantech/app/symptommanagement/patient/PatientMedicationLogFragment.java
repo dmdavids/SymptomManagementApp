@@ -38,6 +38,10 @@ public class PatientMedicationLogFragment extends Fragment {
 
     @InjectView(R.id.patient_medication_check_list)  ListView mLogListView;
 
+    public interface Callbacks {
+        public boolean onMedicationLogComplete();
+    }
+
     //TODO:  replace with actual patient's list of medications
     private Collection<Medication> dummyMedications = makeDummyMedicationList();
 
@@ -95,8 +99,9 @@ public class PatientMedicationLogFragment extends Fragment {
         long objectId = ContentUris.parseId(uri);
         if (objectId < 0) {
             Log.e(LOG_TAG, "Medication Log Insert Failed.");
+        } else {
+            ((Callbacks) getActivity()).onMedicationLogComplete();
         }
-
         mAdapter.notifyDataSetChanged();
     }
 

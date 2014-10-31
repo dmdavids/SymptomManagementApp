@@ -33,8 +33,10 @@ public class PatientCPContract {
         public static final String TABLE_NAME = "patient";
         public static final String COLUMN_PATIENT_ID = "patient_id"; // server id
         public static final String COLUMN_LAST_LOGIN = "last_login";
+        public static final String COLUMN_BIRTHDATE = "birthdate";
         public static final String COLUMN_ACTIVE = "active";
-        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_FIRST_NAME = "first_name";
+        public static final String COLUMN_LAST_NAME = "last_name";
         public static final String COLUMN_PROCESSED = "processed";
         public static final String COLUMN_PROCESS_STATUS = "process_status";
 

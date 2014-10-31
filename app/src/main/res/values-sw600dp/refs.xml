@@ -11,6 +11,6 @@
     <item name="activity_adminpatient_list" type="layout">@layout/activity_admin_patient_twopane</item>
     <item name="activity_adminphysician_list" type="layout">@layout/activity_admin_physician_twopane</item>
     <item name="activity_adminmedication_list" type="layout">@layout/activity_admin_medication_twopane</item>
-    <item name="activity_physicianpatient_list" type="layout">@layout/activity_physicianpatient_twopane</item>
+    <item name="activity_physicianpatient_list" type="layout">@layout/activity_physician_patient_twopane</item>
 
 </resources>

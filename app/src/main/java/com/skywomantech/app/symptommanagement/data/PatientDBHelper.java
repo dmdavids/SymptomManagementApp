@@ -49,11 +49,13 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + PatientEntry.TABLE_NAME + " (" +
                         PatientEntry._ID + " INTEGER PRIMARY KEY," +
                         PatientEntry.COLUMN_PATIENT_ID + " TEXT UNIQUE NOT NULL, " +
-                        PatientEntry.COLUMN_NAME + " TEXT NOT NULL, " +
+                        PatientEntry.COLUMN_FIRST_NAME + " TEXT, " +
+                        PatientEntry.COLUMN_LAST_NAME + " TEXT, " +
                         PatientEntry.COLUMN_LAST_LOGIN + " REAL, " +
-                        PatientEntry.COLUMN_ACTIVE + " INTEGER NOT NULL, " +
-                        PatientEntry.COLUMN_PROCESS_STATUS + " INTEGER  NOT NULL, " +
-                        PatientEntry.COLUMN_PROCESSED + " REAL  NOT NULL, " +
+                        PatientEntry.COLUMN_BIRTHDATE + " REAL, " +
+                        PatientEntry.COLUMN_ACTIVE + " INTEGER, " +
+                        PatientEntry.COLUMN_PROCESS_STATUS + " INTEGER, " +
+                        PatientEntry.COLUMN_PROCESSED + " REAL, " +
                 "UNIQUE (" + PatientEntry.COLUMN_PATIENT_ID
                         +") ON CONFLICT REPLACE"+
                 " );";

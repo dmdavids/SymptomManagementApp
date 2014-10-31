@@ -115,7 +115,7 @@
                 android:value="com.skywomantech.app.symptommanagement.Login" />
         </activity>
         <activity
-            android:name=".physician.PhysicianPatientListActivity"
+            android:name=".physician.PhysicianListPatientsActivity"
             android:label="@string/title_physicianpatient_list"
             android:parentActivityName=".Login" >
             <meta-data
@@ -125,7 +125,7 @@
         <activity
             android:name=".physician.PhysicianPatientDetailActivity"
             android:label="@string/title_physicianpatient_detail"
-            android:parentActivityName=".physician.PhysicianPatientListActivity" >
+            android:parentActivityName=".physician.PhysicianListPatientsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skywomantech.app.symptommanagement.physician.PhysicianPatientListActivity" />

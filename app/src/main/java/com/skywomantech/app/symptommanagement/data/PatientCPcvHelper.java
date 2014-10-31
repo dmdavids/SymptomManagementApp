@@ -4,6 +4,18 @@ import android.content.ContentValues;
 
 public class PatientCPcvHelper {
 
+
+    public  static ContentValues createValuesObject(String id, Patient patient) {
+        ContentValues cv = new ContentValues();
+        cv.put(PatientCPContract.PatientEntry._ID, patient.getDbId());
+        cv.put(PatientCPContract.PatientEntry.COLUMN_PATIENT_ID, id);
+        cv.put(PatientCPContract.PatientEntry.COLUMN_LAST_LOGIN, patient.getLastLogin());
+        cv.put(PatientCPContract.PatientEntry.COLUMN_LAST_NAME, patient.getLastName());
+        cv.put(PatientCPContract.PatientEntry.COLUMN_FIRST_NAME, patient.getFirstName());
+        cv.put(PatientCPContract.PatientEntry.COLUMN_BIRTHDATE, patient.getBirthdate());
+        return cv;
+    }
+
     public  static ContentValues createValuesObject(String id, MedicationLog log) {
         ContentValues cv = new ContentValues();
         cv.put(PatientCPContract.MedLogEntry.COLUMN_MED_NAME, log.getMed().getName());

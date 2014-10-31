@@ -3,27 +3,37 @@ package com.skywomantech.app.symptommanagement.patient;
 import android.app.Activity;
 import android.app.FragmentManager;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.MediaStore;
+
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.SetPreferenceActivity;
+import com.skywomantech.app.symptommanagement.client.CallableTask;
+import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
+import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
+import com.skywomantech.app.symptommanagement.client.TaskCallback;
+import com.skywomantech.app.symptommanagement.data.Patient;
+import com.skywomantech.app.symptommanagement.data.PatientCPContract.PatientEntry;
+import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
+import com.skywomantech.app.symptommanagement.data.Physician;
 import com.skywomantech.app.symptommanagement.data.Reminder;
+import com.skywomantech.app.symptommanagement.physician.PatientListAdapter;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
-import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.concurrent.Callable;
 
 
 public class PatientMainActivity extends Activity
@@ -31,10 +41,17 @@ public class PatientMainActivity extends Activity
         MedicationLogListAdapter.Callbacks,
         MedicationTimeDialog.Callbacks,
         PatientPainLogFragment.Callbacks,
+        PatientMedicationLogFragment.Callbacks,
+        PatientStatusLogFragment.Callbacks,
         ReminderFragment.Callbacks,
         ReminderAddEditDialog.Callbacks,
         ReminderListAdapter.Callbacks {
 
+    public final static String LOG_TAG = PatientMainActivity.class.getSimpleName();
+    private String mPatientId;
+    private Patient mPatient;
+    private long mLastLogged = System.currentTimeMillis();
+    Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +68,7 @@ public class PatientMainActivity extends Activity
                         .commit();
             }
         }
+        mContext = this;
     }
 
     @Override
@@ -84,6 +102,102 @@ public class PatientMainActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
+    private Patient getPatientFromCP() {
+        mPatientId = Login.getPatientId(this);
+        if (mPatientId != null && !mPatientId.isEmpty()) {
+            Cursor cursor = getContentResolver()
+                    .query(PatientEntry.CONTENT_URI, null, null, null,null);
+            if (cursor.moveToFirst()) {
+                mPatient = new Patient();
+                mPatientId = cursor.getString(cursor.getColumnIndex(PatientEntry._ID));
+                mPatient.setId(mPatientId);
+                mPatient.setDbId(cursor.getLong(cursor.getColumnIndex(PatientEntry._ID)));
+                mPatient.setFirstName(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_FIRST_NAME)));
+                mPatient.setLastName(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_LAST_NAME)));
+                mPatient.setLastLogin(cursor.getLong(cursor.getColumnIndex(PatientEntry.COLUMN_LAST_LOGIN)));
+                Log.v(LOG_TAG, "Last Login Originally set to: " + Long.toString(mPatient.getLastLogin()));
+                if (mLastLogged > mPatient.getLastLogin()) {
+                    Log.v(LOG_TAG, "Last Login RESET to: " + Long.toString(mLastLogged));
+                    mPatient.setLastLogin(mLastLogged);
+                }
+                mPatient.setBirthdate(cursor.getLong(cursor.getColumnIndex(PatientEntry.COLUMN_BIRTHDATE)));
+            }
+            cursor.close();
+        }
+        // CP didn't find it so try the internet
+        // if found on the internet then save it to C
+        if (mPatient == null ) {
+            mPatient = getPatientFromCloud();  // this is asynchronous so don't expect immediate response
+        }
+        return mPatient;
+    }
+
+    private Patient getPatientFromCloud() {
+        // hardcoded for my local host (see ipconfig for values) at port 8080
+        // need to put this is prefs or somewhere it can me modified
+        final SymptomManagementApi svc =
+                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+
+        if (svc != null) {
+            CallableTask.invoke(new Callable<Patient>() {
+
+                @Override
+                public Patient call() throws Exception {
+                    Log.d(LOG_TAG, "getting Patient from Internet");
+                    return svc.getPatient(mPatientId);
+                }
+            }, new TaskCallback<Patient>() {
+
+                @Override
+                public void success(Patient result) {
+                    Log.d(LOG_TAG, "got the Patient!");
+                    mPatient = result;
+                    mPatientId = mPatient.getId();
+                    if (mPatient != null) {
+                        Log.v(LOG_TAG, "Last Login set to: " + Long.toString(mLastLogged));
+                        mPatient.setLastLogin(mLastLogged);
+                        savePatientToCP(mPatient);
+                    }
+                }
+
+                @Override
+                public void error(Exception e) {
+                    Toast.makeText(mContext,
+                            "Unable to fetch the Patient data. Please check Internet connection.",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        return null;
+    }
+
+    private void savePatientToCP(Patient patient) {
+        if (mPatientId != null && !mPatientId.isEmpty()
+                &&  patient != null && patient.getDbId() >= 0L) {
+            ContentValues cvPatient = PatientCPcvHelper.createValuesObject(mPatientId, patient);
+            Uri uri = getContentResolver().insert(PatientEntry.CONTENT_URI, cvPatient);
+            long objectId = ContentUris.parseId(uri);
+            patient.setDbId(objectId);
+            Log.d(LOG_TAG, "New Patient DB Id is : " + Long.toString(objectId));
+        }
+        else {
+            Log.d(LOG_TAG, "Patient is not Saveable.");
+        }
+    }
+
+    private void updatePatientToCP(Patient patient) {
+        if (mPatientId != null && !mPatientId.isEmpty()
+                &&  patient != null && patient.getDbId() >= 0L) {
+            ContentValues cvPatient = PatientCPcvHelper.createValuesObject(mPatientId, patient);
+            String selection = PatientEntry._ID + "=" + Long.toString(patient.getDbId());
+            int updated = getContentResolver()
+                    .update(PatientEntry.CONTENT_URI, cvPatient, selection, null);
+        }
+        else {
+            Log.d(LOG_TAG, "Patient is not Updateable.");
+        }
+    }
+
     // default to no checkin if the preference is not found
     private boolean isCheckIn() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -108,7 +222,29 @@ public class PatientMainActivity extends Activity
             // do we add to backstack here?
             return true;
         }
+        setLastLoggedTimestamp();
         return false;
+    }
+
+    @Override
+    public boolean onStatusLogComplete() {
+        setLastLoggedTimestamp();
+        return true;
+    }
+
+    @Override
+    public boolean onMedicationLogComplete() {
+        setLastLoggedTimestamp();
+        return true;
+    }
+
+    private void setLastLoggedTimestamp() {
+        mPatient = getPatientFromCP();
+        if (mPatient != null) {
+            Log.v(LOG_TAG, "Last Login RESET to: " + Long.toString(mLastLogged));
+            mPatient.setLastLogin(mLastLogged);
+            updatePatientToCP(mPatient);
+        }
     }
 
     // this should be called when the timer goes off
@@ -183,4 +319,6 @@ public class PatientMainActivity extends Activity
                 (ReminderFragment) getFragmentManager().findFragmentById(R.id.container);
         frag.deleteReminder(position);
     }
+
+
 }

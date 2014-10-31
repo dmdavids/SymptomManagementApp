@@ -53,7 +53,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private final boolean mPatientDevice = true;
     private final boolean mPhysicianLoggedIn = false;
-    private String mPatientId = "2084098340928"; // TODO: needs a real id from db to work
+    private String mPatientId = ""; // = "2084098340928"; // TODO: needs a real id from db to work
     private Patient mPatient;
 
 
@@ -168,26 +168,34 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle bundle, String authority,
                               ContentProviderClient contentProviderClient, SyncResult syncResult) {
-        Log.d(LOG_TAG, "Starting sync");
+        Log.d(LOG_TAG, "Starting onPerformSync");
         processPhysicianSync();
-        processPatientSync();
-    }
 
+        mPatientId = Login.getPatientId(mContext);
+        if (mPatientId != null && !mPatientId.isEmpty()) {
+            processPatientSync();
+        } else {
+            Log.v(LOG_TAG,"Skipping Patient Sync - no Patient identified.");
+        }
+    }
 
     private void processPatientSync() {
         if (!mPatientDevice && mPhysicianLoggedIn) return;
-        Log.d(LOG_TAG, "Patient sync");
+        Log.d(LOG_TAG, "Processing Patient sync");
 
         Patient patientRecord = getPatientRecordFromCloud();
         if (patientRecord == null) {
-            Log.d(LOG_TAG, "NO PATIENT RECORD YET!");
+            Log.d(LOG_TAG, "No Patient identified yet.");
             return;
         }
 
         if (patientRecord.getPrescriptions() != null ) {
             updatePrescriptionsToCP(patientRecord.getPrescriptions()); // warning! do this first before updating the server
         }
+
+        updateLastLoginFromCP(patientRecord);
         updateLogsFromCP(patientRecord);
+
         // update the reminders
         if (patientRecord.getPrefs() == null) {
             patientRecord.setPrefs(new PatientPrefs());
@@ -197,36 +205,17 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         sendPatientRecordToCloud(patientRecord);
     }
 
-    private void sendPatientRecordToCloud(final Patient patientRecord) {
-        mPatientId = Login.getPatientId(mContext);
-        // hardcoded for my local host (see ipconfig for values) at port 8080
-        // need to put this is prefs or somewhere it can me modified
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
-
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Patient>() {
-
-                @Override
-                public Patient call() throws Exception {
-                    Log.d(LOG_TAG, "Updating single Patient id : " + mPatientId);
-                    return svc.updatePatient(mPatientId, patientRecord);
-                }
-            }, new TaskCallback<Patient>() {
-
-                @Override
-                public void success(Patient result) {
-                    Log.d(LOG_TAG, "Updated Patient to Server:" + result.toDebugString());
-                    mPatient = result;
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Log.e(LOG_TAG, "Sync unable to UPDATE Patient record to internet." +
-                            " Try again later");
-                }
-            });
+    private void updateLastLoginFromCP(Patient patientRecord) {
+        Cursor cursor = mContext.getContentResolver()
+                .query(PatientCPContract.PatientEntry.CONTENT_URI, null, null, null,null);
+        if (cursor.moveToFirst()) {
+           patientRecord
+                   .setLastLogin(cursor
+                           .getLong(cursor
+                                   .getColumnIndex(PatientCPContract.PatientEntry.COLUMN_LAST_LOGIN)));
+            Log.v(LOG_TAG, "Last Login RESET to: " + Long.toString(patientRecord.getLastLogin()));
         }
+        cursor.close();
     }
 
     private Patient getPatientRecordFromCloud() {
@@ -261,10 +250,8 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
             });
         }
-
         return mPatient;
     }
-
 
     private void updatePrescriptionsToCP(Collection<Medication> prescriptions) {
         if (prescriptions == null) return;
@@ -283,7 +270,6 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         cVVector.toArray(cvArray);
         mContext.getContentResolver().bulkInsert(PrescriptionEntry.CONTENT_URI, cvArray);
     }
-
 
     private void updateLogsFromCP(Patient patientRecord) {
         patientRecord.setPainLog(getUpdatedPainLogs());
@@ -354,7 +340,38 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         cursor.close();
         return reminders;
     }
+    private void sendPatientRecordToCloud(final Patient patientRecord) {
+        mPatientId = Login.getPatientId(mContext);
+        // hardcoded for my local host (see ipconfig for values) at port 8080
+        // need to put this is prefs or somewhere it can me modified
+        final SymptomManagementApi svc =
+                SymptomManagementService.getService(Login.SERVER_ADDRESS);
 
+        if (svc != null) {
+            CallableTask.invoke(new Callable<Patient>() {
+
+                @Override
+                public Patient call() throws Exception {
+                    Log.d(LOG_TAG, "Updating single Patient id : " + mPatientId);
+                    Log.v(LOG_TAG, "Last Login SET to before Sent to Cloud: " + Long.toString(patientRecord.getLastLogin()));
+                    return svc.updatePatient(mPatientId, patientRecord);
+                }
+            }, new TaskCallback<Patient>() {
+
+                @Override
+                public void success(Patient result) {
+                    Log.d(LOG_TAG, "Returned Patient from Server:" + result.toDebugString());
+                    mPatient = result;
+                }
+
+                @Override
+                public void error(Exception e) {
+                    Log.e(LOG_TAG, "Sync unable to UPDATE Patient record to Internet." +
+                            " Try again later");
+                }
+            });
+        }
+    }
 
     private void processPhysicianSync() {
         if (mPatientDevice) return;
@@ -363,6 +380,5 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 //        Collection<Alert> alerts = getPhysicianAlerts();
 //        notifyPhysicianAlerts(alerts);
     }
-
 
 }

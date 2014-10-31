@@ -8,7 +8,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="com.skywomantech.app.symptommanagement.physician.PhysicianPatientListActivity">
+    tools:context="com.skywomantech.app.symptommanagement.physician.PhysicianListPatientsActivity">
 
     <!--
     This layout is a two-pane layout for the PhysicianPatients
@@ -22,15 +22,15 @@
     -->
 
     <fragment
-        android:id="@+id/physicianpatient_list"
-        android:name="com.skywomantech.app.symptommanagement.physician.PhysicianPatientListFragment"
+        android:id="@+id/physician_patient_list"
+        android:name="com.skywomantech.app.symptommanagement.physician.PhysicianListPatientsFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         tools:layout="@android:layout/list_content" />
 
     <FrameLayout
-        android:id="@+id/physicianpatient_detail_container"
+        android:id="@+id/physician_patient_detail_container"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="3" />

@@ -18,15 +18,15 @@ import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
  * item details side-by-side using two vertical panes.
  * <p>
  * The activity makes heavy use of fragments. The list of items is a
- * {@link PhysicianPatientListFragment} and the item details
+ * {@link PhysicianListPatientsFragment} and the item details
  * (if present) is a {@link PhysicianPatientDetailFragment}.
  * <p>
  * This activity also implements the required
- * {@link PhysicianPatientListFragment.Callbacks} interface
+ * {@link PhysicianListPatientsFragment.Callbacks} interface
  * to listen for item selections.
  */
-public class PhysicianPatientListActivity extends Activity
-        implements PhysicianPatientListFragment.Callbacks {
+public class PhysicianListPatientsActivity extends Activity
+        implements PhysicianListPatientsFragment.Callbacks {
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
@@ -37,11 +37,11 @@ public class PhysicianPatientListActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_physicianpatient_list);
+        setContentView(R.layout.activity_physician_patient_list);
         // Show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if (findViewById(R.id.physicianpatient_detail_container) != null) {
+        if (findViewById(R.id.physician_patient_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-large and
             // res/values-sw600dp). If this view is present, then the
@@ -50,8 +50,8 @@ public class PhysicianPatientListActivity extends Activity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((PhysicianPatientListFragment) getFragmentManager()
-                    .findFragmentById(R.id.physicianpatient_list))
+            ((PhysicianListPatientsFragment) getFragmentManager()
+                    .findFragmentById(R.id.physician_patient_list))
                     .setActivateOnItemClick(true);
         }
 
@@ -76,7 +76,7 @@ public class PhysicianPatientListActivity extends Activity
     }
 
     /**
-     * Callback method from {@link PhysicianPatientListFragment.Callbacks}
+     * Callback method from {@link PhysicianListPatientsFragment.Callbacks}
      * indicating that the item with the given ID was selected.
      */
     @Override
@@ -90,7 +90,7 @@ public class PhysicianPatientListActivity extends Activity
             PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
-                    .replace(R.id.physicianpatient_detail_container, fragment)
+                    .replace(R.id.physician_patient_detail_container, fragment)
                     .commit();
 
         } else {
