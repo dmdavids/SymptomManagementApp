@@ -28,7 +28,6 @@ public class PatientListAdapter extends ArrayAdapter<Patient> {
             patientName = (TextView) view.findViewById(R.id.patient_list_name);
             lastLog = (TextView) view.findViewById(R.id.patient_list_last_log);
         }
-
         Patient patient;
     }
 
@@ -37,7 +36,6 @@ public class PatientListAdapter extends ArrayAdapter<Patient> {
         this.context = context;
         this.patients = patients;
     }
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

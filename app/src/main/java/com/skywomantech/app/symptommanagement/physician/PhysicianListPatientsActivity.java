@@ -34,6 +34,7 @@ public class PhysicianListPatientsActivity extends Activity
      */
     private boolean mTwoPane;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,33 +43,18 @@ public class PhysicianListPatientsActivity extends Activity
         getActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (findViewById(R.id.physician_patient_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-large and
-            // res/values-sw600dp). If this view is present, then the
-            // activity should be in two-pane mode.
             mTwoPane = true;
 
-            // In two-pane mode, list items should be given the
-            // 'activated' state when touched.
             ((PhysicianListPatientsFragment) getFragmentManager()
                     .findFragmentById(R.id.physician_patient_list))
                     .setActivateOnItemClick(true);
         }
-
-        // TODO: If exposing deep links into your app, handle intents here.
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. Use NavUtils to allow users
-            // to navigate up one level in the application structure. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
             navigateUpFromSameTask(this);
             return true;
         }
@@ -86,7 +72,7 @@ public class PhysicianListPatientsActivity extends Activity
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(PhysicianPatientDetailFragment.ARG_ITEM_ID, id);
+            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, id);
             PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -97,7 +83,7 @@ public class PhysicianListPatientsActivity extends Activity
             // In single-pane mode, simply start the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, PhysicianPatientDetailActivity.class);
-            detailIntent.putExtra(PhysicianPatientDetailFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra(PhysicianPatientDetailFragment.PATIENT_ID_KEY, id);
             startActivity(detailIntent);
         }
     }

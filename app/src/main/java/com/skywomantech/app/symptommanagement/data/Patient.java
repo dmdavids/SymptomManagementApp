@@ -235,10 +235,7 @@ public class Patient {
 	}
 
     public String getFormattedBirthdate() {
-        if (this.birthdate <= 0L) return "";
-        Date date = new Date(this.birthdate);
-        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
-        return format.format(date);
+        return getFormattedDate(this.birthdate, "MM/dd/yyyy");
     }
 
     // returns 0 if the string is invalid
@@ -257,9 +254,16 @@ public class Patient {
         return cal.getTimeInMillis();
     }
 
+    public String getFormattedDate(long dt, String fmt) {
+        if (dt <= 0L) return "";
+        Date date = new Date(dt);
+        SimpleDateFormat format = new SimpleDateFormat(fmt);
+        return format.format(date);
+    }
+
     // TODO: put the guts in this one
     public String getFormattedLastLogged() {
-        return "10:22 PM on Mon Jan 31 2014";
+        return getFormattedDate(this.lastLogin,"E, MMM d yyyy 'at' hh:mm a" );
     }
 
 

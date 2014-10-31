@@ -46,6 +46,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
      */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
+
     /**
      * The current activated item position. Only used on tablets.
      */
@@ -116,7 +117,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
-
+        super.onListItemClick(listView, view, position, id);
         Patient patient =
                 (Patient) getListAdapter().getItem(position);
         Log.d(LOG_TAG, "Patient name selected is " + patient.getName()
@@ -135,13 +136,8 @@ public class PhysicianListPatientsFragment extends ListFragment {
         }
     }
 
-    /**
-     * Turns on activate-on-click mode. When this mode is on, list items will be
-     * given the 'activated' state when touched.
-     */
+
     public void setActivateOnItemClick(boolean activateOnItemClick) {
-        // When setting CHOICE_MODE_SINGLE, ListView will automatically
-        // give items the 'activated' state when touched.
         getListView().setChoiceMode(activateOnItemClick
                 ? ListView.CHOICE_MODE_SINGLE
                 : ListView.CHOICE_MODE_NONE);
@@ -153,7 +149,6 @@ public class PhysicianListPatientsFragment extends ListFragment {
         } else {
             getListView().setItemChecked(position, true);
         }
-
         mActivatedPosition = position;
     }
 

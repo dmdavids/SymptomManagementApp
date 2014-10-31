@@ -27,8 +27,8 @@ public class PhysicianPatientDetailActivity extends Activity {
 
         if (savedInstanceState == null) {
             Bundle arguments = new Bundle();
-            arguments.putString(PhysicianPatientDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(PhysicianPatientDetailFragment.ARG_ITEM_ID));
+            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY,
+                    getIntent().getStringExtra(PhysicianPatientDetailFragment.PATIENT_ID_KEY));
             PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()

@@ -2,11 +2,26 @@ package com.skywomantech.app.symptommanagement.physician;
 
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.skywomantech.app.symptommanagement.R;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.skywomantech.app.symptommanagement.Login;
+import com.skywomantech.app.symptommanagement.R;
+import com.skywomantech.app.symptommanagement.client.CallableTask;
+import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
+import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
+import com.skywomantech.app.symptommanagement.client.TaskCallback;
+import com.skywomantech.app.symptommanagement.data.Patient;
+
+import java.util.concurrent.Callable;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 /**
  * A fragment representing a single PhysicianPatient detail screen.
@@ -15,17 +30,22 @@ import com.skywomantech.app.symptommanagement.R;
  * on handsets.
  */
 public class PhysicianPatientDetailFragment extends Fragment {
-    /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
-    public static final String ARG_ITEM_ID = "item_id";
 
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private String mItem;
+    public final static String LOG_TAG = PhysicianPatientDetailFragment.class.getSimpleName();
 
+    public static final String PATIENT_ID_KEY = "patient_id";
+
+    private String  mPatientId;
+    private Patient mPatient;
+
+    @InjectView(R.id.physician_patient_detail_name)
+    TextView mNameView;
+
+    @InjectView(R.id.physician_patient_detail_birthdate)
+    TextView mBDView;
+
+    @InjectView(R.id.physician_patient_last_log)
+    TextView mLastLog;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -37,24 +57,59 @@ public class PhysicianPatientDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
+        if (getArguments().containsKey(PATIENT_ID_KEY)) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = null;
+            mPatientId = getArguments().getString(PATIENT_ID_KEY);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_physicianpatient_detail, container, false);
-
-        // Show the dummy content as text in a TextView.
-        if (mItem != null) {
-            //don't do anything right now
-        }
-
+        View rootView = inflater.inflate(R.layout.fragment_physician_patient_detail, container, false);
+        ButterKnife.inject(this, rootView);
+        mPatient = getPatientFromCloud();
         return rootView;
+    }
+
+    private Patient getPatientFromCloud() {
+        // hardcoded for my local host (see ipconfig for values) at port 8080
+        // need to put this is prefs or somewhere it can me modified
+        final SymptomManagementApi svc =
+                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+
+        if (svc != null) {
+            CallableTask.invoke(new Callable<Patient>() {
+
+                @Override
+                public Patient call() throws Exception {
+                    Log.d(LOG_TAG, "getting Patient ID : " + mPatientId);
+                    return svc.getPatient(mPatientId);
+                }
+            }, new TaskCallback<Patient>() {
+
+                @Override
+                public void success(Patient result) {
+                    mPatient = result;
+                    Log.d(LOG_TAG, "got the Patient!" + mPatient.toDebugString());
+                    if (mPatient != null) {
+                        // set the views with the patient data
+                        mNameView.setText(mPatient.getName());
+                        mBDView.setText(mPatient.getFormattedBirthdate());
+                        mLastLog.setText(mPatient.getFormattedLastLogged());  //TODO: needs real date here!
+                    }
+                }
+
+                @Override
+                public void error(Exception e) {
+                    Toast.makeText(getActivity(),
+                            "Unable to fetch the Patient data. Please check Internet connection.",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+        return null;
     }
 }
