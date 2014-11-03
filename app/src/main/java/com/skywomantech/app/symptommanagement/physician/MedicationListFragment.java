@@ -1,4 +1,4 @@
-package com.skywomantech.app.symptommanagement.admin.Medication;
+package com.skywomantech.app.symptommanagement.physician;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -25,50 +25,16 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 
 
-/**
- * A list fragment representing a list of admin_medications. This fragment
- * also supports tablet devices by allowing list items to be given an
- * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link AdminMedicationDetailFragment}.
- * <p>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
- */
 public class MedicationListFragment extends ListFragment {
 
     private static final String LOG_TAG = MedicationListFragment.class.getSimpleName();
 
-    /**
-     * The serialization (saved instance state) Bundle key representing the
-     * activated item position. Only used on tablets.
-     */
-    private static final String STATE_ACTIVATED_POSITION = "activated_position";
-
-    /**
-     * The current activated item position. Only used on tablets.
-     */
-    private int mActivatedPosition = ListView.INVALID_POSITION;
-
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
     public interface Callbacks {
-
-        // called when user selects a Medication
-        public void onMedicationSelected(String medId);
-
-        // called when user wants to add a medication
+        public void onMedicationSelected(Medication medication);
         public void onAddMedication();
-
         public boolean showAddMedicationOptionsMenu();
     }
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public MedicationListFragment() {
     }
 
@@ -81,11 +47,6 @@ public class MedicationListFragment extends ListFragment {
         setHasOptionsMenu(((Callbacks) getActivity()).showAddMedicationOptionsMenu());
 
         setEmptyText(getString(R.string.empty_list_text));
-        // Restore the previously serialized activated item position.
-        if (savedInstanceState != null
-                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
-        }
     }
 
     @Override
@@ -134,50 +95,17 @@ public class MedicationListFragment extends ListFragment {
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
-
         Medication med = (Medication) getListAdapter().getItem(position);
+
         Log.d(LOG_TAG, "Medication name selected is " + med.getName()
                 + " id is : " + med.getId());
+
         String medId = med.getId();
         Log.d(LOG_TAG, " String id value is : " + medId);
-        ((Callbacks) getActivity()).onMedicationSelected(medId);
-        setActivatedPosition(position);
+        ((Callbacks) getActivity()).onMedicationSelected(med);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mActivatedPosition != ListView.INVALID_POSITION) {
-            // Serialize and persist the activated item position.
-            Log.v(LOG_TAG, "Saving the activated medication list position as "
-                    + Integer.toString(mActivatedPosition));
-            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
-        }
-    }
-
-    /**
-     * Turns on activate-on-click mode. When this mode is on, list items will be
-     * given the 'activated' state when touched.
-     */
-    public void setActivateOnItemClick(boolean activateOnItemClick) {
-        // When setting CHOICE_MODE_SINGLE, ListView will automatically
-        // give items the 'activated' state when touched.
-        getListView().setChoiceMode(activateOnItemClick
-                ? ListView.CHOICE_MODE_SINGLE
-                : ListView.CHOICE_MODE_NONE);
-    }
-
-    private void setActivatedPosition(int position) {
-        if (getListView() == null) return;
-        if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
-        } else {
-            getListView().setItemChecked(position, true);
-        }
-        mActivatedPosition = position;
-    }
-
-    private void refreshAllMedications() {
+    public void refreshAllMedications() {
 
         // hardcoded for my local host (see ipconfig for values) at port 8080
         // need to put this is prefs or somewhere it can me modified
@@ -197,11 +125,14 @@ public class MedicationListFragment extends ListFragment {
                 @Override
                 public void success(Collection<Medication> result) {
                     Log.d(LOG_TAG,"creating list of all medications");
-                    setListAdapter(new ArrayAdapter<Medication>(
-                            getActivity(),
-                            android.R.layout.simple_list_item_activated_1,
-                            android.R.id.text1,
-                            new ArrayList(result)));
+                    if(result != null) {
+                        Log.d(LOG_TAG, "REFRESHING MEDICATION LIST!");
+                        setListAdapter(new ArrayAdapter<Medication>(
+                                getActivity(),
+                                android.R.layout.simple_list_item_activated_1,
+                                android.R.id.text1,
+                                new ArrayList(result)));
+                    }
                 }
                 @Override
                 public void error(Exception e) {

@@ -87,4 +87,7 @@ public class PhysicianListPatientsActivity extends Activity
             startActivity(detailIntent);
         }
     }
+
+    public void onAddMedication(String id) {
+    }
 }

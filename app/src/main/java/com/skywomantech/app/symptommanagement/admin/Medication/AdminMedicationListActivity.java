@@ -1,76 +1,42 @@
 package com.skywomantech.app.symptommanagement.admin.Medication;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
+import com.skywomantech.app.symptommanagement.client.CallableTask;
+import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
+import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
+import com.skywomantech.app.symptommanagement.client.TaskCallback;
+import com.skywomantech.app.symptommanagement.data.Medication;
+import com.skywomantech.app.symptommanagement.physician.MedicationAddEditDialog;
+import com.skywomantech.app.symptommanagement.physician.MedicationListFragment;
+
+import java.util.concurrent.Callable;
 
 import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
 
 
-/**
- * An activity representing a list of admin_medications. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link AdminMedicationDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
- * <p>
- * The activity makes heavy use of fragments. The list of items is a
- * {@link MedicationListFragment} and the item details
- * (if present) is a {@link AdminMedicationDetailFragment}.
- * <p>
- * This activity also implements the required
- * {@link MedicationListFragment.Callbacks} interface
- * to listen for item selections.
- */
 public class AdminMedicationListActivity extends Activity
-        implements MedicationListFragment.Callbacks {
+        implements
+        MedicationListFragment.Callbacks,
+        MedicationAddEditDialog.Callbacks {
 
     public final String LOG_TAG = AdminMedicationListActivity.class.getSimpleName();
-
-    /**
-     * The fragment argument representing the medication ID that this fragment
-     * represents.
-     */
-    public static final String MED_ID_KEY = "med_id";
-
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_medication_list);
-        // Show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // return if Activity is being restored, no need to recreate GUI
-        if (savedInstanceState != null)
-            return;
-
-        if (findViewById(R.id.adminmedication_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-large and
-            // res/values-sw600dp). If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-
-            // In two-pane mode, list items should be given the
-            // 'activated' state when touched.
-            ((MedicationListFragment) getFragmentManager()
-                    .findFragmentById(R.id.adminmedication_list))
-                    .setActivateOnItemClick(true);
-        }
-
-        // TODO: If exposing deep links into your app, handle intents here.
     }
 
     @Override
@@ -83,31 +49,14 @@ public class AdminMedicationListActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Callback method from {@link MedicationListFragment.Callbacks}
-     * indicating that the item with the given ID was selected.
-     */
+
     @Override
-    public void onMedicationSelected(String medId) {
-        Log.d(LOG_TAG, "Saving Med ID: " + medId + " 2-pane is " + Boolean.toString(mTwoPane));
-        if (mTwoPane) {
-            // In two-pane mode, show the detail view in this activity by
-            // adding or replacing the detail fragment using a
-            // fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(MED_ID_KEY, medId);
-            AdminMedicationDetailFragment fragment = new AdminMedicationDetailFragment();
-            fragment.setArguments(arguments);
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.adminmedication_detail_container, fragment)
-                    .commit();
-        } else {
-            // In single-pane mode, simply start the detail activity
-            // for the selected item ID.
-            Intent detailIntent = new Intent(this, AdminMedicationDetailActivity.class);
-            detailIntent.putExtra(MED_ID_KEY, medId);
-            startActivity(detailIntent);
-        }
+    public void onMedicationSelected(Medication medication) {
+        Log.d(LOG_TAG, "Displaying Medication Edit Dialog for medication : "
+                + medication.toDebugString());
+        FragmentManager fm = getFragmentManager();
+        MedicationAddEditDialog medicationDialog = MedicationAddEditDialog.newInstance(medication);
+        medicationDialog.show(fm, "med_edit_dialog");
     }
 
     @Override
@@ -117,25 +66,61 @@ public class AdminMedicationListActivity extends Activity
 
     @Override
     public void onAddMedication() {
-        Log.d(LOG_TAG, "Changing to Add/Edit Fragment");
-        if (mTwoPane) {
-            // In two-pane mode, show the detail view in this activity by
-            // adding or replacing the detail fragment using a
-            // fragment transaction.
-            Bundle arguments = new Bundle();
-            AdminMedicationAddEditFragment fragment = new AdminMedicationAddEditFragment();
-            fragment.setArguments(arguments);
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.adminmedication_detail_container, fragment)
-                    .commit();
-        } else {
-            // In single-pane mode, simply start the detail activity
-            // for the selected item ID.
-            Intent detailIntent = new Intent(this, AdminMedicationDetailActivity.class);
-            startActivity(detailIntent);
+        Log.d(LOG_TAG, "Displaying Medication Add Dialog");
+        FragmentManager fm = getFragmentManager();
+        MedicationAddEditDialog medicationDialog = MedicationAddEditDialog.newInstance(new Medication());
+        medicationDialog.show(fm, "med_add_dialog");
+    }
+
+    @Override
+    public void onSaveMedicationResult(final Medication medication) {
+        // no name to work with so we aren't gonna do anything here
+        if (medication.getName() == null || medication.getName().isEmpty()) return;
+
+        // we have a name so now we can get some work done
+        final SymptomManagementApi svc =
+                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+
+        if (svc != null) {
+            CallableTask.invoke(new Callable<Medication>() {
+
+                @Override
+                public Medication call() throws Exception {
+                    if (medication.getId() == null || medication.getId().isEmpty()) {
+                        Log.d(LOG_TAG, "adding mMedication :" + medication.toDebugString());
+                        return svc.addMedication(medication);
+                    } else {
+                        Log.d(LOG_TAG, "updating mMedication :" + medication.toDebugString());
+                        return svc.updateMedication(medication.getId(), medication);
+                    }
+                }
+            }, new TaskCallback<Medication>() {
+
+                @Override
+                public void success(Medication result) {
+                    Log.d(LOG_TAG, "Medication change was successful.");
+                    // if we are still in the medication list view then update the list
+                    Fragment fragment = getFragmentManager()
+                            .findFragmentById(R.id.adminmedication_list);
+                    if (fragment instanceof MedicationListFragment) {
+                        // refreshing medications
+                        ((MedicationListFragment) fragment).refreshAllMedications();
+                    }
+
+                }
+
+                @Override
+                public void error(Exception e) {
+                    Toast.makeText(getApplicationContext(),
+                            "Unable to SAVE Medication. Please check Internet connection.",
+                            Toast.LENGTH_LONG).show();
+                }
+            });
         }
     }
 
-
-
+    @Override
+    public void onCancelMedicationResult() {
+        Log.d(LOG_TAG, "Add/Edit Medication was cancelled.");
+    }
 }

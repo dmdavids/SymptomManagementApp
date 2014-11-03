@@ -33,15 +33,10 @@ import java.util.concurrent.Callable;
  * 'activated' state upon selection. This helps indicate which item is
  * currently being viewed in a {@link com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailFragment}.
  * <p>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
  */
 public class HistoryLogFragment extends ListFragment {
 
     private static final String LOG_TAG = HistoryLogFragment.class.getSimpleName();
-
-    String mPhysicianId = "5445d3f9ca4c027d60d2b1f7";
-    HistoryLogAdapter mAdapter;
     private String  mPatientId;
     private Patient mPatient;
 
@@ -70,6 +65,7 @@ public class HistoryLogFragment extends ListFragment {
         if (getArguments().containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY)) {
             mPatientId = getArguments().getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
         }
+        this.setRetainInstance(true);  // save the fragment state with rotations
     }
 
     @Override

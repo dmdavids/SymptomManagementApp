@@ -33,7 +33,7 @@
     <string name="title_admin_medication_detail">Admin Medications Detail</string>
     <string name="admin_medication_edit">Edit</string>
     <string name="admin_medication_delete">Delete</string>
-    <string name="admin_medication_add">Add</string>
+    <string name="admin_medication_add">Add Medication</string>
     <string name="empty_list_text">This List is Empty.</string>
     <string name="title_activity_patient_main">Patient Main</string>
     <string name="title_activity_pain_log">Pain Logs</string>

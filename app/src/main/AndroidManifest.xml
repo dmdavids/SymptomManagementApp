@@ -99,14 +99,6 @@
                 android:value="com.skywomantech.app.symptommanagement.AdminMain" />
         </activity>
         <activity
-            android:name=".admin.Medication.AdminMedicationDetailActivity"
-            android:label="@string/title_admin_medication_detail"
-            android:parentActivityName=".admin.Medication.AdminMedicationListActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skywomantech.app.symptommanagement.adminmedicationListActivity" />
-        </activity>
-        <activity
             android:name=".patient.PatientMainActivity"
             android:label="@string/title_activity_patient_main"
             android:parentActivityName=".Login" >

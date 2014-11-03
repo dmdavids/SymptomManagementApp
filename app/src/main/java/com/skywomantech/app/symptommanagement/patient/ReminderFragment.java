@@ -28,6 +28,7 @@ import com.skywomantech.app.symptommanagement.data.Reminder;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.TreeSet;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
