@@ -19,6 +19,7 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Medication;
+import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.concurrent.Callable;
 
@@ -105,6 +106,9 @@ public class PhysicianPatientDetailActivity extends Activity implements
                     .replace(R.id.physician_patient_detail_container, fragment)
                     .addToBackStack(null)
                     .commit();
+            return true;
+        } else if (id == R.id.action_sync_alerts) {
+            SymptomManagementSyncAdapter.syncImmediately(this);
             return true;
         }
         return super.onOptionsItemSelected(item);

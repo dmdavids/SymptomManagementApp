@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import com.skywomantech.app.symptommanagement.admin.AdminMain;
 import com.skywomantech.app.symptommanagement.patient.PatientMainActivity;
 import com.skywomantech.app.symptommanagement.physician.PhysicianListPatientsActivity;
+import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -27,6 +28,7 @@ public class Login extends Activity {
 
     public final static String SERVER_ADDRESS = "http://192.168.0.34:8080";
     private static String mPatientId = "5445d476ca4c027d60d2b1fa";
+    private static String mPhysicianId = "5445d3f9ca4c027d60d2b1f7";
 
 
     // TODO: needs better design
@@ -134,6 +136,9 @@ public class Login extends Activity {
             setPatientId(this, mPatientId);
             mIsPatient = true;
         }
+        if(type == LoginType.PHYSICIAN) {
+            setPhysicianId(this, mPhysicianId);
+        }
     }
 
     private static LoginType getUserType() {
@@ -166,8 +171,8 @@ public class Login extends Activity {
         public void loginAdministrator() {
             ((Login)getActivity()).setUserType(LoginType.ADMIN);
             mHasAdmin = true;
-            mIsPatient = false;
             mIsLoggedIn = true;
+            SymptomManagementSyncAdapter.setPatientDevice(false);
             startActivity(new Intent(getActivity(), AdminMain.class));
         }
 
@@ -176,8 +181,8 @@ public class Login extends Activity {
         public void loginPhysician() {
             ((Login)getActivity()).setUserType(LoginType.PHYSICIAN);
             mHasAdmin = false;
-            mIsPatient = false;
             mIsLoggedIn = true;
+            SymptomManagementSyncAdapter.setPatientDevice(false);
             startActivity(new Intent(getActivity(), PhysicianListPatientsActivity.class));
         }
 
@@ -197,9 +202,9 @@ public class Login extends Activity {
             ((Login)getActivity()).setUserType(LoginType.PATIENT);
             mHasAdmin = false;
             mIsLoggedIn = true;
-            mIsPatient = true;
             setCheckin(getActivity(), checkin);
             setPatientId(getActivity(), mPatientId);
+            SymptomManagementSyncAdapter.setPatientDevice(true);
             startActivity(new Intent(getActivity(), PatientMainActivity.class));
         }
 

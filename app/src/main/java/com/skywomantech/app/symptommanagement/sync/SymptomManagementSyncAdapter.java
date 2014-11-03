@@ -21,6 +21,7 @@ import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
+import com.skywomantech.app.symptommanagement.data.Alert;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.MedicationLog;
 import com.skywomantech.app.symptommanagement.data.PainLog;
@@ -51,10 +52,12 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     private static final int SYNC_INTERVAL = 60 * 5;  //  5 minutes
     private static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
-    private final boolean mPatientDevice = true;
-    private final boolean mPhysicianLoggedIn = false;
+    private static boolean mPatientDevice = true;
+    private boolean mPhysicianLoggedIn = false;
     private String mPatientId = ""; // = "2084098340928"; // TODO: needs a real id from db to work
     private Patient mPatient;
+    private String mPhysicianId;
+    private Collection<Alert> mAlerts;
 
 
     public SymptomManagementSyncAdapter(Context context, boolean autoInitialize) {
@@ -169,13 +172,17 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle bundle, String authority,
                               ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting onPerformSync");
-        processPhysicianSync();
-
-        mPatientId = Login.getPatientId(mContext);
-        if (mPatientId != null && !mPatientId.isEmpty()) {
-            processPatientSync();
+        if (mPatientDevice) {
+            mPatientId = Login.getPatientId(mContext);
+            if (mPatientId != null && !mPatientId.isEmpty()) {
+                Log.v(LOG_TAG, "Patient SYNC!");
+                processPatientSync();
+            } else {
+                Log.v(LOG_TAG, "Skipping Patient Sync - no Patient identified.");
+            }
         } else {
-            Log.v(LOG_TAG,"Skipping Patient Sync - no Patient identified.");
+            Log.v(LOG_TAG, "PHYSICIAN SYNC!");
+            processPhysicianSync();
         }
     }
 
@@ -201,7 +208,6 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
             patientRecord.setPrefs(new PatientPrefs());
         }
         patientRecord.getPrefs().setAlerts(getUpdatedReminders());
-
         sendPatientRecordToCloud(patientRecord);
     }
 
@@ -376,9 +382,47 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     private void processPhysicianSync() {
         if (mPatientDevice) return;
         Log.d(LOG_TAG, "Physician sync");
-//
-//        Collection<Alert> alerts = getPhysicianAlerts();
+        Collection<Alert> alerts = getPhysicianAlerts();
 //        notifyPhysicianAlerts(alerts);
+    }
+
+    private Collection<Alert> getPhysicianAlerts() {
+        mPhysicianId = Login.getPhysicianId(mContext);
+        Log.d(LOG_TAG, "get Alerts for Physician : " + mPhysicianId);
+
+        final SymptomManagementApi svc =
+                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+
+        if (svc != null) {
+            CallableTask.invoke(new Callable<Collection<Alert>>() {
+
+                @Override
+                public Collection<Alert> call() throws Exception {
+                    Log.d(LOG_TAG, "getting patient alerts for physician : " + mPhysicianId);
+                    return svc.getPatientAlerts(mPhysicianId);
+                }
+            }, new TaskCallback<Collection<Alert>>() {
+
+                @Override
+                public void success(Collection<Alert> result) {
+                    if (result != null) {
+                        Log.d(LOG_TAG, "Found Alerts size of :" + result.size());
+                    }
+                    mAlerts = result;
+                }
+
+                @Override
+                public void error(Exception e) {
+                    Log.e(LOG_TAG, "Sync unable to get patients alerts from internet." +
+                            " Check your internet.");
+                }
+            });
+        }
+        return mAlerts;
+    }
+
+    public static void setPatientDevice(boolean isPatient) {
+        mPatientDevice = isPatient;
     }
 
 }

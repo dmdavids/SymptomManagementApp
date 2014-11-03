@@ -4,8 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 
+import android.view.Menu;
 import android.view.MenuItem;
 import com.skywomantech.app.symptommanagement.R;
+import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
 
@@ -50,12 +52,20 @@ public class PhysicianListPatientsActivity extends Activity
                     .setActivateOnItemClick(true);
         }
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.physician_patient_list_menu, menu);
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             navigateUpFromSameTask(this);
+            return true;
+        } else if (id == R.id.action_sync_alerts) {
+            SymptomManagementSyncAdapter.syncImmediately(this);
             return true;
         }
         return super.onOptionsItemSelected(item);
