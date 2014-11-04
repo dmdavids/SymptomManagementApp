@@ -40,6 +40,9 @@ public class PatientDBHelper extends SQLiteOpenHelper {
      * to use separately managed tables and code-in all the
      * rules vs use the database capabilities.
      *
+     * BIG NOTE:  There is some logic fail here if more than one patient is
+     * using this device!!!
+     *
      * @param sqLiteDatabase database we are working with
      */
     @Override
@@ -64,22 +67,18 @@ public class PatientDBHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_PRESCRIPTION_TABLE =
                 "CREATE TABLE " + PrescriptionEntry.TABLE_NAME + " (" +
                         PrescriptionEntry._ID + " INTEGER PRIMARY KEY," +
-                        PrescriptionEntry.COLUMN_PATIENT_ID + " TEXT UNIQUE NOT NULL, " +
+                        PrescriptionEntry.COLUMN_PATIENT_ID + " TEXT  NOT NULL, " +
                         PrescriptionEntry.COLUMN_MEDICATION_ID + " TEXT UNIQUE NOT NULL, " +
-                        PrescriptionEntry.COLUMN_NAME + " TEXT NOT NULL, " +
-                        "UNIQUE (" + PrescriptionEntry.COLUMN_MEDICATION_ID
-                        +") ON CONFLICT REPLACE"+
+                        PrescriptionEntry.COLUMN_NAME + " TEXT NOT NULL " +
                         " );";
         sqLiteDatabase.execSQL(SQL_CREATE_PRESCRIPTION_TABLE);
 
         final String SQL_CREATE_PHYSICIAN_TABLE =
                 "CREATE TABLE " + PhysicianEntry.TABLE_NAME + " (" +
                         PhysicianEntry._ID + " INTEGER PRIMARY KEY," +
-                        PhysicianEntry.COLUMN_PATIENT_ID + " TEXT UNIQUE NOT NULL, " +
-                        PhysicianEntry.COLUMN_PHYSICIAN_ID + " TEXT UNIQUE NOT NULL, " +
-                        PhysicianEntry.COLUMN_NAME + " TEXT NOT NULL, " +
-                        "UNIQUE (" + PhysicianEntry.COLUMN_PHYSICIAN_ID
-                        +") ON CONFLICT REPLACE"+
+                        PhysicianEntry.COLUMN_PATIENT_ID + " TEXT  NOT NULL, " +
+                        PhysicianEntry.COLUMN_PHYSICIAN_ID + " TEXT , " +
+                        PhysicianEntry.COLUMN_NAME + " TEXT NOT NULL " +
                         " );";
         sqLiteDatabase.execSQL(SQL_CREATE_PHYSICIAN_TABLE);
 

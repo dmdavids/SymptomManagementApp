@@ -37,31 +37,32 @@
         >
 
             <LinearLayout
-                android:id="@+id/email_login_form"
+                android:id="@+id/username_login_form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <AutoCompleteTextView
-                    android:id="@+id/email"
+                <EditText
+                    android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_email"
-                    android:inputType="textEmailAddress"
+                    android:hint="@string/prompt_username"
                     android:maxLines="1"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:drawableLeft="@drawable/ic_action_user"/>
 
                 <EditText
-                    android:id="@+id/password"
+                    android:id="@+id/sm_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Password"
-                    android:imeActionId="@+id/login"
+                    android:imeActionId="@+id/goto_login"
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:singleLine="true"/>
+                    android:singleLine="true"
+                    android:drawableLeft="@drawable/ic_action_lock"/>
 
                 <CheckBox
                     android:layout_width="wrap_content"
@@ -72,7 +73,7 @@
                     android:layout_gravity="center_horizontal" />
 
                 <Button
-                    android:id="@+id/email_sign_in_button"
+                    android:id="@+id/username_sign_in_button"
                     style="?android:textAppearanceSmall"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

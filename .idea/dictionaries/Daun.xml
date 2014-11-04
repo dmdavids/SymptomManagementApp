@@ -2,6 +2,7 @@
   <dictionary name="Daun">
     <words>
       <w>backstack</w>
+      <w>bday</w>
       <w>birthdate</w>
       <w>checkin</w>
       <w>failsafes</w>
@@ -9,6 +10,7 @@
       <w>meds</w>
       <w>mongo</w>
       <w>patient's</w>
+      <w>programmatically</w>
       <w>saveable</w>
       <w>skywomantech</w>
       <w>symptommanagement</w>

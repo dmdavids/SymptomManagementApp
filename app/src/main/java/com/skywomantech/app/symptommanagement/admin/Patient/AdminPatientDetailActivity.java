@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Physician;
+import com.skywomantech.app.symptommanagement.physician.PatientMedicationFragment;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,7 +26,8 @@ import java.util.Set;
  * more than a {@link PatientDetailFragment}.
  */
 public class AdminPatientDetailActivity extends Activity
-            implements PatientDetailFragment.Callbacks {
+            implements PatientDetailFragment.Callbacks,
+        BirthdateDialog.Callbacks {
     private static final String LOG_TAG = AdminPatientDetailActivity.class.getSimpleName();
     public final static String PATIENT_ID_KEY = AdminPatientListActivity.PATIENT_ID_KEY;
 
@@ -77,4 +79,19 @@ public class AdminPatientDetailActivity extends Activity
                 .commit();
     }
 
+    @Override
+    public void onPositiveResult(long time) {
+        PatientAddEditFragment frag =
+                (PatientAddEditFragment) getFragmentManager()
+                        .findFragmentById(R.id.adminpatient_detail_container);
+        frag.onPositiveResult(time);
+    }
+
+    @Override
+    public void onNegativeResult() {
+        PatientAddEditFragment frag =
+                (PatientAddEditFragment) getFragmentManager()
+                        .findFragmentById(R.id.adminpatient_detail_container);
+        frag.onNegativeResult();
+    }
 }

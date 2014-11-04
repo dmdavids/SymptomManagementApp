@@ -175,13 +175,11 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         if (mPatientDevice) {
             mPatientId = Login.getPatientId(mContext);
             if (mPatientId != null && !mPatientId.isEmpty()) {
-                Log.v(LOG_TAG, "Patient SYNC!");
                 processPatientSync();
             } else {
                 Log.v(LOG_TAG, "Skipping Patient Sync - no Patient identified.");
             }
         } else {
-            Log.v(LOG_TAG, "PHYSICIAN SYNC!");
             processPhysicianSync();
         }
     }
@@ -228,10 +226,8 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         mPatientId = Login.getPatientId(mContext);
         Log.d(LOG_TAG, "getPatientRecordFromCloud - Patient ID is : " + mPatientId);
 
-        // hardcoded for my local host (see ipconfig for values) at port 8080
-        // need to put this is prefs or somewhere it can me modified
         final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+                SymptomManagementService.getService();
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
@@ -348,10 +344,9 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     }
     private void sendPatientRecordToCloud(final Patient patientRecord) {
         mPatientId = Login.getPatientId(mContext);
-        // hardcoded for my local host (see ipconfig for values) at port 8080
-        // need to put this is prefs or somewhere it can me modified
+
         final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+                SymptomManagementService.getService();
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
@@ -391,7 +386,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         Log.d(LOG_TAG, "get Alerts for Physician : " + mPhysicianId);
 
         final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+                SymptomManagementService.getService();
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Collection<Alert>>() {

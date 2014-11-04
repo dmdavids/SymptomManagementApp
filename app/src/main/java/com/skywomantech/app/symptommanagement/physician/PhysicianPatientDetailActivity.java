@@ -164,7 +164,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
 
         // we have a name so now we can get some work done
         final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+                SymptomManagementService.getService();
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Medication>() {

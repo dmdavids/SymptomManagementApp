@@ -3,7 +3,7 @@
     <item
         android:id="@+id/action_add"
         android:orderInCategory="0"
-        android:title="@string/admin_medication_add"
+        android:title="Add"
         android:icon="@android:drawable/ic_menu_add"
         android:showAsAction="ifRoom|withText"/>
 

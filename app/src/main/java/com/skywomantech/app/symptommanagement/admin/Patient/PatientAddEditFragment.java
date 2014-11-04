@@ -1,6 +1,7 @@
 package com.skywomantech.app.symptommanagement.admin.Patient;
 
 import android.app.AlertDialog;
+
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -13,10 +14,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
+
 import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
@@ -25,37 +28,30 @@ import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.Physician;
 
 import java.util.ArrayList;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
+
 import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-/**
- * A fragment representing a single admin_medication detail screen.
- * This fragment is either contained in a {@link com.skywomantech.app.symptommanagement.admin.Medication.AdminMedicationListActivity}
- * in two-pane mode (on tablets) or a {@link com.skywomantech.app.symptommanagement.admin.Medication.AdminMedicationDetailActivity}
- * on handsets.
- */
-public class PatientAddEditFragment extends Fragment {
+public class PatientAddEditFragment extends Fragment  {
     private static final String LOG_TAG = PatientAddEditFragment.class.getSimpleName();
 
     public final static String PATIENT_ID_KEY = AdminPatientListActivity.PATIENT_ID_KEY;
 
-    private Patient mPatient;
+    private static Patient mPatient;
     private String mPatientId;
 
-
-    @InjectView(R.id.admin_patient_edit_first_name)  EditText mFirstName;
-    @InjectView(R.id.admin_patient_edit_last_name)  EditText mLastName;
-    @InjectView(R.id.admin_patient_edit_birthdate) EditText mBirthdate;
+    @InjectView(R.id.edit_first_name)  EditText mFirstName;
+    @InjectView(R.id.edit_last_name)  EditText mLastName;
+    @InjectView(R.id.display_birthdate)  TextView mBirthdate;
     @InjectView(R.id.admin_patient_physician_listview)  ListView mPhysiciansListView;
-
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -113,7 +109,6 @@ public class PatientAddEditFragment extends Fragment {
         }
     }
 
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putString(PATIENT_ID_KEY, mPatientId);
@@ -123,10 +118,9 @@ public class PatientAddEditFragment extends Fragment {
     private void loadPatientFromAPI() {
         if (mPatientId == null) return;
         Log.d(LOG_TAG, "LoadFromAPI - Physician ID Key is : " + mPatientId);
-        // hardcoded for my local host (see ipconfig for values) at port 8080
-        // need to put this is prefs or somewhere it can me modified
+
         final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+                SymptomManagementService.getService();
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
@@ -178,24 +172,9 @@ public class PatientAddEditFragment extends Fragment {
             errorSaving.show(getFragmentManager(), "Error saving/updating patient");
             return;
         }
-        else if ( mPatient.formatBirthdate(mBirthdate.getText().toString()) < 0) {
-            DialogFragment errorSaving =
-                    new DialogFragment() {
-                        @Override
-                        public Dialog onCreateDialog(Bundle savedInstanceState) {
-                            AlertDialog.Builder builder =
-                                    new AlertDialog.Builder(getActivity());
-                            builder.setMessage("Unable to Save patient. Please Enter a valid birthdate with format mm/dd/yyyy.");
-                            builder.setPositiveButton("OK", null);
-                            return builder.create();
-                        }
-                    };
-            errorSaving.show(getFragmentManager(), "Error saving/updating patient");
-            return;
-        }
 
         final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+                SymptomManagementService.getService();
 
         final String successMsg = (mPatientId == null ? "ADDED" : "UPDATED");
         if (svc != null) {
@@ -206,8 +185,6 @@ public class PatientAddEditFragment extends Fragment {
                     mPatient.setId(mPatientId);
                     mPatient.setFirstName(mFirstName.getText().toString());
                     mPatient.setLastName(mLastName.getText().toString());
-                    long birth = mPatient.formatBirthdate(mBirthdate.getText().toString());
-                    if ( birth >= 0L) mPatient.setBirthdate(birth);
                     if (mPatientId == null) {
                         Log.d(LOG_TAG, "adding patient :" + mPatient.toDebugString());
                         return svc.addPatient(mPatient);
@@ -259,7 +236,7 @@ public class PatientAddEditFragment extends Fragment {
 
     public void updatePatient() {
         final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+                SymptomManagementService.getService();
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
@@ -337,10 +314,9 @@ public class PatientAddEditFragment extends Fragment {
     private static Physician mPhysician;
     private void loadAndSavePhysicianFromAPI(final String physicianId) {
         Log.d(LOG_TAG, "Getting Physician to Update Patients - Physician ID is : " + physicianId);
-        // hardcoded for my local host (see ipconfig for values) at port 8080
-        // need to put this is prefs or somewhere it can me modified
+
         final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+                SymptomManagementService.getService();
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Physician>() {
@@ -382,7 +358,7 @@ public class PatientAddEditFragment extends Fragment {
     public void savePhysician() {
 
         final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+                SymptomManagementService.getService();
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Physician>() {
@@ -423,4 +399,18 @@ public class PatientAddEditFragment extends Fragment {
         ButterKnife.reset(this);
     }
 
+    @OnClick(R.id.pick_birthdate)
+    public void showDatePickerDialog(View v) {
+        BirthdateDialog newFragment = BirthdateDialog.newInstance(mPatient.getBirthdate());
+        newFragment.show(getFragmentManager(), "birthdayPicker");
+    }
+
+    public void onPositiveResult(long time) {
+        mPatient.setBirthdate(time);
+        mBirthdate.setText(mPatient.getFormattedBirthdate());
+    }
+
+    public void onNegativeResult() {
+        mBirthdate.setText(mPatient.getFormattedBirthdate());
+    }
 }

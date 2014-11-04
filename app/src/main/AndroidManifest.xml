@@ -19,13 +19,22 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".Login"
+            android:name=".LoginActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".Login"
+            android:label="Testing Sign In"
+            android:parentActivityName=".LoginActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.skywomantech.app.symptommanagement.LoginActivity" />
         </activity>
 
         <provider
@@ -121,15 +130,6 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.skywomantech.app.symptommanagement.physician.PhysicianPatientListActivity" />
-        </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:label="Sign In"
-            android:parentActivityName=".Login"
-            android:windowSoftInputMode="adjustResize|stateVisible" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skywomantech.app.symptommanagement.Login" />
         </activity>
 
         <provider

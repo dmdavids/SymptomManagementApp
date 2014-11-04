@@ -24,6 +24,8 @@ import retrofit.http.Query;
  */
 public interface SymptomManagementApi {
 
+    public static final String TOKEN_PATH = "/oauth/token";
+
     public static final String PATIENT_PATH = "/patient";
     public static final String PHYSICIAN_PATH = "/physician";
     public static final String MEDICATION_PATH = "/medication";

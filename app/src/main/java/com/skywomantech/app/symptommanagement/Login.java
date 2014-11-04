@@ -26,7 +26,6 @@ public class Login extends Activity {
 
     public final static String LOG_TAG = Login.class.getSimpleName();
 
-    public final static String SERVER_ADDRESS = "http://192.168.0.34:8080";
     private static String mPatientId = "5445d476ca4c027d60d2b1fa";
     private static String mPhysicianId = "5445d3f9ca4c027d60d2b1f7";
 

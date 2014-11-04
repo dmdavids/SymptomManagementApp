@@ -111,10 +111,9 @@ public class AdminPhysicianAddEditFragment extends Fragment {
     private void loadPhysicianFromAPI() {
         if (mPhysicianId == null) return;
         Log.d(LOG_TAG, "LoadFromAPI - Physician ID Key is : " + mPhysicianId);
-        // hardcoded for my local host (see ipconfig for values) at port 8080
-        // need to put this is prefs or somewhere it can me modified
+
         final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+                SymptomManagementService.getService();
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Physician>() {
@@ -169,7 +168,7 @@ public class AdminPhysicianAddEditFragment extends Fragment {
         }
 
         final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+                SymptomManagementService.getService();
 
         final String successMsg = (mPhysicianId == null ? "ADDED" : "UPDATED");
         if (svc != null) {

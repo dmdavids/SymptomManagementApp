@@ -72,10 +72,9 @@ public class PhysicianPatientDetailFragment extends Fragment {
     }
 
     private Patient getPatientFromCloud() {
-        // hardcoded for my local host (see ipconfig for values) at port 8080
-        // need to put this is prefs or somewhere it can me modified
+
         final SymptomManagementApi svc =
-                SymptomManagementService.getService(Login.SERVER_ADDRESS);
+                SymptomManagementService.getService();
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
