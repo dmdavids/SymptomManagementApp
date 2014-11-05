@@ -34,15 +34,15 @@ public class Patient {
 
     public Patient( String firstName, String lastName ){
         super();
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstName = firstName.trim();
+        this.lastName = lastName.trim();
         this.birthdate = System.currentTimeMillis();
     }
 
     public Patient(Patient patient) {
         super();
-        this.firstName = patient.getFirstName();
-        this.lastName = patient.getLastName();
+        this.firstName = patient.getFirstName().trim();
+        this.lastName = patient.getLastName().trim();
         this.birthdate = patient.getBirthdate();
         this.id = patient.getId();
     }
@@ -52,8 +52,8 @@ public class Patient {
                     Set<Physician> physicians, Set<PainLog> painLog,
                     Set<MedicationLog> medLog, Set<StatusLog> statusLog, PatientPrefs prefs) {
         super();
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstName = firstName.trim();
+        this.lastName = lastName.trim();
         this.birthdate = birthdate;
         this.lastLogin = lastLogin;
         this.active = active;
@@ -89,12 +89,20 @@ public class Patient {
         return name;
     }
 
+    public String getUserName() {
+        String name = "";
+        if (firstName != null && !firstName.isEmpty()) name += firstName;
+        if (!name.isEmpty()) name += ".";
+        if (lastName != null  && !lastName.isEmpty()) name+= lastName;
+        return name;
+    }
+
     public String getFirstName() {
         return firstName;
     }
 
     public void setFirstName(String firstName) {
-        this.firstName = firstName;
+        this.firstName = firstName.trim();
     }
 
     public String getLastName() {
@@ -102,7 +110,7 @@ public class Patient {
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        this.lastName = lastName.trim();
     }
 
     public long getBirthdate() {
@@ -238,22 +246,6 @@ public class Patient {
         return getFormattedDate(this.birthdate, "MM/dd/yyyy");
     }
 
-    // returns 0 if the string is invalid
-    public static long formatBirthdate(String s) {
-        if (s == null || s.isEmpty()) return -1L;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        Date dt = null;
-        try {
-            dt = dateFormat.parse(s);
-        } catch (ParseException e) {
-            return -1L;
-        }
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(dt);
-        return cal.getTimeInMillis();
-    }
-
     public String getFormattedDate(long dt, String fmt) {
         if (dt <= 0L) return "";
         Date date = new Date(dt);
@@ -265,6 +257,5 @@ public class Patient {
     public String getFormattedLastLogged() {
         return getFormattedDate(this.lastLogin,"E, MMM d yyyy 'at' hh:mm a" );
     }
-
 
 }

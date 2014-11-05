@@ -4,7 +4,7 @@
 **
 ** 
 */
-package com.skywomantech.app.symptommanagement.oauth.unsafe;
+package com.skywomantech.app.symptommanagement.client.oauth.unsafe;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

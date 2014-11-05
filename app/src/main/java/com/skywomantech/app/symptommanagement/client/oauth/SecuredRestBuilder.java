@@ -4,7 +4,7 @@
  **
  ** 
  */
-package com.skywomantech.app.symptommanagement.oauth;
+package com.skywomantech.app.symptommanagement.client.oauth;
 
 import java.util.ArrayList;
 import java.util.List;

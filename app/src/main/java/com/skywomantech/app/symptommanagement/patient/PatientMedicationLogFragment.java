@@ -94,7 +94,7 @@ public class PatientMedicationLogFragment extends Fragment {
         mLogList[position].setTaken(msTime);
 
         // save this one to the database
-        String mPatientId = Login.getPatientId(getActivity());
+        String mPatientId = Login.getLoginId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLogList[position]);
         Uri uri = getActivity().getContentResolver().insert(MedLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);

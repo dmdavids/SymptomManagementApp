@@ -6,15 +6,15 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.skywomantech.app.symptommanagement.LoginActivity;
-import com.skywomantech.app.symptommanagement.oauth.SecuredRestBuilder;
-import com.skywomantech.app.symptommanagement.oauth.unsafe.EasyHttpClient;
+import com.skywomantech.app.symptommanagement.client.oauth.SecuredRestBuilder;
+import com.skywomantech.app.symptommanagement.client.oauth.unsafe.EasyHttpClient;
 
 
 import retrofit.RestAdapter;
 import retrofit.client.ApacheClient;
 
 public class SymptomManagementService {
-    private static final String LOG_TAG = LoginActivity.class.getSimpleName();
+    private static final String LOG_TAG = SymptomManagementService.class.getSimpleName();
 
     private static SymptomManagementApi symptomManagementSvc;
 
@@ -22,8 +22,8 @@ public class SymptomManagementService {
     public final static String SERVER_ADDRESS = "https://192.168.0.34:8443";
 
     // make them go to login screen if these values are empty!
-    private static String user = "admin";
-    private static String pass = "pass";
+    private static String mUser = "admin";
+    private static String mPassword = "pass";
 
     // Use this one when you aren't already in the LoginActivity class
     public static synchronized SymptomManagementApi getServiceOrShowLogin(Context ctx) {
@@ -53,7 +53,7 @@ public class SymptomManagementService {
             return symptomManagementSvc;
         }
         else {
-            return init(server, user, pass);
+            return init(server, mUser, mPassword);
         }
     }
 
@@ -62,18 +62,13 @@ public class SymptomManagementService {
             return symptomManagementSvc;
         }
         else {
-            return init(SERVER_ADDRESS, user, pass);
+            return init(SERVER_ADDRESS, mUser, mPassword);
         }
     }
 
     // This is the one that does the actual login at the server
     public static synchronized  SymptomManagementApi init(String server, String user, String pass) {
-
-/*        symptomManagementSvc = new RestAdapter.Builder()
-                .setEndpoint(server)
-                .build()
-                .create(SymptomManagementApi.class);*/
-    Log.d(LOG_TAG, "Getting service Server : " + server + " user : " + user + " pass : " + pass);
+    Log.d(LOG_TAG, "Getting service Server : " + server + " mUser : " + user + " mPassword : " + pass);
         symptomManagementSvc = new SecuredRestBuilder()
                 .setLoginEndpoint(server + SymptomManagementApi.TOKEN_PATH)
                 .setUsername(user)

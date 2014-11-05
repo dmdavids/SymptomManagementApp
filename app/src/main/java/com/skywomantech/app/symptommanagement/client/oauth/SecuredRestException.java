@@ -4,7 +4,7 @@
  **
  ** 
  */
-package com.skywomantech.app.symptommanagement.oauth;
+package com.skywomantech.app.symptommanagement.client.oauth;
 
 /**
  * A special class made to specify exceptions that are thrown by our

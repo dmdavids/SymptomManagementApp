@@ -117,7 +117,7 @@ public class ReminderFragment extends Fragment {
 
     public void addReminder(Reminder newReminder) {
         // add to database first
-        String mPatientId = Login.getPatientId(getActivity());
+        String mPatientId = Login.getLoginId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, newReminder);
         Uri uri = getActivity().getContentResolver().insert(ReminderEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);
@@ -155,7 +155,7 @@ public class ReminderFragment extends Fragment {
     public void updateReminder(int position, Reminder temp) {
        // update the one in the database first
         if (mReminders[position].getDbId() >= 0) {
-            String mPatientId = Login.getPatientId(getActivity());
+            String mPatientId = Login.getLoginId(getActivity());
             ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, temp);
             String selection =
                     ReminderEntry._ID + "=" + Long.toString(mReminders[position].getDbId());

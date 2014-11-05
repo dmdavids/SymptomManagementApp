@@ -9,47 +9,13 @@
     tools:context=".Login$PlaceholderFragment">
 
     <TextView
-        android:text="@string/login_title"
+        android:text="REDIRECTING TO USER SCREENS"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/title_login"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:textStyle="bold"
-        android:typeface="sans" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Patient"
-        android:id="@+id/patient_button"
-        android:layout_below="@+id/title_login"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Physician"
-        android:id="@+id/physician_button"
-        android:layout_below="@+id/checkin_button"
-        android:layout_centerHorizontal="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Admin"
-        android:id="@+id/admin_button"
-        android:layout_below="@+id/physician_button"
-        android:layout_alignRight="@+id/patient_button"
-        android:layout_alignEnd="@+id/patient_button" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Patient CheckIn"
-        android:id="@+id/checkin_button"
-        android:layout_below="@+id/patient_button"
-        android:layout_centerHorizontal="true" />
+        android:typeface="sans"
+        android:textSize="@android:dimen/app_icon_size"
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>

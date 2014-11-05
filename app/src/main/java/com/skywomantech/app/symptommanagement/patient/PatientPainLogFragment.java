@@ -87,7 +87,7 @@ public class PatientPainLogFragment extends Fragment {
     @OnClick(R.id.pain_log_done_button)
     public void savePainLog() {
         // save Pain Log to the CP
-        mPatientId = Login.getPatientId(getActivity());
+        mPatientId = Login.getLoginId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLog);
         Uri uri = getActivity().getContentResolver().insert(PainLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);

@@ -103,7 +103,7 @@ public class PatientMainActivity extends Activity
     }
 
     private Patient getPatientFromCP() {
-        mPatientId = Login.getPatientId(this);
+        mPatientId = Login.getLoginId(this);
         if (mPatientId != null && !mPatientId.isEmpty()) {
             Cursor cursor = getContentResolver()
                     .query(PatientEntry.CONTENT_URI, null, null, null,null);

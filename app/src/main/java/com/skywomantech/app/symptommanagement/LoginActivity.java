@@ -171,8 +171,8 @@ public class LoginActivity extends Activity {
      */
     public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mUsername;
-        private final String mPassword;
+        private String mUsername = "admin";
+        private String mPassword = "pass";
 
         UserLoginTask(String username, String password) {
             mUsername = username;
@@ -181,23 +181,13 @@ public class LoginActivity extends Activity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-
-//            Log.d(LOG_TAG, "Logging into the Server right now.Psst... this is faked.");
-//            try {
-//                // Simulate network access.  TODO: REMOVE THIS !!!
-//                Thread.sleep(8000);
-//            } catch (InterruptedException e) {
-//                return false;
-//            }
-
-            // TODO: write the code that goes to the server and logs in
-            // if it fails then return false;
-            Log.d(LOG_TAG, "attempting an actually login to the server! using defaults for now");
-            SymptomManagementApi svc = SymptomManagementService.getService();
+            Log.d(LOG_TAG, "attempting an actually login to the server with username "
+                    + mUsername + " password " + mPassword);
+            SymptomManagementApi svc = SymptomManagementService.getService(mUsername, mPassword);
             if (svc == null) {
                 return false;
             }
-            Log.d(LOG_TAG, "Server login was SUCCESSFUL... do your happy dance!");
+            Log.d(LOG_TAG, "Server login was SUCCESSFUL!");
             return true;
         }
 
@@ -207,7 +197,9 @@ public class LoginActivity extends Activity {
             showProgress(false);
 
             if (success) {
-                startActivity(new Intent(getApplicationContext(), Login.class));
+                Intent i = new Intent(getApplicationContext(), Login.class);
+                i.putExtra("username", mUsername);
+                startActivity(i);
                 finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
