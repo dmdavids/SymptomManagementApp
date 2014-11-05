@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
@@ -12,35 +13,39 @@ import android.widget.TimePicker;
 
 import com.skywomantech.app.symptommanagement.R;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 
 public class BirthdateDialog extends DialogFragment {
-
+    public final static String LOG_TAG = BirthdateDialog.class.getSimpleName();
     public interface Callbacks {
-        public void onPositiveResult(long time);
+        public void onPositiveResult(String bday);
         public void onNegativeResult();
     }
-    DatePicker datePicker;
 
-    private long birthday = 0L;
+    private DatePicker datePicker;
+
+    private String birthday = "";
 
     public BirthdateDialog() {
         // required empty constructor
-
     }
 
-    public static BirthdateDialog newInstance(long thisDay) {
+    public static BirthdateDialog newInstance(String birthdate) {
         BirthdateDialog frag = new BirthdateDialog();
         Bundle args = new Bundle();
-        args.putLong("bday_long", thisDay);
+        args.putString("bday", birthdate);
         frag.setArguments(args);
         return frag;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        birthday = getArguments().getLong("bday_long");
+        birthday = getArguments().getString("bday");
         View view = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_birthday_entry, null);
         AlertDialog.Builder builder =  new AlertDialog.Builder(getActivity())
@@ -50,7 +55,8 @@ public class BirthdateDialog extends DialogFragment {
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        birthday = convertSelectionToMilliseconds();
+                        //format birthday String
+                        birthday = convertSelectionToString();
                         ((Callbacks) getActivity()).onPositiveResult(birthday);
                     }
                 })
@@ -58,7 +64,7 @@ public class BirthdateDialog extends DialogFragment {
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        birthday = 0L;
+                        birthday = "";
                         ((Callbacks) getActivity()).onNegativeResult();
                     }
                 });
@@ -66,14 +72,33 @@ public class BirthdateDialog extends DialogFragment {
         // set up the widgets to get the selections from
         datePicker = (DatePicker) view.findViewById(R.id.birthday_date_picker);
 
+        // set the datePicker to display the birthday if available
+        convertStringToSelection(birthday);
+
         return builder.create();
     }
 
-    private long convertSelectionToMilliseconds() {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth(),
-                     0, 0, 0);
-        return calendar.getTimeInMillis();
+    private String convertSelectionToString() {
+        long dateTime = datePicker.getCalendarView().getDate();
+        Date date = new Date(dateTime);
+        DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        String formattedDate = dateFormat.format(date);
+        return formattedDate;
     }
 
+    private void convertStringToSelection(String day) {
+        if (day == null || day.isEmpty()) return;
+
+        Date theDate;
+        try {
+            theDate = new SimpleDateFormat("MM-dd-yyyy").parse(day);
+        } catch (ParseException e) {
+            Log.d(LOG_TAG, "Birthdate String not in expected format MM-dd-yy. Ignoring.");
+            return;
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(theDate);
+        datePicker.updateDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
+    }
 }

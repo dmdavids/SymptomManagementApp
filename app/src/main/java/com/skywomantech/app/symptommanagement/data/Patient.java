@@ -15,7 +15,7 @@ public class Patient {
 
     private String firstName;
     private String lastName;
-    private long birthdate = 0L;
+    private String birthdate = "";
     private long lastLogin = 0L;
     private Boolean active = true;
 
@@ -36,18 +36,18 @@ public class Patient {
         super();
         this.firstName = firstName.trim();
         this.lastName = lastName.trim();
-        this.birthdate = System.currentTimeMillis();
+        this.birthdate = "";
     }
 
     public Patient(Patient patient) {
         super();
         this.firstName = patient.getFirstName().trim();
         this.lastName = patient.getLastName().trim();
-        this.birthdate = patient.getBirthdate();
+        this.birthdate = "";
         this.id = patient.getId();
     }
 
-    public Patient( String firstName, String lastName, long birthdate, long lastLogin,
+    public Patient( String firstName, String lastName, String birthdate, long lastLogin,
                     Boolean active, Set<Medication> prescriptions,
                     Set<Physician> physicians, Set<PainLog> painLog,
                     Set<MedicationLog> medLog, Set<StatusLog> statusLog, PatientPrefs prefs) {
@@ -113,11 +113,11 @@ public class Patient {
         this.lastName = lastName.trim();
     }
 
-    public long getBirthdate() {
+    public String getBirthdate() {
         return birthdate;
     }
 
-    public void setBirthdate(long birthdate) {
+    public void setBirthdate(String birthdate) {
         this.birthdate = birthdate;
     }
 
@@ -186,45 +186,28 @@ public class Patient {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (int) (birthdate ^ (birthdate >>> 32));
-        result = prime * result
-                + ((firstName == null) ? 0 : firstName.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result
-                + ((lastName == null) ? 0 : lastName.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Patient patient = (Patient) o;
+
+        if (birthdate != null ? !birthdate.equals(patient.birthdate) : patient.birthdate != null)
+            return false;
+        if (firstName != null ? !firstName.equals(patient.firstName) : patient.firstName != null)
+            return false;
+        if (lastName != null ? !lastName.equals(patient.lastName) : patient.lastName != null)
+            return false;
+
+        return true;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (!(obj instanceof Patient))
-            return false;
-        Patient other = (Patient) obj;
-        if (birthdate != other.birthdate)
-            return false;
-        if (firstName == null) {
-            if (other.firstName != null)
-                return false;
-        } else if (!firstName.equals(other.firstName))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (lastName == null) {
-            if (other.lastName != null)
-                return false;
-        } else if (!lastName.equals(other.lastName))
-            return false;
-        return true;
+    public int hashCode() {
+        int result = firstName != null ? firstName.hashCode() : 0;
+        result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
+        result = 31 * result + (birthdate != null ? birthdate.hashCode() : 0);
+        return result;
     }
 
     public String toDebugString() {
@@ -242,9 +225,9 @@ public class Patient {
 		return getName();
 	}
 
-    public String getFormattedBirthdate() {
-        return getFormattedDate(this.birthdate, "MM/dd/yyyy");
-    }
+   // public String getFormattedBirthdate() {
+     //   return getFormattedDate(this.birthdate, "MM/dd/yyyy");
+    //}
 
     public String getFormattedDate(long dt, String fmt) {
         if (dt <= 0L) return "";

@@ -55,7 +55,7 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         PatientEntry.COLUMN_FIRST_NAME + " TEXT, " +
                         PatientEntry.COLUMN_LAST_NAME + " TEXT, " +
                         PatientEntry.COLUMN_LAST_LOGIN + " REAL, " +
-                        PatientEntry.COLUMN_BIRTHDATE + " REAL, " +
+                        PatientEntry.COLUMN_BIRTHDATE + " TEXT, " +
                         PatientEntry.COLUMN_ACTIVE + " INTEGER, " +
                         PatientEntry.COLUMN_PROCESS_STATUS + " INTEGER, " +
                         PatientEntry.COLUMN_PROCESSED + " REAL, " +

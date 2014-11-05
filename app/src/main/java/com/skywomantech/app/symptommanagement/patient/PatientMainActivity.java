@@ -124,7 +124,7 @@ public class PatientMainActivity extends Activity
                     Log.v(LOG_TAG, "Last Login RESET to: " + Long.toString(mLastLogged));
                     mPatient.setLastLogin(mLastLogged);
                 }
-                mPatient.setBirthdate(cursor.getLong(cursor.getColumnIndex(PatientEntry.COLUMN_BIRTHDATE)));
+                mPatient.setBirthdate(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_BIRTHDATE)));
             }
             cursor.close();
         }
@@ -178,6 +178,8 @@ public class PatientMainActivity extends Activity
         if (mPatientId != null && !mPatientId.isEmpty()
                 &&  patient != null && patient.getDbId() >= 0L) {
             ContentValues cvPatient = PatientCPcvHelper.createValuesObject(mPatientId, patient);
+            // TODO: Insert fails here... should check if exists first?  Who else is inserting?
+            // TODO:  does this get called multiple times?
             Uri uri = getContentResolver().insert(PatientEntry.CONTENT_URI, cvPatient);
             long objectId = ContentUris.parseId(uri);
             patient.setDbId(objectId);

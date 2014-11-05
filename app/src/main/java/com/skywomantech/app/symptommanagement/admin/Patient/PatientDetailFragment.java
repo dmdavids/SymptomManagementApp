@@ -136,7 +136,7 @@ public class PatientDetailFragment extends Fragment {
                     Log.d(LOG_TAG, "Found Patient :" + result.toDebugString());
                     mPatient = result;
                     mTextView.setText(mPatient.getName());
-                    mBirthdate.setText(mPatient.getFormattedBirthdate());
+                    mBirthdate.setText(mPatient.getBirthdate());
                     displayPhysicianList(mPatient.getPhysicians());
                 }
 

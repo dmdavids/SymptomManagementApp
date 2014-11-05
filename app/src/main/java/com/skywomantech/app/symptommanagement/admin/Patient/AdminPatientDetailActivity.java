@@ -80,7 +80,7 @@ public class AdminPatientDetailActivity extends Activity
     }
 
     @Override
-    public void onPositiveResult(long time) {
+    public void onPositiveResult(String time) {
         PatientAddEditFragment frag =
                 (PatientAddEditFragment) getFragmentManager()
                         .findFragmentById(R.id.adminpatient_detail_container);

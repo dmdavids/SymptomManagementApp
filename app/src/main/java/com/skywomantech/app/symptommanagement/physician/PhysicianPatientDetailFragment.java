@@ -93,7 +93,7 @@ public class PhysicianPatientDetailFragment extends Fragment {
                     if (mPatient != null) {
                         // set the views with the patient data
                         mNameView.setText(mPatient.getName());
-                        mBDView.setText(mPatient.getFormattedBirthdate());
+                        mBDView.setText(mPatient.getBirthdate());
                         mLastLog.setText(mPatient.getFormattedLastLogged());  //TODO: needs real date here!
                     }
                 }

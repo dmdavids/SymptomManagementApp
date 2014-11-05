@@ -138,7 +138,7 @@ public class PatientAddEditFragment extends Fragment  {
                     mPatient = result;
                     mFirstName.setText(mPatient.getFirstName());
                     mLastName.setText(mPatient.getLastName());
-                    mBirthdate.setText(mPatient.getFormattedBirthdate());
+                    mBirthdate.setText(mPatient.getBirthdate());
                     displayPhysicians(mPatient.getPhysicians());
                 }
 
@@ -405,12 +405,12 @@ public class PatientAddEditFragment extends Fragment  {
         newFragment.show(getFragmentManager(), "birthdayPicker");
     }
 
-    public void onPositiveResult(long time) {
-        mPatient.setBirthdate(time);
-        mBirthdate.setText(mPatient.getFormattedBirthdate());
+    public void onPositiveResult(String bday) {
+        mPatient.setBirthdate(bday);
+        mBirthdate.setText(mPatient.getBirthdate());
     }
 
     public void onNegativeResult() {
-        mBirthdate.setText(mPatient.getFormattedBirthdate());
+        mBirthdate.setText(mPatient.getBirthdate());
     }
 }
