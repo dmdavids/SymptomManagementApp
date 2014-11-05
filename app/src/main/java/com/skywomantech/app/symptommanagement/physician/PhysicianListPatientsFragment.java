@@ -36,7 +36,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
 
     private static final String LOG_TAG = PhysicianListPatientsFragment.class.getSimpleName();
 
-    String mPhysicianId = "5445d3f9ca4c027d60d2b1f7";
+    String mPhysicianId;
     PatientListAdapter mAdapter;
     private Collection<Patient> patients;
     Patient[] patient;
@@ -154,6 +154,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
 
     private void refreshAllPatients() {
 
+        mPhysicianId = Login.getLoginId(getActivity());
         final SymptomManagementApi svc =
                 SymptomManagementService.getService();
 
@@ -170,7 +171,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
                 @Override
                 public void success(Physician result) {
                     Log.d(LOG_TAG, "creating list of all patients assigned to physician");
-                    Patient[] plist = null;
+                    Patient[] plist = new Patient[0];
                     if (result != null && result.getPatients() != null ) {
                         plist = result.getPatients().toArray(new Patient[result.getPatients().size()]);
                     }

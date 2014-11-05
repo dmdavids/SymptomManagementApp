@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
 public class Login extends Activity {
@@ -50,7 +49,7 @@ public class Login extends Activity {
 
         String username = getIntent().getExtras().getString("username");
         Log.d(LOG_TAG, "Saving the username to preferences");
-        setUsername(this, username);
+        setUsername(this, username.toLowerCase());
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
@@ -79,6 +78,14 @@ public class Login extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    public static void logout(Context context ) {
+        // reset all the values that make the app think we are logged in
+        setUsername(context, "");
+        setLoginId(context, "");
+        setUserRole(context, UserCredential.UserRole.NOT_ASSIGNED.getValue());
+        mCredential = null;
+    }
+
     private static void setCheckin(Context context, boolean value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -100,13 +107,13 @@ public class Login extends Activity {
     public static void setUsername(Context context, String value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("username", value);
+        editor.putString("username", value.toLowerCase());
         editor.apply();
     }
 
     public static String getUsername(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString("username", null);
+        return prefs.getString("username", null).toLowerCase();
     }
 
     public static void setUserRole(Context context, int value) {
@@ -223,7 +230,7 @@ public class Login extends Activity {
 
         private void getUserCredentialsAndProcessLogin(String username) {
 
-            final String mUsername = username;
+            final String mUsername = username.toLowerCase();
 
             final SymptomManagementApi svc =
                     SymptomManagementService.getService();
@@ -243,11 +250,11 @@ public class Login extends Activity {
                         Log.d(LOG_TAG, "getting user credentials");
                         if (result != null && result.size() == 1) {
                             mCredential = result.iterator().next();
-                            Log.d(LOG_TAG, "Credential Received is : " + result.toString());
 
                             // STUPID WORK AROUND ... the enum value does not get set correctly ARGH!
                             // have to sent the int value over to make it work or write a gson converter
                             mCredential.setUserType(UserCredential.UserRole.findByValue(mCredential.getUserRoleValue()));
+                            Log.d(LOG_TAG, "Credential Received is : " + result.toString());
 
                             // store the credential  info needed for future processing
                             setLoginId(getActivity(), mCredential.getUserId());
@@ -261,7 +268,13 @@ public class Login extends Activity {
                             processLoginRedirect(mCredential);
                         } else {
                             Log.d(LOG_TAG, "Error getting user credentials.");
-                            // TODO: go to the LoginActivity class HERE
+                            getActivity().finishAffinity();
+                            Toast.makeText(
+                                    getActivity(),
+                                    "Invalid Login. Please Try Again.",
+                                    Toast.LENGTH_LONG).show();
+                            logout(getActivity());
+                            startActivity(new Intent(getActivity(), LoginActivity.class));
                         }
                     }
 
@@ -269,9 +282,10 @@ public class Login extends Activity {
                     public void error(Exception e) {
                         Toast.makeText(
                                 getActivity(),
-                                "Unable to fetch the User Credentials. Please check Internet connection.",
+                                "Unable to Login. Please check Internet connection.",
                                 Toast.LENGTH_LONG).show();
-                        // TODO: go to the LoginActivity class HERE
+                        logout(getActivity());
+                        startActivity(new Intent(getActivity(), LoginActivity.class));
                     }
                 });
             }

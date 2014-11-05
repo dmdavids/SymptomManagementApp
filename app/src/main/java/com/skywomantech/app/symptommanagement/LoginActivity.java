@@ -84,7 +84,8 @@ public class LoginActivity extends Activity {
         mUsernameView.setError(null);
         mPasswordView.setError(null);
 
-        String username = mUsernameView.getText().toString();
+        // always lowercase the user name
+        String username = mUsernameView.getText().toString().toLowerCase();
         String password = mPasswordView.getText().toString();
         Log.d(LOG_TAG, "Username: " + username + " Password: " + password);
 
@@ -175,7 +176,7 @@ public class LoginActivity extends Activity {
         private String mPassword = "pass";
 
         UserLoginTask(String username, String password) {
-            mUsername = username;
+            mUsername = username.toLowerCase();
             mPassword = password;
         }
 
@@ -198,7 +199,7 @@ public class LoginActivity extends Activity {
 
             if (success) {
                 Intent i = new Intent(getApplicationContext(), Login.class);
-                i.putExtra("username", mUsername);
+                i.putExtra("username", mUsername.toLowerCase());
                 startActivity(i);
                 finish();
             } else {

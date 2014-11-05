@@ -13,4 +13,8 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never" />
+    <item android:id="@+id/patient_logout"
+        android:title="Logout"
+        android:orderInCategory="200"
+        android:showAsAction="never" />
 </menu>

@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.Login;
+import com.skywomantech.app.symptommanagement.LoginActivity;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.SetPreferenceActivity;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
@@ -98,6 +99,9 @@ public class PatientMainActivity extends Activity
         } else if (id == R.id.action_refresh) {
             SymptomManagementSyncAdapter.syncImmediately(this);
             return true;
+        } else if (id == R.id.patient_logout) {
+            Login.logout(this);
+            startActivity(new Intent(this, LoginActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
