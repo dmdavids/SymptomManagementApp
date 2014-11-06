@@ -33,28 +33,14 @@ import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
 public class PhysicianListPatientsActivity extends Activity
         implements PhysicianListPatientsFragment.Callbacks {
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private boolean mTwoPane;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_physician_patient_list);
-        // Show the Up button in the action bar.
         getActionBar().setDisplayHomeAsUpEnabled(true);
-
-        if (findViewById(R.id.physician_patient_detail_container) != null) {
-            mTwoPane = true;
-
-            ((PhysicianListPatientsFragment) getFragmentManager()
-                    .findFragmentById(R.id.physician_patient_list))
-                    .setActivateOnItemClick(true);
-        }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.physician_patient_list_menu, menu);
@@ -77,33 +63,11 @@ public class PhysicianListPatientsActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Callback method from {@link PhysicianListPatientsFragment.Callbacks}
-     * indicating that the item with the given ID was selected.
-     */
     @Override
     public void onItemSelected(String id) {
-        if (mTwoPane) {
-            // In two-pane mode, show the detail view in this activity by
-            // adding or replacing the detail fragment using a
-            // fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, id);
-            PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
-            fragment.setArguments(arguments);
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.physician_patient_detail_container, fragment)
-                    .commit();
-
-        } else {
-            // In single-pane mode, simply start the detail activity
-            // for the selected item ID.
             Intent detailIntent = new Intent(this, PhysicianPatientDetailActivity.class);
             detailIntent.putExtra(PhysicianPatientDetailFragment.PATIENT_ID_KEY, id);
             startActivity(detailIntent);
         }
-    }
 
-    public void onAddMedication(String id) {
-    }
 }

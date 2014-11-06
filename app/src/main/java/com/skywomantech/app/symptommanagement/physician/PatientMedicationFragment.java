@@ -22,13 +22,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
 
-/**
- * A list fragment representing a list of PhysicianPatients. This fragment
- * also supports tablet devices by allowing list items to be given an
- * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link PhysicianPatientDetailFragment}.
- * <p>
- */
 public class PatientMedicationFragment extends ListFragment {
 
     private static final String LOG_TAG = PatientMedicationFragment.class.getSimpleName();
@@ -145,9 +138,7 @@ public class PatientMedicationFragment extends ListFragment {
 
     private void refreshPatientMeds() {
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
 
@@ -193,8 +184,7 @@ public class PatientMedicationFragment extends ListFragment {
 
     private void sendPatientRecordToCloud(final Patient patientRecord) {
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
+        final SymptomManagementApi svc =  SymptomManagementService.getService();
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
@@ -202,7 +192,8 @@ public class PatientMedicationFragment extends ListFragment {
                 @Override
                 public Patient call() throws Exception {
                     Log.d(LOG_TAG, "Updating single Patient id : " + patientRecord.getId());
-                    Log.v(LOG_TAG, "Last Login SET to before Sent to Cloud: " + Long.toString(patientRecord.getLastLogin()));
+                    Log.v(LOG_TAG, "Last Login SET to before Sent to Cloud: "
+                            + Long.toString(patientRecord.getLastLogin()));
                     return svc.updatePatient(patientRecord.getId(), patientRecord);
                 }
             }, new TaskCallback<Patient>() {
@@ -224,10 +215,9 @@ public class PatientMedicationFragment extends ListFragment {
                 @Override
                 public void error(Exception e) {
                     Log.e(LOG_TAG, "Sync unable to UPDATE Patient record to Internet." +
-                            " Try again later");
+                            "Prescription changes did not save. Try again later");
                 }
             });
         }
     }
-
 }

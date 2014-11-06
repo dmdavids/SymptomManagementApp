@@ -19,9 +19,6 @@ import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-/**
- * A placeholder fragment containing a simple view.
- */
 public class PatientPainLogFragment extends Fragment {
 
     public final static String LOG_TAG = PatientPainLogFragment.class.getSimpleName();

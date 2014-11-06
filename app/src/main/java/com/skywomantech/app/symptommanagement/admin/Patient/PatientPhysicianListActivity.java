@@ -11,23 +11,6 @@ import com.skywomantech.app.symptommanagement.admin.Physician.PhysicianListFragm
 
 import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
 
-
-/**
- * An activity representing a list of AdminPhysicians. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link com.skywomantech.app.symptommanagement.admin.Physician.AdminPhysicianDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
- * <p>
- * The activity makes heavy use of fragments. The list of items is a
- * {@link com.skywomantech.app.symptommanagement.admin.Physician.PhysicianListFragment} and the item details
- * (if present) is a {@link com.skywomantech.app.symptommanagement.admin.Physician.AdminPhysicianDetailFragment}.
- * <p>
- * This activity also implements the required
- * {@link com.skywomantech.app.symptommanagement.admin.Physician.PhysicianListFragment.Callbacks} interface
- * to listen for item selections.
- */
 public class PatientPhysicianListActivity extends Activity
         implements PhysicianListFragment.Callbacks {
 
@@ -77,6 +60,5 @@ public class PatientPhysicianListActivity extends Activity
     public void onAddPhysician() {
         // do nothing because we aren't allowing the add physician capability
     }
-
 
 }

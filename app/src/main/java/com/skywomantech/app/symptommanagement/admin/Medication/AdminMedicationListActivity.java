@@ -77,9 +77,7 @@ public class AdminMedicationListActivity extends Activity
         if (medication.getName() == null || medication.getName().isEmpty()) return;
 
         // we have a name so now we can get some work done
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc =  SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Medication>() {
 

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.skywomantech.app.symptommanagement.LoginActivity;
+import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.client.oauth.SecuredRestBuilder;
 import com.skywomantech.app.symptommanagement.client.oauth.unsafe.EasyHttpClient;
 
@@ -32,6 +33,7 @@ public class SymptomManagementService {
             return symptomManagementSvc;
         } else {
             Log.d(LOG_TAG, "We do not have a service so we need to LOGIN!");
+            LoginUtility.logout(ctx);  // make sure we are good and logged out
             ctx.startActivity(new Intent(ctx, LoginActivity.class));
             return null;
         }

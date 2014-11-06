@@ -26,12 +26,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-/**
- * A fragment representing a single admin_medication detail screen.
- * This fragment is either contained in a {@link com.skywomantech.app.symptommanagement.admin.Medication.AdminMedicationListActivity}
- * in two-pane mode (on tablets) or a {@link com.skywomantech.app.symptommanagement.admin.Medication.AdminMedicationDetailActivity}
- * on handsets.
- */
+
 public class AdminPhysicianAddEditFragment extends Fragment {
     private static final String LOG_TAG = AdminPhysicianAddEditFragment.class.getSimpleName();
 
@@ -43,10 +38,6 @@ public class AdminPhysicianAddEditFragment extends Fragment {
     @InjectView(R.id.admin_physician_edit_first_name)  EditText mFirstName;
     @InjectView(R.id.admin_physician_edit_last_name)  EditText mLastName;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public AdminPhysicianAddEditFragment() {
     }
 
@@ -99,7 +90,6 @@ public class AdminPhysicianAddEditFragment extends Fragment {
             loadPhysicianFromAPI();
         }
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -166,9 +156,7 @@ public class AdminPhysicianAddEditFragment extends Fragment {
             return;
         }
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc =  SymptomManagementService.getService();
         final String successMsg = (mPhysicianId == null ? "ADDED" : "UPDATED");
         if (svc != null) {
             CallableTask.invoke(new Callable<Physician>() {

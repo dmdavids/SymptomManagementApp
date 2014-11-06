@@ -46,7 +46,6 @@ public class ReminderFragment extends Fragment {
 
     @InjectView(R.id.reminder_list)  ListView mReminderView;
 
-
     public ReminderFragment() {
 
     }

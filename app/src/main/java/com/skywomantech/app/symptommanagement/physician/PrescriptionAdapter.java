@@ -59,7 +59,6 @@ public class PrescriptionAdapter extends ArrayAdapter<Medication> {
                         public void onClick(View view) {
                             Medication med = (Medication) viewHolder.deletePrescription.getTag();
                             // TODO: are you sure you want to delete?
-                            // TODO: have the activity do the delete from the actual version
                             ((Callbacks) activity)
                                     .onPrescriptionDelete(viewHolder.position, viewHolder.prescription);
                         }

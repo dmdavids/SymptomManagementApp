@@ -106,9 +106,7 @@ public class MedicationListFragment extends ListFragment {
 
     public void refreshAllMedications() {
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Collection<Medication>>() {
 

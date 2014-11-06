@@ -4,16 +4,8 @@ import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
 
-/**
- * Displays the preference options to the user and processes them
- *
- */
 public class SetPreferenceActivity extends PreferenceActivity {
 
-    /**
-     *
-     * @param savedInstanceState bundle of saved information
-     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,12 +16,6 @@ public class SetPreferenceActivity extends PreferenceActivity {
                 .commit();
     }
 
-    /**
-     * process the home bar arrow to back up
-     *
-     * @param item menu item to process
-     * @return  true if processed
-     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -39,5 +25,4 @@ public class SetPreferenceActivity extends PreferenceActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

@@ -54,7 +54,6 @@ public class BirthdateDialog extends DialogFragment {
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        //format birthday String
                         birthday = convertSelectionToString();
                         ((Callbacks) getActivity()).onPositiveResult(birthday);
                     }

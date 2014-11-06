@@ -48,7 +48,6 @@ public class PhysicianEditListAdapter extends ArrayAdapter<Physician> {
         this.physicians = physicians;
     }
 
-
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view;

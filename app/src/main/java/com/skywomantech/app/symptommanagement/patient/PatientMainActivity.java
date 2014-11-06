@@ -29,6 +29,7 @@ import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.PatientEntry;
 import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 import com.skywomantech.app.symptommanagement.data.Reminder;
+import com.skywomantech.app.symptommanagement.data.UserCredential;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.concurrent.Callable;
@@ -71,18 +72,13 @@ public class PatientMainActivity extends Activity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.patient_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        // set up the reminders
         if (id == R.id.action_settings) {
             getFragmentManager().beginTransaction()
                     .replace(R.id.container, new ReminderFragment())
@@ -104,7 +100,11 @@ public class PatientMainActivity extends Activity
     }
 
     private Patient getPatient() {
-        mPatientId = LoginUtility.getLoginId(this);  // cloud db id
+        if ( LoginUtility.isLoggedIn(this)
+                && LoginUtility.getUserRole(this) == UserCredential.UserRole.PATIENT) {
+            mPatientId = LoginUtility.getLoginId(mContext);
+        } else return null;
+
         Log.d(LOG_TAG, "Getting PATIENT from CP with id : " + mPatientId);
         mPatient = null;
         if (mPatientId != null && !mPatientId.isEmpty()) {
@@ -117,7 +117,6 @@ public class PatientMainActivity extends Activity
                 Log.d(LOG_TAG, "There are multiple entries for the same DB patient! id : " + mPatientId);
             }
             if (cursor.moveToFirst()) {
-                //mPatientId = cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_PATIENT_ID));
 
                 mPatient.setDbId(cursor.getLong(cursor.getColumnIndex(PatientEntry._ID))); // local CP id
                 mPatient.setFirstName(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_FIRST_NAME)));
@@ -147,9 +146,7 @@ public class PatientMainActivity extends Activity
 
     private Patient getPatientFromCloud() {
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
 
@@ -280,15 +277,7 @@ public class PatientMainActivity extends Activity
         getFragmentManager().beginTransaction()
                     .replace(R.id.container, new PatientPainLogFragment())
                     .commit();
-        // do we add to backstack here?
     }
-
-    // Handling the Date Time Pickers in a Dialog
-    // if the box is checked then the list adapter requests the date and
-    // time for the log in "position"
-    // when the time and date dialog ends then it tells the
-    // activity to update the medication log at position with then
-    // time entered or to put 0L for a cancel
 
     @Override
     public void onRequestDateTime(int position) {
@@ -345,6 +334,4 @@ public class PatientMainActivity extends Activity
                 (ReminderFragment) getFragmentManager().findFragmentById(R.id.container);
         frag.deleteReminder(position);
     }
-
-
 }

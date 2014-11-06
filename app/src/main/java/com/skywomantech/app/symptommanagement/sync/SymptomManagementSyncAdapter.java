@@ -32,6 +32,7 @@ import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 import com.skywomantech.app.symptommanagement.data.PatientPrefs;
 import com.skywomantech.app.symptommanagement.data.Reminder;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
+import com.skywomantech.app.symptommanagement.data.UserCredential;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -49,14 +50,12 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
     // Try to sync the data at approximately 5 minute intervals
     // it can range plus or minus 6ish minutes
-    private static final int SYNC_INTERVAL = 60 * 5;  //  5 minutes
+    private static final int SYNC_INTERVAL = 60 * 15;  //  15 minutes syncs
     private static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
-    private static boolean mPatientDevice = true;
-    private boolean mPhysicianLoggedIn = false;
-    private String mPatientId = ""; // = "2084098340928"; // TODO: needs a real id from db to work
     private Patient mPatient;
     private String mPhysicianId;
+    private String mPatientId;
     private Collection<Alert> mAlerts;
 
 
@@ -172,30 +171,42 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle bundle, String authority,
                               ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting onPerformSync");
-        if (mPatientDevice) {
-            mPatientId = LoginUtility.getLoginId(mContext);
-            if (mPatientId != null && !mPatientId.isEmpty()) {
+        if(LoginUtility.isLoggedIn(getContext())) {
+            // only process if patient or physician... no processing for ADMIN
+            if (LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PATIENT) {
+                Log.d(LOG_TAG, "SYNC Processing for PATIENT.");
+                // app is logged in as a PATIENT
                 processPatientSync();
-            } else {
-                Log.v(LOG_TAG, "Skipping Patient Sync - no Patient identified.");
+            } else if (LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PHYSICIAN) {
+                Log.d(LOG_TAG, "SYNC Processing for PHYSICIAN.");
+                // app is logged in as a PHYSICIAN
+                processPhysicianSync();
             }
-        } else {
-            processPhysicianSync();
+        }
+        else {
+            Log.d(LOG_TAG, "Not Logged In so we won't need to anything for SYNC.");
         }
     }
 
     private void processPatientSync() {
-        if (!mPatientDevice && mPhysicianLoggedIn) return;
+
+        if ( LoginUtility.isLoggedIn(getContext())
+                && LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PATIENT) {
+            mPatientId = LoginUtility.getLoginId(mContext);
+        } else return ;
+
         Log.d(LOG_TAG, "Processing Patient sync");
 
         Patient patientRecord = getPatientRecordFromCloud();
         if (patientRecord == null) {
-            Log.d(LOG_TAG, "No Patient identified yet.");
+            Log.d(LOG_TAG, "No Patient Record Found yet.");
             return;
         }
 
+        // warning! do this first before updating the server
+        // or there could be overwrite problems
         if (patientRecord.getPrescriptions() != null ) {
-            updatePrescriptionsToCP(patientRecord.getPrescriptions()); // warning! do this first before updating the server
+            updatePrescriptionsToCP(patientRecord.getPrescriptions());
         }
 
         updateLastLoginFromCP(patientRecord);
@@ -223,12 +234,17 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private Patient getPatientRecordFromCloud() {
-        mPatientId = LoginUtility.getLoginId(mContext);
+
+        // are we a logged in patient?  don't bother the server if we aren't
+        if ( LoginUtility.isLoggedIn(getContext())
+                && LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PATIENT) {
+            mPatientId = LoginUtility.getLoginId(mContext);
+            mPhysicianId = null;
+        } else
+            return null;
+
         Log.d(LOG_TAG, "getPatientRecordFromCloud - Patient ID is : " + mPatientId);
-
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
 
@@ -248,13 +264,22 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                 @Override
                 public void error(Exception e) {
                     Log.e(LOG_TAG, "Sync unable to UPDATE Patient record from internet." +
-                            " Try again later");
+                            " No Internet? Try again later");
                 }
             });
+        } else  {
+            // something is wrong .. maybe we don't have internet .. just keep on trying
+            Log.d(LOG_TAG, "NO SERVICE... is the internet offline?");
         }
         return mPatient;
     }
 
+    /**
+     * Take the prescriptions from the cloud patient, remove the ones from the local patient
+     * and put the new ones in the CP.. just in case the doctor updated them.
+     *
+     * @param prescriptions
+     */
     private void updatePrescriptionsToCP(Collection<Medication> prescriptions) {
         if (prescriptions == null) return;
 
@@ -273,6 +298,15 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         mContext.getContentResolver().bulkInsert(PrescriptionEntry.CONTENT_URI, cvArray);
     }
 
+    /**
+     * Put the logs that are on the local device into the cloud patient record
+     * Warning.. this pretty much assumes the patient is only use this device and
+     * not another one too... otherwise we would just put them in one by one
+     * and make sure that we aren't overwriting them.  We would need to put IDs in them
+     * on the cloud server too... too much work for this project
+     *
+     * @param patientRecord
+     */
     private void updateLogsFromCP(Patient patientRecord) {
         patientRecord.setPainLog(getUpdatedPainLogs());
         patientRecord.setMedLog(getUpdatedMedLogs());
@@ -342,19 +376,25 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         cursor.close();
         return reminders;
     }
+
+    /**
+     * Now that the cloud patient has all the new information from this device we need to
+     * save it back out to the cloud
+     *
+     * @param patientRecord
+     */
     private void sendPatientRecordToCloud(final Patient patientRecord) {
         mPatientId = LoginUtility.getLoginId(mContext);
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
 
                 @Override
                 public Patient call() throws Exception {
                     Log.d(LOG_TAG, "Updating single Patient id : " + mPatientId);
-                    Log.v(LOG_TAG, "Last Login SET to before Sent to Cloud: " + Long.toString(patientRecord.getLastLogin()));
+                    Log.v(LOG_TAG, "Last Login SET to before Sent to Cloud: "
+                            + Long.toString(patientRecord.getLastLogin()));
                     return svc.updatePatient(mPatientId, patientRecord);
                 }
             }, new TaskCallback<Patient>() {
@@ -368,26 +408,41 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                 @Override
                 public void error(Exception e) {
                     Log.e(LOG_TAG, "Sync unable to UPDATE Patient record to Internet." +
-                            " Try again later");
+                            " Maybe no internet? Try again later");
                 }
             });
         }
     }
 
     private void processPhysicianSync() {
-        if (mPatientDevice) return;
-        Log.d(LOG_TAG, "Physician sync");
+        if ( LoginUtility.isLoggedIn(getContext())
+                && LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PHYSICIAN) {
+            mPhysicianId = LoginUtility.getLoginId(mContext);
+            mPatientId = null;
+        } else return ;
+
+        Log.d(LOG_TAG, "Processing Physician sync for id: " + mPhysicianId);
         Collection<Alert> alerts = getPhysicianAlerts();
+        //TODO: have to figure out physician alarm manager yet.
 //        notifyPhysicianAlerts(alerts);
     }
 
+    /**
+     * go to cloud and find any alerts for the doctor who is logged in
+     *
+     * @return set of alerts for the logged in physician
+     */
     private Collection<Alert> getPhysicianAlerts() {
-        mPhysicianId = LoginUtility.getLoginId(mContext);
+
+        if ( LoginUtility.isLoggedIn(getContext())
+                && LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PHYSICIAN) {
+            mPhysicianId = LoginUtility.getLoginId(mContext);
+            mPatientId = null;
+        } else
+            return  null;
+
         Log.d(LOG_TAG, "get Alerts for Physician : " + mPhysicianId);
-
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Collection<Alert>>() {
 
@@ -408,16 +463,13 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 @Override
                 public void error(Exception e) {
-                    Log.e(LOG_TAG, "Sync unable to get patients alerts from internet." +
-                            " Check your internet.");
+                    Log.e(LOG_TAG, "Sync unable to get physician alerts from internet." +
+                            " Internet may not be available. Check your internet.");
                 }
             });
+        } else {
+            Log.d(LOG_TAG, "No SERVICE available? Is the internet gone?");
         }
         return mAlerts;
     }
-
-    public static void setPatientDevice(boolean isPatient) {
-        mPatientDevice = isPatient;
-    }
-
 }

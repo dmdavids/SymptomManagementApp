@@ -25,35 +25,16 @@ import java.util.Comparator;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
-/**
- * A list fragment representing a list of PhysicianPatients. This fragment
- * also supports tablet devices by allowing list items to be given an
- * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailFragment}.
- * <p>
- */
 public class HistoryLogFragment extends ListFragment {
 
     private static final String LOG_TAG = HistoryLogFragment.class.getSimpleName();
     private String  mPatientId;
     private Patient mPatient;
 
-    /**
-     * The serialization (saved instance state) Bundle key representing the
-     * activated item position. Only used on tablets.
-     */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
-
-    /**
-     * The current activated item position. Only used on tablets.
-     */
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public HistoryLogFragment() {
     }
 
@@ -95,7 +76,6 @@ public class HistoryLogFragment extends ListFragment {
         refreshAllLogs();
     }
 
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -123,9 +103,7 @@ public class HistoryLogFragment extends ListFragment {
 
     private void refreshAllLogs() {
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc =  SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
 
@@ -207,7 +185,6 @@ public class HistoryLogFragment extends ListFragment {
     }
 
     private class HistoryLogSorter implements Comparator<HistoryLog> {
-
         public int compare(HistoryLog x, HistoryLog y) {
             return Long.compare(x.getCreated(), y.getCreated());
         }

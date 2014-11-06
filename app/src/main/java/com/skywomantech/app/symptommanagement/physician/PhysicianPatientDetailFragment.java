@@ -21,12 +21,6 @@ import java.util.concurrent.Callable;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-/**
- * A fragment representing a single PhysicianPatient detail screen.
- * This fragment is either contained in a {@link PhysicianListPatientsActivity}
- * in two-pane mode (on tablets) or a {@link PhysicianPatientDetailActivity}
- * on handsets.
- */
 public class PhysicianPatientDetailFragment extends Fragment {
 
     public final static String LOG_TAG = PhysicianPatientDetailFragment.class.getSimpleName();
@@ -71,9 +65,7 @@ public class PhysicianPatientDetailFragment extends Fragment {
 
     private Patient getPatientFromCloud() {
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
 
@@ -99,7 +91,8 @@ public class PhysicianPatientDetailFragment extends Fragment {
                 @Override
                 public void error(Exception e) {
                     Toast.makeText(getActivity(),
-                            "Unable to fetch the Patient data. Please check Internet connection.",
+                            "Unable to fetch the Patient data. " +
+                                    "Please check Internet connection and try again.",
                             Toast.LENGTH_LONG).show();
                 }
             });

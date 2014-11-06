@@ -17,6 +17,7 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.Physician;
+import com.skywomantech.app.symptommanagement.data.UserCredential;
 
 
 import java.util.Collection;
@@ -36,37 +37,13 @@ public class PhysicianListPatientsFragment extends ListFragment {
     private static final String LOG_TAG = PhysicianListPatientsFragment.class.getSimpleName();
 
     String mPhysicianId;
-    PatientListAdapter mAdapter;
-    private Collection<Patient> patients;
-    Patient[] patient;
-    /**
-     * The serialization (saved instance state) Bundle key representing the
-     * activated item position. Only used on tablets.
-     */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
-
-
-    /**
-     * The current activated item position. Only used on tablets.
-     */
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
     public interface Callbacks {
-        /**
-         * Callback for when an item has been selected.
-         */
         public void onItemSelected(String id);
     }
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public PhysicianListPatientsFragment() {
     }
 
@@ -96,8 +73,6 @@ public class PhysicianListPatientsFragment extends ListFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
-        // Activities containing this fragment must implement its callbacks.
         if (!(activity instanceof Callbacks)) {
             throw new IllegalStateException("Activity must implement fragment's callbacks.");
         }
@@ -135,7 +110,6 @@ public class PhysicianListPatientsFragment extends ListFragment {
         }
     }
 
-
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         getListView().setChoiceMode(activateOnItemClick
                 ? ListView.CHOICE_MODE_SINGLE
@@ -153,10 +127,15 @@ public class PhysicianListPatientsFragment extends ListFragment {
 
     private void refreshAllPatients() {
 
-        mPhysicianId = LoginUtility.getLoginId(getActivity());
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
+        if ( LoginUtility.isLoggedIn(getActivity())
+                && LoginUtility.getUserRole(getActivity()) == UserCredential.UserRole.PHYSICIAN) {
+            mPhysicianId = LoginUtility.getLoginId(getActivity());
+        } else {
+            Log.d(LOG_TAG, "This user isn't a physician why are they here?");
+            return;
+        }
 
+        final SymptomManagementApi svc =  SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Physician>() {
 
@@ -169,7 +148,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
 
                 @Override
                 public void success(Physician result) {
-                    Log.d(LOG_TAG, "creating list of all patients assigned to physician");
+                    Log.d(LOG_TAG, "Creating list of all patients assigned to physician");
                     Patient[] plist = new Patient[0];
                     if (result != null && result.getPatients() != null ) {
                         plist = result.getPatients().toArray(new Patient[result.getPatients().size()]);
@@ -181,7 +160,8 @@ public class PhysicianListPatientsFragment extends ListFragment {
                 public void error(Exception e) {
                     Toast.makeText(
                             getActivity(),
-                            "Unable to fetch the Physician data. Please check Internet connection.",
+                            "Unable to fetch the Physician data. " +
+                                    "Please check Internet connection and try again.",
                             Toast.LENGTH_LONG).show();
                 }
             });

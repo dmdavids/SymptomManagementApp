@@ -52,10 +52,6 @@ public class PatientAddEditFragment extends Fragment  {
     @InjectView(R.id.display_birthdate)  TextView mBirthdate;
     @InjectView(R.id.admin_patient_physician_listview)  ListView mPhysiciansListView;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public PatientAddEditFragment() {
     }
 
@@ -116,11 +112,9 @@ public class PatientAddEditFragment extends Fragment  {
 
     private void loadPatientFromAPI() {
         if (mPatientId == null) return;
-        Log.d(LOG_TAG, "LoadFromAPI - Physician ID Key is : " + mPatientId);
+        Log.d(LOG_TAG, "Physician ID Key is : " + mPatientId);
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
 
@@ -172,9 +166,7 @@ public class PatientAddEditFragment extends Fragment  {
             return;
         }
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         final String successMsg = (mPatientId == null ? "ADDED" : "UPDATED");
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
@@ -200,7 +192,6 @@ public class PatientAddEditFragment extends Fragment  {
                             getActivity(),
                             "Patient [" + result.getName() + "] " + successMsg + " successfully.",
                             Toast.LENGTH_SHORT).show();
-                    // re-GET the physicians list .. shouldn't have the medication in it any more
                     getActivity().onBackPressed();
                 }
 
@@ -210,7 +201,6 @@ public class PatientAddEditFragment extends Fragment  {
                             getActivity(),
                             "Unable to SAVE Patient. Please check Internet connection.",
                             Toast.LENGTH_LONG).show();
-                    //re-GET the physicians list ... medication should still be in the list
                     getActivity().onBackPressed();
                 }
             });
@@ -234,9 +224,7 @@ public class PatientAddEditFragment extends Fragment  {
     }
 
     public void updatePatient() {
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
 
@@ -314,9 +302,7 @@ public class PatientAddEditFragment extends Fragment  {
     private void loadAndSavePhysicianFromAPI(final String physicianId) {
         Log.d(LOG_TAG, "Getting Physician to Update Patients - Physician ID is : " + physicianId);
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Physician>() {
 
@@ -356,9 +342,7 @@ public class PatientAddEditFragment extends Fragment  {
 
     public void savePhysician() {
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Physician>() {
 
@@ -375,7 +359,6 @@ public class PatientAddEditFragment extends Fragment  {
                             getActivity(),
                             "Updated Physician with Patient Successfully.",
                             Toast.LENGTH_SHORT).show();
-                    // re-GET the physicians list .. shouldn't have the medication in it any more
                 }
 
                 @Override
@@ -384,7 +367,6 @@ public class PatientAddEditFragment extends Fragment  {
                             getActivity(),
                             "Unable to UPDATE Physician with Patients. Please check Internet connection.",
                             Toast.LENGTH_LONG).show();
-                    //re-GET the physicians list ... medication should still be in the list
                 }
             });
         }

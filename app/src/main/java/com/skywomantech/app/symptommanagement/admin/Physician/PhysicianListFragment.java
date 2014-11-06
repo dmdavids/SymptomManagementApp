@@ -24,35 +24,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-/**
- * A list fragment representing a list of AdminPhysicians. This fragment
- * also supports tablet devices by allowing list items to be given an
- * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link AdminPhysicianDetailFragment}.
- * <p>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
- */
 public class PhysicianListFragment extends ListFragment {
 
     private static final String LOG_TAG = PhysicianListFragment.class.getSimpleName();
-
-    /**
-     * The serialization (saved instance state) Bundle key representing the
-     * activated item position. Only used on tablets.
-     */
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
 
-    /**
-     * The current activated item position. Only used on tablets.
-     */
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
-    /**
-     * A callback interface that all activities containing this fragment must
-     * implement. This mechanism allows activities to be notified of item
-     * selections.
-     */
     public interface Callbacks {
 
         // called when user selects a Physician
@@ -64,10 +42,6 @@ public class PhysicianListFragment extends ListFragment {
         public boolean showAddPhysicianOptionsMenu();
     }
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public PhysicianListFragment() {
     }
 
@@ -157,10 +131,6 @@ public class PhysicianListFragment extends ListFragment {
         }
     }
 
-    /**
-     * Turns on activate-on-click mode. When this mode is on, list items will be
-     * given the 'activated' state when touched.
-     */
     public void setActivateOnItemClick(boolean activateOnItemClick) {
         // When setting CHOICE_MODE_SINGLE, ListView will automatically
         // give items the 'activated' state when touched.
@@ -175,14 +145,12 @@ public class PhysicianListFragment extends ListFragment {
         } else {
             getListView().setItemChecked(position, true);
         }
-
         mActivatedPosition = position;
     }
 
     private void refreshAllPhysicians() {
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
+        final SymptomManagementApi svc = SymptomManagementService.getService();
 
         if (svc != null) {
             CallableTask.invoke(new Callable<Collection<Physician>>() {

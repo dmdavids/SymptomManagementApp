@@ -31,12 +31,7 @@ import java.util.concurrent.Callable;
  import butterknife.ButterKnife;
  import butterknife.InjectView;
 
-/**
-  * A fragment representing a single AdminPhysician detail screen.
-  * This fragment is either contained in a {@link AdminPhysicianListActivity}
-  * in two-pane mode (on tablets) or a {@link AdminPhysicianDetailActivity}
-  * on handsets.
-  */
+
  public class AdminPhysicianDetailFragment extends Fragment {
      private static final String LOG_TAG = AdminPhysicianDetailFragment.class.getSimpleName();
 
@@ -50,7 +45,7 @@ import java.util.concurrent.Callable;
          public void onEditPhysician(String id);
      }
 
-     @InjectView(R.id.admin_physician_detail) TextView mTextView;
+    @InjectView(R.id.admin_physician_detail) TextView mTextView;
     @InjectView(R.id.physician_patients_list) ListView mListView;
 
      public AdminPhysicianDetailFragment() {
@@ -59,7 +54,6 @@ import java.util.concurrent.Callable;
      @Override
      public View onCreateView(LayoutInflater inflater, ViewGroup container,
                               Bundle savedInstanceState) {
-
          Bundle arguments = getArguments();
          if (arguments != null) {
              mPhysicianId = arguments.getString(PHYSICIAN_ID_KEY);
@@ -108,11 +102,9 @@ import java.util.concurrent.Callable;
      }
 
      private void loadPhysicianFromAPI() {
-         Log.d(LOG_TAG, "LoadFromAPI - Physician ID is : " + mPhysicianId);
+         Log.d(LOG_TAG, "Physician ID is : " + mPhysicianId);
 
-         final SymptomManagementApi svc =
-                 SymptomManagementService.getService();
-
+         final SymptomManagementApi svc =  SymptomManagementService.getService();
          if (svc != null) {
              CallableTask.invoke(new Callable<Physician>() {
 
@@ -135,7 +127,8 @@ import java.util.concurrent.Callable;
                  public void error(Exception e) {
                      Toast.makeText(
                              getActivity(),
-                             "Unable to fetch Selected Physician. Please check Internet connection.",
+                             "Unable to fetch Selected Physician. " +
+                                     "Please check Internet connection.",
                              Toast.LENGTH_LONG).show();
                      getActivity().onBackPressed();
                  }
@@ -145,9 +138,7 @@ import java.util.concurrent.Callable;
 
      public void deletePhysician() {
 
-         final SymptomManagementApi svc =
-                 SymptomManagementService.getService();
-
+         final SymptomManagementApi svc = SymptomManagementService.getService();
          if (svc != null) {
              CallableTask.invoke(new Callable<Physician>() {
 
@@ -200,9 +191,6 @@ import java.util.concurrent.Callable;
         }
     }
 
-     /**
-      * required by ButterKnife to null out the view when destroyed
-      */
      @Override
      public void onDestroyView() {
          super.onDestroyView();

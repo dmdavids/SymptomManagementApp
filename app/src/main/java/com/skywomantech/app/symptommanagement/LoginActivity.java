@@ -249,21 +249,17 @@ public class LoginActivity extends Activity {
                 "Process Login REDIRECTing to appropriate screen flow for " + role.toString());
         if (role == UserCredential.UserRole.ADMIN) {
             Log.d(LOG_TAG, "Starting Admin screen flow");
-            SymptomManagementSyncAdapter.setPatientDevice(false);
             startActivity(new Intent(this, AdminMain.class));
         } else if (role == UserCredential.UserRole.PATIENT) {
             if (LoginUtility.isCheckin(this)) {
                 Log.d(LOG_TAG, "Starting Patient CHECKIN flow");
-                SymptomManagementSyncAdapter.setPatientDevice(true);
                 startActivity(new Intent(this, PatientMainActivity.class));
             } else {
                 Log.d(LOG_TAG, "Starting Patient screen flow");
-                SymptomManagementSyncAdapter.setPatientDevice(true);
                 startActivity(new Intent(this, PatientMainActivity.class));
             }
         } else if (role == UserCredential.UserRole.PHYSICIAN) {
             Log.d(LOG_TAG, "Starting Doctor screen flow");
-            SymptomManagementSyncAdapter.setPatientDevice(false);
             startActivity(new Intent(this, PhysicianListPatientsActivity.class));
         } else {
             // I guess we aren't going anywhere

@@ -77,7 +77,6 @@ public class MedicationLogListAdapter extends ArrayAdapter<MedicationLog> {
             ((ViewHolder) view.getTag()).isTaken.setTag(logs[position]);
         }
 
-
         ViewHolder holder = (ViewHolder) view.getTag();
         holder.savePosition = position;
         String question = "Did you take " + logs[position].getMed().getName() + "?";

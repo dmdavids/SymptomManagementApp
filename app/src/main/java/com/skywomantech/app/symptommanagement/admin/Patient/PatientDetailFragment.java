@@ -33,13 +33,6 @@ import java.util.concurrent.Callable;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-
-/**
- * A fragment representing a single AdminPatient detail screen.
- * This fragment is either contained in a {@link AdminPatientListActivity}
- * in two-pane mode (on tablets) or a {@link AdminPatientDetailActivity}
- * on handsets.
- */
 public class PatientDetailFragment extends Fragment {
     private static final String LOG_TAG = PatientDetailFragment.class.getSimpleName();
 
@@ -76,8 +69,6 @@ public class PatientDetailFragment extends Fragment {
         return rootView;
     }
 
-
-    // display this fragment's menu items
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
@@ -115,11 +106,8 @@ public class PatientDetailFragment extends Fragment {
     }
 
     private void loadPatientFromAPI() {
-        Log.d(LOG_TAG, "LoadFromAPI - Patient ID is : " + mPatientId);
-
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        Log.d(LOG_TAG, "Patient ID is : " + mPatientId);
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
 
@@ -170,12 +158,9 @@ public class PatientDetailFragment extends Fragment {
         }
     }
 
-
     public void deletePatient() {
 
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
 
@@ -192,7 +177,6 @@ public class PatientDetailFragment extends Fragment {
                             getActivity(),
                             "Patient [" + result.getName() + "] deleted successfully.",
                             Toast.LENGTH_SHORT).show();
-                    // re-GET the patient list .. shouldn't have the medication in it any more
                     getActivity().onBackPressed();
                 }
 
@@ -202,16 +186,12 @@ public class PatientDetailFragment extends Fragment {
                             getActivity(),
                             "Unable to delete Patient. Please check Internet connection.",
                             Toast.LENGTH_LONG).show();
-                    //re-GET the patient list ... medication should still be in the list
                     getActivity().onBackPressed();
                 }
             });
         }
     }
 
-    /**
-     * required by ButterKnife to null out the view when destroyed
-     */
     @Override
     public void onDestroyView() {
         super.onDestroyView();

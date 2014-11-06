@@ -31,7 +31,6 @@ public class ReminderAddEditDialog extends DialogFragment {
     private static Reminder mReminder;
     private static int mPosition;
 
-
     public ReminderAddEditDialog() {
         // required empty constructor
     }

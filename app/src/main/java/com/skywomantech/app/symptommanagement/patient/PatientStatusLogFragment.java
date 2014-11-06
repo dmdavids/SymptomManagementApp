@@ -77,6 +77,12 @@ public class PatientStatusLogFragment extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         if ( mLog == null) {

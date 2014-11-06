@@ -20,15 +20,6 @@ import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.concurrent.Callable;
 
-/**
- * An activity representing a single PhysicianPatient detail screen. This
- * activity is only used on handset devices. On tablet-size devices,
- * item details are presented side-by-side with a list of items
- * in a {@link PhysicianListPatientsActivity}.
- * <p/>
- * This activity is mostly just a 'shell' activity containing nothing
- * more than a {@link PhysicianPatientDetailFragment}.
- */
 public class PhysicianPatientDetailActivity extends Activity implements
         PrescriptionAdapter.Callbacks,
         PatientMedicationFragment.Callbacks,
@@ -64,7 +55,8 @@ public class PhysicianPatientDetailActivity extends Activity implements
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        Fragment frag = getFragmentManager().findFragmentById(R.id.physician_patient_detail_container);
+        Fragment frag =
+                getFragmentManager().findFragmentById(R.id.physician_patient_detail_container);
         if(frag instanceof PatientMedicationFragment) {
             menu.removeItem(R.id.action_medication_list);
         } else if (frag instanceof HistoryLogFragment) {
@@ -160,9 +152,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
         if (medication.getName() == null || medication.getName().isEmpty()) return;
 
         // we have a name so now we can get some work done
-        final SymptomManagementApi svc =
-                SymptomManagementService.getService();
-
+        final SymptomManagementApi svc =  SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Medication>() {
 
@@ -192,7 +182,8 @@ public class PhysicianPatientDetailActivity extends Activity implements
                 @Override
                 public void error(Exception e) {
                     Toast.makeText(getApplicationContext(),
-                            "Unable to SAVE Medication. Please check Internet connection.",
+                            "Unable to SAVE Medication. " +
+                                    "Please check Internet connection and try again.",
                             Toast.LENGTH_LONG).show();
                 }
             });

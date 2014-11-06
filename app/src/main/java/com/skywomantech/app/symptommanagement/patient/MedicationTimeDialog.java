@@ -29,7 +29,6 @@ public class MedicationTimeDialog extends DialogFragment {
 
     public MedicationTimeDialog() {
         // required empty constructor
-
     }
 
     public static MedicationTimeDialog newInstance(int position) {
