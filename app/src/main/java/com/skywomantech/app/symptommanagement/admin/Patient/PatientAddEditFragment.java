@@ -207,7 +207,6 @@ public class PatientAddEditFragment extends Fragment  {
         }
     }
 
-
     private void displayPhysicians(Collection<Physician> physicians) {
         if (physicians == null || physicians.size() == 0) {
             final List<Physician> emptyList = new ArrayList<Physician>();
@@ -263,6 +262,8 @@ public class PatientAddEditFragment extends Fragment  {
 
     @OnClick(R.id.add_physician_button)
     public void addPhysician(Button button) {
+        // The Add Physician stuff is actually a whole different fragment on this page
+        // Maybe didn't have to do it this way but it was a good learning experience.
         Intent intent = new Intent(getActivity(), PatientPhysicianListActivity.class);
         startActivityForResult(intent, 2);
     }
@@ -271,15 +272,13 @@ public class PatientAddEditFragment extends Fragment  {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.v(LOG_TAG, "OnActivityResult for Request code: " + Integer.toString(requestCode));
+
         if(requestCode == 2) {
-            Log.v(LOG_TAG, "Saving the new physician information.");
-            String physicianId = data.getStringExtra(PatientPhysicianListActivity.PHYSICIAN_ID_KEY);
-            String physicianFirstName = data.getStringExtra(PatientPhysicianListActivity.PHYSICIAN_FIRST_NAME_KEY);
-            String physicianLastName = data.getStringExtra(PatientPhysicianListActivity.PHYSICIAN_LAST_NAME_KEY);
+            Log.v(LOG_TAG, "Saving the new physician information to patient record.");
             Physician p = new Physician();
-            p.setId(physicianId);
-            p.setFirstName(physicianFirstName);
-            p.setLastName(physicianLastName);
+            p.setId(data.getStringExtra(PatientPhysicianListActivity.PHYSICIAN_ID_KEY));
+            p.setFirstName(data.getStringExtra(PatientPhysicianListActivity.PHYSICIAN_FIRST_NAME_KEY));
+            p.setLastName(data.getStringExtra(PatientPhysicianListActivity.PHYSICIAN_LAST_NAME_KEY));
             if (mPatient.getPhysicians() != null) {
                 mPatient.getPhysicians().add(p);
             } else {
@@ -289,88 +288,20 @@ public class PatientAddEditFragment extends Fragment  {
             }
             // if there hasn't been any input yet then don't bother to save or update yet
             // do it on a later saving opportunity
-            if (physicianId != null && !physicianId.isEmpty() && physicianFirstName != null &&
-                    !physicianFirstName.isEmpty() && physicianLastName != null &&
-                    !physicianLastName.isEmpty()) {
+            if (p.getId() != null && !p.getId().isEmpty()
+                    && p.getFirstName() != null && !p.getFirstName().isEmpty()
+                    && p.getLastName() != null && !p.getLastName().isEmpty()) {
+                // NOTE!! The SERVER is expected to update the physician record
+                // when it updates the patient record... this is so that
+                // the app doesn't have some transactional nightmare going on
+                // BUT it should only worry about this when the ADMIN user is doing
+                // and update to the patient because no one else has the ability to change
+                // physician and patient assignments
                 updatePatient();
-                loadAndSavePhysicianFromAPI(physicianId);
             }
         }
     }
 
-    private static Physician mPhysician;
-    private void loadAndSavePhysicianFromAPI(final String physicianId) {
-        Log.d(LOG_TAG, "Getting Physician to Update Patients - Physician ID is : " + physicianId);
-
-        final SymptomManagementApi svc = SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Physician>() {
-
-                @Override
-                public Physician call() throws Exception {
-                    Log.d(LOG_TAG, "getting single Physician id : " + physicianId);
-                    return svc.getPhysician(physicianId);
-                }
-            }, new TaskCallback<Physician>() {
-
-                @Override
-                public void success(Physician result) {
-                    Log.d(LOG_TAG, "Found Physician :" + result.toString());
-                    mPhysician = result;
-                    Patient justPatient = new Patient(mPatient);
-                    if (mPhysician.getPatients() != null) {
-                        mPhysician.getPatients().add(justPatient);
-                    }else  {
-                        final Set<Patient> newSet = new HashSet<Patient>();
-                        newSet.add(justPatient);
-                        mPhysician.setPatients(newSet);
-                    }
-                    savePhysician();
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Toast.makeText(
-                            getActivity(),
-                            "Unable to fetch Physician to update Patients. Please check Internet connection.",
-                            Toast.LENGTH_LONG).show();
-                    getActivity().onBackPressed();
-                }
-            });
-        }
-    }
-
-    public void savePhysician() {
-
-        final SymptomManagementApi svc = SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Physician>() {
-
-                @Override
-                public Physician call() throws Exception {
-                        Log.d(LOG_TAG, "updating physician with patient :" + mPhysician.toDebugString());
-                        return svc.updatePhysician(mPhysician.getId(), mPhysician);
-                }
-            }, new TaskCallback<Physician>() {
-
-                @Override
-                public void success(Physician result) {
-                    Toast.makeText(
-                            getActivity(),
-                            "Updated Physician with Patient Successfully.",
-                            Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Toast.makeText(
-                            getActivity(),
-                            "Unable to UPDATE Physician with Patients. Please check Internet connection.",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-    }
     /**
      * required by ButterKnife to null out the view when destroyed
      */
