@@ -37,7 +37,7 @@ public class Reminder {
             }
             return GENERIC;
         }
-    };
+    }
 
     private ReminderType reminderType;
 	
@@ -103,7 +103,7 @@ public class Reminder {
 	}
 
 	public void setOn(boolean isOn) {
-		this.on = on;
+		this.on = isOn;
 	}
 
 	public ReminderType getReminderType() {

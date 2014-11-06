@@ -7,7 +7,17 @@ public class PatientCPcvHelper {
 
     public  static ContentValues createValuesObject(String id, Patient patient) {
         ContentValues cv = new ContentValues();
-        cv.put(PatientCPContract.PatientEntry._ID, patient.getDbId());
+        cv.put(PatientCPContract.PatientEntry._ID, patient.getDbId()); // update needs this
+        cv.put(PatientCPContract.PatientEntry.COLUMN_PATIENT_ID, id);
+        cv.put(PatientCPContract.PatientEntry.COLUMN_LAST_LOGIN, patient.getLastLogin());
+        cv.put(PatientCPContract.PatientEntry.COLUMN_LAST_NAME, patient.getLastName());
+        cv.put(PatientCPContract.PatientEntry.COLUMN_FIRST_NAME, patient.getFirstName());
+        cv.put(PatientCPContract.PatientEntry.COLUMN_BIRTHDATE, patient.getBirthdate());
+        return cv;
+    }
+
+    public  static ContentValues createInsertValuesObject(String id, Patient patient) {
+        ContentValues cv = new ContentValues();
         cv.put(PatientCPContract.PatientEntry.COLUMN_PATIENT_ID, id);
         cv.put(PatientCPContract.PatientEntry.COLUMN_LAST_LOGIN, patient.getLastLogin());
         cv.put(PatientCPContract.PatientEntry.COLUMN_LAST_NAME, patient.getLastName());
@@ -44,8 +54,18 @@ public class PatientCPcvHelper {
         return cv;
     }
 
-
     public static ContentValues createValuesObject(String id, Reminder rem) {
+        ContentValues cv = new ContentValues();
+        cv.put(PatientCPContract.ReminderEntry._ID, rem.getDbId());
+        cv.put(PatientCPContract.ReminderEntry.COLUMN_ON, (rem.isOn() ? 1 : 0));
+        cv.put(PatientCPContract.ReminderEntry.COLUMN_HOUR, rem.getHour());
+        cv.put(PatientCPContract.ReminderEntry.COLUMN_PATIENT_ID, id);
+        cv.put(PatientCPContract.ReminderEntry.COLUMN_MINUTES, rem.getMinutes());
+        cv.put(PatientCPContract.ReminderEntry.COLUMN_NAME, rem.getName());
+        return cv;
+    }
+
+    public static ContentValues createInsertValuesObject(String id, Reminder rem) {
         ContentValues cv = new ContentValues();
         cv.put(PatientCPContract.ReminderEntry.COLUMN_ON, (rem.isOn() ? 1 : 0));
         cv.put(PatientCPContract.ReminderEntry.COLUMN_HOUR, rem.getHour());

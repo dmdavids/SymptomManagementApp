@@ -5,108 +5,102 @@
     android:id="@+id/admin_patient_add_edit_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="8dp"
     tools:context="com.skywomantech.app.symptommanagement.admin.Physician.AdminPatientDetailFragment">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:height="@android:dimen/app_icon_size"
+        android:text="PATIENT DETAILS :"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/edit_first_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:height="@android:dimen/app_icon_size"
-            android:text="PATIENT DETAILS :"
+            android:hint="First Name"
+            android:imeOptions="actionNext"
+            android:inputType="textPersonName|textCapWords"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/edit_last_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:height="@android:dimen/app_icon_size"
+            android:hint="Last Name"
+            android:imeOptions="actionNext"
+            android:inputType="textPersonName|textCapWords"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <EditText
-                android:id="@+id/edit_first_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:height="@android:dimen/app_icon_size"
-                android:hint="First Name"
-                android:imeOptions="actionNext"
-                android:inputType="textPersonName|textCapWords"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <EditText
-                android:id="@+id/edit_last_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:height="@android:dimen/app_icon_size"
-                android:hint="Last Name"
-                android:imeOptions="actionNext"
-                android:inputType="textPersonName|textCapWords"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="8dp">
-
-                <Button
-                    android:id="@+id/pick_birthdate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:text="Choose Birthdate" />
-
-                <TextView
-                    android:id="@+id/display_birthdate"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Birthdate"
-                    android:padding="16dp"
-                    android:textAppearance="?android:attr/textAppearanceMedium" />
-
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/add_physician_layout">
-
-            <TextView
-                android:id="@+id/patient_physicians_heading"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:height="@android:dimen/app_icon_size"
-                android:padding="12dp"
-                android:text="ASSIGNED PHYSICIANS :"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:orientation="horizontal"
+            android:padding="8dp">
 
             <Button
-                android:id="@+id/add_physician_button"
+                android:id="@+id/pick_birthdate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:text="Add Physician" />
+                android:text="Choose Birthdate" />
+
+            <TextView
+                android:id="@+id/display_birthdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Birthdate"
+                android:padding="16dp"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
 
         </LinearLayout>
 
-        <ListView
-            android:id="@+id/admin_patient_physician_listview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"></ListView>
+    </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/add_physician_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/save_patient_button"
+        <TextView
+            android:id="@+id/patient_physicians_heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Save Patient"></Button>
+            android:height="@android:dimen/app_icon_size"
+            android:padding="12dp"
+            android:text="ASSIGNED PHYSICIANS :"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Button
+            android:id="@+id/add_physician_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:text="Add Physician" />
 
     </LinearLayout>
+
+    <ListView
+        android:id="@+id/admin_patient_physician_listview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></ListView>
+
+
+    <Button
+        android:id="@+id/save_patient_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Save Patient"></Button>
 
 </LinearLayout>

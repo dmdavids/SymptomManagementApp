@@ -2,7 +2,7 @@ package com.skywomantech.app.symptommanagement.admin.Medication;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Intent;
+
 import android.os.Bundle;
 import android.app.Activity;
 
@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;

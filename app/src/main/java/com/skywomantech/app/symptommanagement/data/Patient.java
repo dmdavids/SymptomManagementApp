@@ -1,17 +1,14 @@
 package com.skywomantech.app.symptommanagement.data;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
-import java.util.TimeZone;
 
 
 public class Patient {
 
     private String id;
-    private transient long dbId;  // local database id
+    private transient long dbId;  // local CP database id!!
 
     private String firstName;
     private String lastName;

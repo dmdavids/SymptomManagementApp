@@ -15,7 +15,6 @@ import android.widget.TextView;
  import android.widget.Toast;
 
 
- import com.skywomantech.app.symptommanagement.Login;
  import com.skywomantech.app.symptommanagement.R;
  import com.skywomantech.app.symptommanagement.client.CallableTask;
  import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;

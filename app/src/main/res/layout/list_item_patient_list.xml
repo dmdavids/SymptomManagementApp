@@ -17,7 +17,6 @@
             android:id="@+id/patient_list_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Patient Name"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -25,7 +24,6 @@
             android:id="@+id/patient_list_last_log"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Last Logged Status at "
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>

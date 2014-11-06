@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.DatePicker;
-import android.widget.TimePicker;
 
 import com.skywomantech.app.symptommanagement.R;
 
@@ -82,8 +81,7 @@ public class BirthdateDialog extends DialogFragment {
         long dateTime = datePicker.getCalendarView().getDate();
         Date date = new Date(dateTime);
         DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
-        String formattedDate = dateFormat.format(date);
-        return formattedDate;
+        return dateFormat.format(date);
     }
 
     private void convertStringToSelection(String day) {

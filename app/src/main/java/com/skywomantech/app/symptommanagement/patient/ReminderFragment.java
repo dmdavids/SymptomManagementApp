@@ -19,7 +19,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
-import com.skywomantech.app.symptommanagement.Login;
+import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.ReminderEntry;
@@ -28,7 +28,6 @@ import com.skywomantech.app.symptommanagement.data.Reminder;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.TreeSet;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -117,8 +116,8 @@ public class ReminderFragment extends Fragment {
 
     public void addReminder(Reminder newReminder) {
         // add to database first
-        String mPatientId = Login.getLoginId(getActivity());
-        ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, newReminder);
+        String mPatientId = LoginUtility.getLoginId(getActivity());
+        ContentValues cv = PatientCPcvHelper.createInsertValuesObject(mPatientId, newReminder);
         Uri uri = getActivity().getContentResolver().insert(ReminderEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);
         if (objectId < 0) {
@@ -126,7 +125,7 @@ public class ReminderFragment extends Fragment {
             Toast.makeText(getActivity(), "Failed to Add Reminder.", Toast.LENGTH_LONG).show();
 
         } else {
-            newReminder.setDbId(objectId);
+            newReminder.setDbId(objectId);  // this is the local CP id
             // if database add successful then
             reminders.add(newReminder);
             mReminders = reminders.toArray(new Reminder[reminders.size()]);
@@ -136,9 +135,7 @@ public class ReminderFragment extends Fragment {
     }
 
     public void deleteReminder(int position ) {
-        // remove from database first
         if (mReminders[position].getDbId() >= 0) {
-            // TODO: deletes all rows, need to only delete one, write testcase
             String selection =
                     ReminderEntry._ID + "=" + Long.toString(mReminders[position].getDbId());
             int rowsDeleted = getActivity().getContentResolver()
@@ -153,9 +150,8 @@ public class ReminderFragment extends Fragment {
     }
 
     public void updateReminder(int position, Reminder temp) {
-       // update the one in the database first
         if (mReminders[position].getDbId() >= 0) {
-            String mPatientId = Login.getLoginId(getActivity());
+            String mPatientId = LoginUtility.getLoginId(getActivity());
             ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, temp);
             String selection =
                     ReminderEntry._ID + "=" + Long.toString(mReminders[position].getDbId());

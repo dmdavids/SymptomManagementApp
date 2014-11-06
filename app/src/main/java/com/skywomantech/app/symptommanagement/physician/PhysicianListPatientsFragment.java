@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.skywomantech.app.symptommanagement.Login;
+import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 
 import com.skywomantech.app.symptommanagement.client.CallableTask;
@@ -19,7 +19,6 @@ import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.Physician;
 
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
@@ -154,7 +153,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
 
     private void refreshAllPatients() {
 
-        mPhysicianId = Login.getLoginId(getActivity());
+        mPhysicianId = LoginUtility.getLoginId(getActivity());
         final SymptomManagementApi svc =
                 SymptomManagementService.getService();
 

@@ -21,47 +21,54 @@ public class SymptomManagementService {
     public static final String CLIENT_ID = "mobile";
     public final static String SERVER_ADDRESS = "https://192.168.0.34:8443";
 
-    // make them go to login screen if these values are empty!
-    private static String mUser = "admin";
-    private static String mPassword = "pass";
+    private static String mUser = "";
+    private static String mPassword = "";
 
-    // Use this one when you aren't already in the LoginActivity class
+    // Use this one when you are already logged in and you just need your server connection
+    // and if it isn't available you want to go back to login activity
     public static synchronized SymptomManagementApi getServiceOrShowLogin(Context ctx) {
         if (symptomManagementSvc != null) {
+            Log.d(LOG_TAG, "We do have a service... no need to Login. Yeah!");
             return symptomManagementSvc;
         } else {
+            Log.d(LOG_TAG, "We do not have a service so we need to LOGIN!");
             ctx.startActivity(new Intent(ctx, LoginActivity.class));
             return null;
         }
     }
 
-
-    // use this one when you are already in the LoginActivity class
+    // use this one when you are in LoginActivity class and you want a NEW server connection
     public static synchronized SymptomManagementApi getService(String username, String password) {
-        if (symptomManagementSvc != null) {
+        if (username == null || username.isEmpty() || password == null ) {
+            Log.e(LOG_TAG, "INVALID username or password. Unable to login.");
+            symptomManagementSvc = null;
             return symptomManagementSvc;
         }
-        else {
-            return init(SERVER_ADDRESS, username, password);
-        }
+        mUser = username;
+        mPassword = password;
+        Log.d(LOG_TAG, "Attempting to INIT the service with a new username and password.");
+        return init(SERVER_ADDRESS, username, password);
     }
-
-    //these are testing versions TODO: remove this later
 
     public static synchronized SymptomManagementApi getService(String server) {
         if (symptomManagementSvc != null) {
+            Log.d(LOG_TAG, "GETTING the service.");
             return symptomManagementSvc;
         }
         else {
+            Log.d(LOG_TAG, "Attempting to INIT the service.");
             return init(server, mUser, mPassword);
         }
     }
 
     public static synchronized SymptomManagementApi getService() {
+
         if (symptomManagementSvc != null) {
+            Log.d(LOG_TAG, "GETTING the service.");
             return symptomManagementSvc;
         }
         else {
+            Log.d(LOG_TAG, "Attempting to INIT the service with previously set username and password.");
             return init(SERVER_ADDRESS, mUser, mPassword);
         }
     }
@@ -84,5 +91,13 @@ public class SymptomManagementService {
         }
         return symptomManagementSvc;
     }
+
+    public static synchronized void reset() {
+        Log.d(LOG_TAG, "RESETTING the service and username and password.");
+        mPassword = "";
+        mUser = "";
+        symptomManagementSvc = null;
+    }
+
 
 }

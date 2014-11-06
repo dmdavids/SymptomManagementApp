@@ -1,6 +1,5 @@
 package com.skywomantech.app.symptommanagement.patient;
 
-import android.app.Dialog;
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -19,9 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.skywomantech.app.symptommanagement.Login;
+import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
-import com.skywomantech.app.symptommanagement.data.PatientCPContract;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.StatusLogEntry;
 import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
@@ -162,7 +160,7 @@ public class PatientStatusLogFragment extends Fragment {
     @OnClick(R.id.status_save_button)
     public void saveStatusLog() {
         mLog.setNote(note.getText().toString()); // save the text from the note edit text
-        String mPatientId = Login.getLoginId(getActivity());
+        String mPatientId = LoginUtility.getLoginId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLog);
         Uri uri = getActivity().getContentResolver().insert(StatusLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);
@@ -209,9 +207,8 @@ public class PatientStatusLogFragment extends Fragment {
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US)
                 .format(new Date());
-        File mediaFile = new File(mediaStorageDir.getPath() + File.separator
+        return new File(mediaStorageDir.getPath() + File.separator
                 + "IMG_" + timeStamp + ".jpg");
-        return mediaFile;
     }
 
     public Uri getImagePath() {
@@ -221,10 +218,7 @@ public class PatientStatusLogFragment extends Fragment {
     /* Checks if external storage is available for read and write */
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.MEDIA_MOUNTED.equals(state);
     }
 
     /* Checks if external storage is available to at least read */

@@ -10,23 +10,16 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
-
 import com.skywomantech.app.symptommanagement.data.Medication;
-
 import com.skywomantech.app.symptommanagement.data.Patient;
 
-
-
 import java.util.Collection;
-
 import java.util.HashSet;
-import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
 /**

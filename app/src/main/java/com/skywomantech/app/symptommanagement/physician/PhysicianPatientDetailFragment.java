@@ -1,16 +1,14 @@
 package com.skywomantech.app.symptommanagement.physician;
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
@@ -94,7 +92,7 @@ public class PhysicianPatientDetailFragment extends Fragment {
                         // set the views with the patient data
                         mNameView.setText(mPatient.getName());
                         mBDView.setText(mPatient.getBirthdate());
-                        mLastLog.setText(mPatient.getFormattedLastLogged());  //TODO: needs real date here!
+                        mLastLog.setText(mPatient.getFormattedLastLogged());
                     }
                 }
 

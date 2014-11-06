@@ -32,7 +32,7 @@ public class HistoryLog {
             }
             return GENERIC;
         }
-    };
+    }
 
     public HistoryLog() {
     }

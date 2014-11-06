@@ -13,10 +13,6 @@ import android.widget.TimePicker;
 import com.skywomantech.app.symptommanagement.R;
 
 import java.util.Calendar;
-import java.util.TimeZone;
-
-import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 
 public class MedicationTimeDialog extends DialogFragment {

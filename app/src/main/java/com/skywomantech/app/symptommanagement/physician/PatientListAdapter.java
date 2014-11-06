@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Patient;
-import com.skywomantech.app.symptommanagement.data.Physician;
 
 
 public class PatientListAdapter extends ArrayAdapter<Patient> {
@@ -39,7 +38,7 @@ public class PatientListAdapter extends ArrayAdapter<Patient> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = null;
+        View view;
         if (convertView == null) {
             LayoutInflater inflater =
                     (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

@@ -1,6 +1,5 @@
 package com.skywomantech.app.symptommanagement.patient;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -10,7 +9,7 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
-import com.skywomantech.app.symptommanagement.Login;
+import com.skywomantech.app.symptommanagement.LoginActivity;
 import com.skywomantech.app.symptommanagement.R;
 
 public class ReminderService extends Service {
@@ -51,9 +50,9 @@ public class ReminderService extends Service {
                         .setAutoCancel(true);
 
         // Open the app when the user clicks on the notification.
-        Intent resultIntent = new Intent(getApplicationContext(), Login.class);
+        Intent resultIntent = new Intent(getApplicationContext(), LoginActivity.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext())
-                .addParentStack(Login.class)
+                .addParentStack(LoginActivity.class)
                 .addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT );

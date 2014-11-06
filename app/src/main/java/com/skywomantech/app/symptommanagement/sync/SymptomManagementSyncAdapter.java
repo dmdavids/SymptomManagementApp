@@ -15,7 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.skywomantech.app.symptommanagement.Login;
+import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
@@ -173,7 +173,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                               ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting onPerformSync");
         if (mPatientDevice) {
-            mPatientId = Login.getLoginId(mContext);
+            mPatientId = LoginUtility.getLoginId(mContext);
             if (mPatientId != null && !mPatientId.isEmpty()) {
                 processPatientSync();
             } else {
@@ -223,7 +223,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private Patient getPatientRecordFromCloud() {
-        mPatientId = Login.getLoginId(mContext);
+        mPatientId = LoginUtility.getLoginId(mContext);
         Log.d(LOG_TAG, "getPatientRecordFromCloud - Patient ID is : " + mPatientId);
 
         final SymptomManagementApi svc =
@@ -258,7 +258,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     private void updatePrescriptionsToCP(Collection<Medication> prescriptions) {
         if (prescriptions == null) return;
 
-        mPatientId = Login.getLoginId(mContext);
+        mPatientId = LoginUtility.getLoginId(mContext);
         // delete all of the patient's prescriptions
         mContext.getContentResolver().delete(PrescriptionEntry.CONTENT_URI, null, null);
 
@@ -343,7 +343,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         return reminders;
     }
     private void sendPatientRecordToCloud(final Patient patientRecord) {
-        mPatientId = Login.getLoginId(mContext);
+        mPatientId = LoginUtility.getLoginId(mContext);
 
         final SymptomManagementApi svc =
                 SymptomManagementService.getService();
@@ -382,7 +382,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private Collection<Alert> getPhysicianAlerts() {
-        mPhysicianId = Login.getLoginId(mContext);
+        mPhysicianId = LoginUtility.getLoginId(mContext);
         Log.d(LOG_TAG, "get Alerts for Physician : " + mPhysicianId);
 
         final SymptomManagementApi svc =

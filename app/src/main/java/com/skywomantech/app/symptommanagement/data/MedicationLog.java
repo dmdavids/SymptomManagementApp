@@ -1,6 +1,5 @@
 package com.skywomantech.app.symptommanagement.data;
 
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;

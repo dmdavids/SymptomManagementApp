@@ -1,19 +1,13 @@
 package com.skywomantech.app.symptommanagement.admin.Patient;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
-
 import android.util.Log;
 import android.view.MenuItem;
 
 import com.skywomantech.app.symptommanagement.R;
-import com.skywomantech.app.symptommanagement.data.Physician;
-import com.skywomantech.app.symptommanagement.physician.PatientMedicationFragment;
-
-import java.util.HashSet;
-import java.util.Set;
 
 
 /**

@@ -1,10 +1,6 @@
 package com.skywomantech.app.symptommanagement.data;
 
 
-import android.os.Parcelable;
-
-import java.io.Serializable;
-
 public class Medication {
 
 	private String id;

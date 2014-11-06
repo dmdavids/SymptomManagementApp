@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello_world">Hello world!</string>
     <string name="app_name">Symptom Management</string>
     <string name="sync_account_type" translatable="false">skywomantech.com</string>
     <string name="content_authority" translatable="false">"com.skywomantech.app.symptommanagement"</string>
     <string name="action_settings">Settings</string>
-    <string name="login_title">Login</string>
     <string name="pref_enable_auto_login_label">Enable Automatic Login</string>
     <string name="pref_enable_auto_login_key" translatable="false">auto_login</string>
     <string name="pref_enable_auto_login_default" translatable="false">false</string>
@@ -30,7 +28,6 @@
     <string name="title_activity_admin_main">Admin Main</string>
     <string name="admin_main_title">Administrate Users and Medications</string>
     <string name="title_admin_medication_list">Admin Medications</string>
-    <string name="title_admin_medication_detail">Admin Medications Detail</string>
     <string name="admin_medication_edit">Edit</string>
     <string name="admin_medication_delete">Delete</string>
     <string name="admin_medication_add">Add Medication</string>
@@ -40,7 +37,6 @@
     <string name="title_physicianpatient_list">Patients</string>
     <string name="title_physicianpatient_detail">Patient Detail</string>
     <string name="title_activity_medication_list">Medication List</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_patient_options">PatientOptionsActivity</string>
     <string name="pref_enable_reminder_snooze">Snooze Reminders</string>
     <string name="pref_enable_reminder_snooze_key">reminder_snooze</string>

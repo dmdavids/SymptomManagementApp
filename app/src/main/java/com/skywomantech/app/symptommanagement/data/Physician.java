@@ -37,13 +37,6 @@ public class Physician {
         this.id = id;
     }
 
-    public String getName() {
-        String name = "";
-        if (firstName != null || !firstName.isEmpty()) name += firstName;
-        if (!name.isEmpty()) name += " ";
-        if (lastName != null  || !lastName.isEmpty()) name+= lastName;
-        return name;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -107,6 +100,14 @@ public class Physician {
         } else if (!lastName.equals(other.lastName))
             return false;
         return true;
+    }
+
+    public String getName() {
+        String name = "";
+        if (this.firstName != null || !this.firstName.isEmpty()) name += this.firstName;
+        if (!name.isEmpty()) name += " ";
+        if (this.lastName != null  || !this.lastName.isEmpty()) name+= this.lastName;
+        return name;
     }
 
     public String toDebugString() {

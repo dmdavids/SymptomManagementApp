@@ -7,8 +7,8 @@ import android.app.Activity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.LoginActivity;
+import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
@@ -71,7 +71,7 @@ public class PhysicianListPatientsActivity extends Activity
             SymptomManagementSyncAdapter.syncImmediately(this);
             return true;
         } else if (id == R.id.physician_logout) {
-            Login.logout(this);
+            LoginUtility.logout(this);
             startActivity(new Intent(this, LoginActivity.class));
         }
         return super.onOptionsItemSelected(item);

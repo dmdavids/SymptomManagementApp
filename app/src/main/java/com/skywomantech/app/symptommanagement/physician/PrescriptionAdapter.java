@@ -12,8 +12,6 @@ import android.widget.TextView;
 
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Medication;
-import com.skywomantech.app.symptommanagement.data.Patient;
-import com.skywomantech.app.symptommanagement.data.Reminder;
 
 
 public class PrescriptionAdapter extends ArrayAdapter<Medication> {
@@ -47,7 +45,7 @@ public class PrescriptionAdapter extends ArrayAdapter<Medication> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = null;
+        View view;
         if (convertView == null) {
             LayoutInflater inflater =
                     (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

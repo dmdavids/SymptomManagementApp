@@ -166,9 +166,8 @@ public class EasyHttpClient extends DefaultHttpClient {
 		SchemeRegistry registry = new SchemeRegistry();
 		registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), HTTP_PORT));
 		registry.register(new Scheme("https", new EasySSLSocketFactory(), HTTPS_PORT));
-		ThreadSafeClientConnManager manager = new ThreadSafeClientConnManager(params, registry);
 					
-		return manager;
+		return  new ThreadSafeClientConnManager(params, registry);
 	}
 	
 	/**

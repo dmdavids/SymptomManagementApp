@@ -7,9 +7,6 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.skywomantech.app.symptommanagement.R;
-import com.skywomantech.app.symptommanagement.admin.Physician.AdminPhysicianAddEditFragment;
-import com.skywomantech.app.symptommanagement.admin.Physician.AdminPhysicianDetailActivity;
-import com.skywomantech.app.symptommanagement.admin.Physician.AdminPhysicianDetailFragment;
 import com.skywomantech.app.symptommanagement.admin.Physician.PhysicianListFragment;
 
 import static android.support.v4.app.NavUtils.navigateUpFromSameTask;

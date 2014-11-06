@@ -3,7 +3,6 @@ package com.skywomantech.app.symptommanagement.patient;
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.skywomantech.app.symptommanagement.Login;
+import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.PainLog;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.PainLogEntry;
@@ -87,7 +86,7 @@ public class PatientPainLogFragment extends Fragment {
     @OnClick(R.id.pain_log_done_button)
     public void savePainLog() {
         // save Pain Log to the CP
-        mPatientId = Login.getLoginId(getActivity());
+        mPatientId = LoginUtility.getLoginId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLog);
         Uri uri = getActivity().getContentResolver().insert(PainLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);

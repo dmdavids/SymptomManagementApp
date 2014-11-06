@@ -1,6 +1,5 @@
 package com.skywomantech.app.symptommanagement.physician;
 
-import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,7 +7,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
@@ -18,7 +16,7 @@ import com.skywomantech.app.symptommanagement.data.HistoryLog;
 import com.skywomantech.app.symptommanagement.data.MedicationLog;
 import com.skywomantech.app.symptommanagement.data.PainLog;
 import com.skywomantech.app.symptommanagement.data.Patient;
-import com.skywomantech.app.symptommanagement.data.Physician;
+
 import com.skywomantech.app.symptommanagement.data.StatusLog;
 
 import java.util.Collection;

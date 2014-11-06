@@ -18,10 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.skywomantech.app.symptommanagement.Login;
 import com.skywomantech.app.symptommanagement.LoginActivity;
+import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
-import com.skywomantech.app.symptommanagement.SetPreferenceActivity;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
@@ -29,9 +28,7 @@ import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.PatientEntry;
 import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
-import com.skywomantech.app.symptommanagement.data.Physician;
 import com.skywomantech.app.symptommanagement.data.Reminder;
-import com.skywomantech.app.symptommanagement.physician.PatientListAdapter;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.concurrent.Callable;
@@ -49,7 +46,7 @@ public class PatientMainActivity extends Activity
         ReminderListAdapter.Callbacks {
 
     public final static String LOG_TAG = PatientMainActivity.class.getSimpleName();
-    private String mPatientId;
+    private String mPatientId;  // cloud login db id
     private Patient mPatient;
     private long mLastLogged = System.currentTimeMillis();
     Context mContext;
@@ -100,22 +97,29 @@ public class PatientMainActivity extends Activity
             SymptomManagementSyncAdapter.syncImmediately(this);
             return true;
         } else if (id == R.id.patient_logout) {
-            Login.logout(this);
+            LoginUtility.logout(this);
             startActivity(new Intent(this, LoginActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private Patient getPatientFromCP() {
-        mPatientId = Login.getLoginId(this);
+    private Patient getPatient() {
+        mPatientId = LoginUtility.getLoginId(this);  // cloud db id
+        Log.d(LOG_TAG, "Getting PATIENT from CP with id : " + mPatientId);
+        mPatient = null;
         if (mPatientId != null && !mPatientId.isEmpty()) {
+            mPatient = new Patient();
+            mPatient.setId(mPatientId); // cloud id
+            String selection = PatientEntry.COLUMN_PATIENT_ID + "=" + "\'"  + mPatientId + "\'";
             Cursor cursor = getContentResolver()
-                    .query(PatientEntry.CONTENT_URI, null, null, null,null);
+                    .query(PatientEntry.CONTENT_URI, null, selection, null,null); // where cloud id = mPatientId
+            if (cursor.getCount() > 1) {
+                Log.d(LOG_TAG, "There are multiple entries for the same DB patient! id : " + mPatientId);
+            }
             if (cursor.moveToFirst()) {
-                mPatient = new Patient();
-                mPatientId = cursor.getString(cursor.getColumnIndex(PatientEntry._ID));
-                mPatient.setId(mPatientId);
-                mPatient.setDbId(cursor.getLong(cursor.getColumnIndex(PatientEntry._ID)));
+                //mPatientId = cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_PATIENT_ID));
+
+                mPatient.setDbId(cursor.getLong(cursor.getColumnIndex(PatientEntry._ID))); // local CP id
                 mPatient.setFirstName(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_FIRST_NAME)));
                 mPatient.setLastName(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_LAST_NAME)));
                 mPatient.setLastLogin(cursor.getLong(cursor.getColumnIndex(PatientEntry.COLUMN_LAST_LOGIN)));
@@ -125,13 +129,18 @@ public class PatientMainActivity extends Activity
                     mPatient.setLastLogin(mLastLogged);
                 }
                 mPatient.setBirthdate(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_BIRTHDATE)));
+                Log.d(LOG_TAG, "Working with this PATIENT\n\tid : " + mPatientId
+                        + "\n\trecord : " + mPatient.toDebugString());
             }
             cursor.close();
         }
         // CP didn't find it so try the internet
         // if found on the internet then save it to C
         if (mPatient == null ) {
+            Log.d(LOG_TAG, "INSTEAD we are Getting PATIENT from CLOUD with id : " + mPatientId);
             mPatient = getPatientFromCloud();  // this is asynchronous so don't expect immediate response
+            Log.d(LOG_TAG, "Working with this PATIENT\n\tid : " + mPatientId
+                    + "\n\trecord : " + mPatient.toDebugString());
         }
         return mPatient;
     }
@@ -147,6 +156,7 @@ public class PatientMainActivity extends Activity
                 @Override
                 public Patient call() throws Exception {
                     Log.d(LOG_TAG, "getting Patient from Internet");
+                    mPatient = null;
                     return svc.getPatient(mPatientId);
                 }
             }, new TaskCallback<Patient>() {
@@ -155,7 +165,7 @@ public class PatientMainActivity extends Activity
                 public void success(Patient result) {
                     Log.d(LOG_TAG, "got the Patient!");
                     mPatient = result;
-                    mPatientId = mPatient.getId();
+                    //mPatientId = mPatient.getId();
                     if (mPatient != null) {
                         Log.v(LOG_TAG, "Last Login set to: " + Long.toString(mLastLogged));
                         mPatient.setLastLogin(mLastLogged);
@@ -175,15 +185,24 @@ public class PatientMainActivity extends Activity
     }
 
     private void savePatientToCP(Patient patient) {
-        if (mPatientId != null && !mPatientId.isEmpty()
-                &&  patient != null && patient.getDbId() >= 0L) {
-            ContentValues cvPatient = PatientCPcvHelper.createValuesObject(mPatientId, patient);
-            // TODO: Insert fails here... should check if exists first?  Who else is inserting?
-            // TODO:  does this get called multiple times?
-            Uri uri = getContentResolver().insert(PatientEntry.CONTENT_URI, cvPatient);
-            long objectId = ContentUris.parseId(uri);
-            patient.setDbId(objectId);
-            Log.d(LOG_TAG, "New Patient DB Id is : " + Long.toString(objectId));
+        if (mPatientId != null && !mPatientId.isEmpty() &&  patient != null) {
+            Log.d(LOG_TAG, "INSERTING with this PATIENT\n\tid : " + mPatientId
+                    + "\n\trecord : " + patient.toDebugString());
+            // test to see if it is already in the database
+            String selection = PatientEntry.COLUMN_PATIENT_ID + "=" + "\'"  + mPatientId + "\'";
+            Cursor cursor = getContentResolver()
+                    .query(PatientEntry.CONTENT_URI, null, selection, null,null); // where cloud id = mPatientId
+            if (cursor.getCount() > 0) {
+                Log.d(LOG_TAG, "NOT INSERTING. This Patient Id already exists in the CP : " + mPatientId);
+            } else {
+                // its a new patient in the CP so we can go ahead and insert
+                ContentValues cvPatient = PatientCPcvHelper.createInsertValuesObject(mPatientId, patient);
+                Uri uri = getContentResolver().insert(PatientEntry.CONTENT_URI, cvPatient);
+                long objectId = ContentUris.parseId(uri);
+                patient.setDbId(objectId);  // set the local CP ID
+                Log.d(LOG_TAG, "New Patient DB Id is : " + Long.toString(objectId));
+            }
+            cursor.close();
         }
         else {
             Log.d(LOG_TAG, "Patient is not Saveable.");
@@ -197,9 +216,11 @@ public class PatientMainActivity extends Activity
             String selection = PatientEntry._ID + "=" + Long.toString(patient.getDbId());
             int updated = getContentResolver()
                     .update(PatientEntry.CONTENT_URI, cvPatient, selection, null);
+            Log.d(LOG_TAG, "Updated Patients : " + Integer.toString(updated));
         }
         else {
-            Log.d(LOG_TAG, "Patient is not Updateable.");
+            Log.d(LOG_TAG, "Patient is not Updateable.  Try saving it INSTEAD?");
+            savePatientToCP(patient);
         }
     }
 
@@ -244,7 +265,7 @@ public class PatientMainActivity extends Activity
     }
 
     private void setLastLoggedTimestamp() {
-        mPatient = getPatientFromCP();
+        mPatient = getPatient();
         if (mPatient != null) {
             Log.v(LOG_TAG, "Last Login RESET to: " + Long.toString(mLastLogged));
             mPatient.setLastLogin(mLastLogged);

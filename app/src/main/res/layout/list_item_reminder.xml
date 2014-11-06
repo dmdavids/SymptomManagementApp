@@ -4,7 +4,9 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
-    android:padding="6dip">
+    android:padding="6dip"
+    android:baselineAligned="false"
+    android:id="@+id/layout_list_reminder">
 
     <LinearLayout
         android:id="@+id/front_stuff"
@@ -63,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="4dp"
-            android:layout_weight="3"
+
             android:src="@android:drawable/ic_menu_edit" />
 
 
@@ -71,7 +73,7 @@
             android:id="@+id/reminder_delete_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+
             android:src="@android:drawable/ic_menu_delete" />
 
     </LinearLayout>

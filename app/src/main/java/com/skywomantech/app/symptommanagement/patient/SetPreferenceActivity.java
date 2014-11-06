@@ -1,4 +1,4 @@
-package com.skywomantech.app.symptommanagement;
+package com.skywomantech.app.symptommanagement.patient;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;

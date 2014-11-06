@@ -12,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.skywomantech.app.symptommanagement.Login;
+import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.MedicationLog;
@@ -21,7 +21,6 @@ import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.TreeSet;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -42,9 +41,6 @@ public class PatientMedicationLogFragment extends Fragment {
     public interface Callbacks {
         public boolean onMedicationLogComplete();
     }
-
-    //TODO:  replace with actual patient's list of medications
-    private Collection<Medication> dummyMedications = makeDummyMedicationList();
 
     public PatientMedicationLogFragment() {
     }
@@ -71,9 +67,9 @@ public class PatientMedicationLogFragment extends Fragment {
     }
 
     private void loadMedicationLogList() {
-        // TODO: get actual Medications for this patient use dummy list for now
+        // if patient doesn't have any medications assigned yet make and empty list
         if (mLogList == null) {
-            createEmptyLogsList(dummyMedications);
+           mLogList = new MedicationLog[0];
         }
         mAdapter = new MedicationLogListAdapter(getActivity(), mLogList);
         mLogListView.setAdapter(mAdapter);
@@ -94,7 +90,7 @@ public class PatientMedicationLogFragment extends Fragment {
         mLogList[position].setTaken(msTime);
 
         // save this one to the database
-        String mPatientId = Login.getLoginId(getActivity());
+        String mPatientId = LoginUtility.getLoginId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLogList[position]);
         Uri uri = getActivity().getContentResolver().insert(MedLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);
@@ -111,20 +107,4 @@ public class PatientMedicationLogFragment extends Fragment {
         super.onDestroyView();
         ButterKnife.reset(this);
     }
-
-
-
-    private static Collection<Medication> makeDummyMedicationList() {
-        Collection<Medication> meds = new HashSet<Medication>();
-
-        Medication oxycontin = new Medication("OxyContin");
-        oxycontin.setId("1234");
-        meds.add(oxycontin);
-
-        Medication lortab = new Medication("Lortab");
-        lortab.setId("543212");
-        meds.add(lortab);
-        return meds;
-    }
-
 }

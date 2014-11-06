@@ -28,15 +28,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".Login"
-            android:label="Testing Sign In"
-            android:parentActivityName=".LoginActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skywomantech.app.symptommanagement.LoginActivity" />
-        </activity>
-
         <provider
             android:name=".data.PatientContentProvider"
             android:authorities="@string/content_authority"
@@ -44,20 +35,20 @@
             android:syncable="true" />
 
         <activity
-            android:name=".SetPreferenceActivity"
+            android:name=".patient.SetPreferenceActivity"
             android:label="@string/action_settings"
-            android:parentActivityName=".Login" >
+            android:parentActivityName=".LoginActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skywomantech.app.symptommanagement.Login" />
+                android:value="com.skywomantech.app.symptommanagement.LoginActivity" />
         </activity>
         <activity
             android:name=".admin.AdminMain"
             android:label="@string/title_activity_admin_main"
-            android:parentActivityName=".Login" >
+            android:parentActivityName=".LoginActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skywomantech.app.symptommanagement.Login" />
+                android:value="com.skywomantech.app.symptommanagement.LoginActivity" />
         </activity>
         <activity
             android:name=".admin.Patient.AdminPatientListActivity"
@@ -110,18 +101,18 @@
         <activity
             android:name=".patient.PatientMainActivity"
             android:label="@string/title_activity_patient_main"
-            android:parentActivityName=".Login" >
+            android:parentActivityName=".LoginActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skywomantech.app.symptommanagement.Login" />
+                android:value="com.skywomantech.app.symptommanagement.LoginActivity" />
         </activity>
         <activity
             android:name=".physician.PhysicianListPatientsActivity"
             android:label="@string/title_physicianpatient_list"
-            android:parentActivityName=".Login" >
+            android:parentActivityName=".LoginActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skywomantech.app.symptommanagement.Login" />
+                android:value="com.skywomantech.app.symptommanagement.LoginActivity" />
         </activity>
         <activity
             android:name=".physician.PhysicianPatientDetailActivity"

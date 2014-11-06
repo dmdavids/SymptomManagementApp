@@ -40,8 +40,6 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
         ReminderHolder reminderHolder;
     }
 
-
-
     public ReminderListAdapter(Activity activity, Reminder[] reminders) {
         super(activity.getApplicationContext(),
                 R.layout.list_item_reminder, reminders);
@@ -52,7 +50,7 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-        View view = null;
+        View view;
         if (convertView == null) {
             LayoutInflater inflater =
                     (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -115,8 +113,8 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
             //TODO: Time needs to be formatted better than this
             String am_pm = (reminders[position].getHour() < 12) ? " AM" : " PM";
             String hours = (reminders[position].getHour() < 12)
-                    ? new Integer(reminders[position].getHour()).toString()
-                    : new Integer(reminders[position].getHour() - 12).toString() ;
+                    ? Integer.valueOf(reminders[position].getHour()).toString()
+                    : Integer.valueOf(reminders[position].getHour() - 12).toString() ;
             String minutes =  (reminders[position].getMinutes() < 10)
                     ? "0" + Integer.toString(reminders[position].getMinutes())
                     : Integer.toString(reminders[position].getMinutes());
