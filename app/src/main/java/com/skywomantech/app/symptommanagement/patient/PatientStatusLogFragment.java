@@ -23,6 +23,7 @@ import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.StatusLogEntry;
 import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
+import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -175,6 +176,7 @@ public class PatientStatusLogFragment extends Fragment {
         } else {
             ((Callbacks) getActivity()).onStatusLogComplete();
         }
+        SymptomManagementSyncAdapter.syncImmediately(getActivity());
         getActivity().onBackPressed();
     }
 

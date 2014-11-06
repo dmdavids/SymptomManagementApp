@@ -25,6 +25,7 @@ import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.ReminderEntry;
 import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 import com.skywomantech.app.symptommanagement.data.Reminder;
+import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -131,6 +132,7 @@ public class ReminderFragment extends Fragment {
             mAdapter = new ReminderListAdapter(getActivity(), mReminders);
             mReminderView.setAdapter(mAdapter);
         }
+        SymptomManagementSyncAdapter.syncImmediately(getActivity());
     }
 
     public void deleteReminder(int position ) {
@@ -145,6 +147,7 @@ public class ReminderFragment extends Fragment {
         mReminders = reminders.toArray(new Reminder[reminders.size()]);
         mAdapter = new ReminderListAdapter(getActivity(), mReminders);
         mReminderView.setAdapter(mAdapter);
+        SymptomManagementSyncAdapter.syncImmediately(getActivity());
         mAdapter.notifyDataSetChanged();
     }
 
@@ -158,6 +161,7 @@ public class ReminderFragment extends Fragment {
                     .update(ReminderEntry.CONTENT_URI, cv, selection, null);
             Log.v(LOG_TAG, "Reminder rows updated : " + Integer.toString(rowsUpdated));
         }
+        SymptomManagementSyncAdapter.syncImmediately(getActivity());
         mAdapter.notifyDataSetChanged();
     }
 

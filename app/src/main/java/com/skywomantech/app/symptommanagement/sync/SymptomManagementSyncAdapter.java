@@ -278,6 +278,8 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
      * Take the prescriptions from the cloud patient, remove the ones from the local patient
      * and put the new ones in the CP.. just in case the doctor updated them.
      *
+     * TODO: Can I flag this so there isn't an overwrite with Patient processing?
+     *
      * @param prescriptions
      */
     private void updatePrescriptionsToCP(Collection<Medication> prescriptions) {

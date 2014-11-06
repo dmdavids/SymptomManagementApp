@@ -4,6 +4,7 @@ import android.app.Fragment;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,8 +17,10 @@ import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.MedicationLog;
+import com.skywomantech.app.symptommanagement.data.PatientCPContract;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.MedLogEntry;
 import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
+import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -67,12 +70,35 @@ public class PatientMedicationLogFragment extends Fragment {
     }
 
     private void loadMedicationLogList() {
-        // if patient doesn't have any medications assigned yet make and empty list
+        // make a blank list of possible entries for the patient to fill in
+        Collection<Medication> prescriptions = getPrescriptionsFromCP();
         if (mLogList == null) {
-           mLogList = new MedicationLog[0];
+            createEmptyLogsList(prescriptions);
         }
         mAdapter = new MedicationLogListAdapter(getActivity(), mLogList);
         mLogListView.setAdapter(mAdapter);
+    }
+
+    private Collection<Medication> getPrescriptionsFromCP() {
+        String mPatientId = LoginUtility.getLoginId(getActivity());
+
+        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'"  + mPatientId + "\'";
+
+        // only get prescriptions where cloud id = mPatientId
+        Cursor cursor = getActivity().getContentResolver()
+                .query(PatientCPContract.PrescriptionEntry.CONTENT_URI, null, selection, null, null);
+
+        Collection<Medication> prescriptions = new HashSet<Medication>();
+        Log.d(LOG_TAG, "Number of prescriptions found: " + Integer.toString(cursor.getCount()));
+        while (cursor.moveToNext()) {
+            Medication med = new Medication();
+            med.setName(cursor.getString
+                    (cursor.getColumnIndex(PatientCPContract.PrescriptionEntry.COLUMN_NAME)));
+            Log.d(LOG_TAG, "Adding this prescription : " + med.toDebugString());
+            prescriptions.add(med);
+        }
+        cursor.close();
+        return prescriptions;
     }
 
     private void createEmptyLogsList(Collection<Medication> medications) {
@@ -99,6 +125,7 @@ public class PatientMedicationLogFragment extends Fragment {
         } else {
             ((Callbacks) getActivity()).onMedicationLogComplete();
         }
+        SymptomManagementSyncAdapter.syncImmediately(getActivity());
         mAdapter.notifyDataSetChanged();
     }
 
@@ -107,4 +134,5 @@ public class PatientMedicationLogFragment extends Fragment {
         super.onDestroyView();
         ButterKnife.reset(this);
     }
+
 }

@@ -253,13 +253,16 @@ public class LoginActivity extends Activity {
         } else if (role == UserCredential.UserRole.PATIENT) {
             if (LoginUtility.isCheckin(this)) {
                 Log.d(LOG_TAG, "Starting Patient CHECKIN flow");
+                SymptomManagementSyncAdapter.syncImmediately(this);
                 startActivity(new Intent(this, PatientMainActivity.class));
             } else {
                 Log.d(LOG_TAG, "Starting Patient screen flow");
+                SymptomManagementSyncAdapter.syncImmediately(this);
                 startActivity(new Intent(this, PatientMainActivity.class));
             }
         } else if (role == UserCredential.UserRole.PHYSICIAN) {
             Log.d(LOG_TAG, "Starting Doctor screen flow");
+            SymptomManagementSyncAdapter.syncImmediately(this);
             startActivity(new Intent(this, PhysicianListPatientsActivity.class));
         } else {
             // I guess we aren't going anywhere
