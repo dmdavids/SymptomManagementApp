@@ -22,7 +22,7 @@ public class PatientPhysicianListActivity extends Activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_adminphysician_list);
+        setContentView(R.layout.activity_admin_physician_list);
         getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

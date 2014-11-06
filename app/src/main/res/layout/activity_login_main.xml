@@ -17,7 +17,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Symptom Management"
         android:id="@+id/login_header"
-        android:padding="32dp"
+        android:padding="18dp"
         android:paddingBottom="32dp"
         android:textStyle="bold"
         android:singleLine="false" />
@@ -34,26 +34,28 @@
         android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        >
+        android:gravity="center_horizontal"  >
 
             <LinearLayout
                 android:id="@+id/username_login_form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:gravity="center_horizontal">
 
                 <EditText
                     android:id="@+id/username"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_username"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:drawableLeft="@drawable/ic_action_user"/>
+                    android:drawableLeft="@drawable/ic_action_user"
+                    android:minWidth="350dp"  />
 
                 <EditText
                     android:id="@+id/sm_password"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:hint="Password"
                     android:imeActionId="@+id/goto_login"
@@ -62,7 +64,8 @@
                     android:inputType="textPassword"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:drawableLeft="@drawable/ic_action_lock"/>
+                    android:drawableLeft="@drawable/ic_action_lock"
+                    android:minWidth="350dp" />
 
                 <CheckBox
                     android:layout_width="wrap_content"
@@ -70,16 +73,18 @@
                     android:text="Remember My Information"
                     android:id="@+id/remember_me_checkbox"
                     android:checked="true"
+                    android:visibility="invisible"
                     android:layout_gravity="center_horizontal" />
 
                 <Button
                     android:id="@+id/username_sign_in_button"
                     style="?android:textAppearanceSmall"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
                     android:text="Sign In"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold"
+                    android:minWidth="350dp"/>
 
             </LinearLayout>
     </ScrollView>
