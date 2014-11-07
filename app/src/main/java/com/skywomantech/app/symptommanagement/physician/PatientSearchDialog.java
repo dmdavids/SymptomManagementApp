@@ -19,18 +19,21 @@ import butterknife.InjectView;
 public class PatientSearchDialog extends DialogFragment {
 
     public interface Callbacks {
-        public void onNameSelected(String name);
+        public void onNameSelected(String lastName, String firstName);
     }
 
-    @InjectView(R.id.patient_search_name)
-    EditText mName;
-    String lastName = "";
+    @InjectView(R.id.patient_search_last_name)
+    EditText mLastName;
 
-    static String mTitle = "Search Patients By Last Name";
+    @InjectView(R.id.patient_search_first_name)
+    EditText mFirstName;
+    String lastName = "";
+    String firstName = "";
+
+    static String mTitle = "Search All Patients By Name";
 
     public PatientSearchDialog() {
     }
-
 
     public static PatientSearchDialog newInstance() {
         PatientSearchDialog frag = new PatientSearchDialog();
@@ -44,7 +47,8 @@ public class PatientSearchDialog extends DialogFragment {
         View view = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_patient_search, null);
         ButterKnife.inject(this, view);
-        mName.setText(lastName);
+        mLastName.setText(lastName);
+        mFirstName.setTag(firstName);
 
         AlertDialog.Builder builder =  new AlertDialog.Builder(getActivity())
                 .setTitle(mTitle)
@@ -53,8 +57,9 @@ public class PatientSearchDialog extends DialogFragment {
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        lastName = mName.getText().toString();
-                        ((Callbacks) getActivity()).onNameSelected(lastName);
+                        lastName = mLastName.getText().toString();
+                        firstName = mFirstName.getText().toString();
+                        ((Callbacks) getActivity()).onNameSelected(lastName, firstName);
                     }
                 })
 
