@@ -1,35 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:padding="6dip"
-    android:baselineAligned="false"
-    android:id="@+id/layout_list_reminder">
+    android:padding="18dp">
 
     <LinearLayout
-        android:id="@+id/front_stuff"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_gravity="start"
-        android:layout_weight="1"
-        android:padding="8dp">
+        android:layout_weight="1">
 
         <CheckBox
             android:id="@+id/reminder_turned_on"
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginRight="6dip"
             android:checked="false" />
 
         <LinearLayout
-            android:id="@+id/alarm_info"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/reminder_name"
@@ -37,7 +29,8 @@
                 android:layout_height="wrap_content"
                 android:text="Dinner Alarm"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#ff4227ff" />
+                android:textColor="#ff4227ff"
+                android:minWidth="350dp" />
 
             <TextView
                 android:id="@+id/reminder_time_summary"
@@ -45,36 +38,31 @@
                 android:layout_height="wrap_content"
                 android:text="6:00 PM"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#ff3b78ff" />
-
+                android:textColor="#ff2a3fff"
+                android:minWidth="350dp"/>
         </LinearLayout>
+
     </LinearLayout>
 
-
     <LinearLayout
-        android:id="@+id/alarm_edit_buttons"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="right"
-        android:layout_weight="0"
+        android:layout_weight="3"
         android:orientation="horizontal">
-
 
         <ImageButton
             android:id="@+id/reminder_edit_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
-
-            android:src="@android:drawable/ic_menu_edit" />
-
+            android:src="@android:drawable/ic_menu_edit"
+            android:layout_weight="1"/>
 
         <ImageButton
             android:id="@+id/reminder_delete_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-            android:src="@android:drawable/ic_menu_delete" />
-
+            android:src="@android:drawable/ic_menu_delete"
+            android:layout_weight="1"/>
     </LinearLayout>
+
 </LinearLayout>

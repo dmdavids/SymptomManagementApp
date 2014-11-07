@@ -70,6 +70,7 @@ public class ReminderFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
         super.onCreateOptionsMenu(menu, inflater);
+        menu.findItem(R.id.action_settings).setVisible(false);
         inflater.inflate(R.menu.reminder_add_menu, menu);
     }
 

@@ -16,7 +16,8 @@
         android:contentDescription="Medication Check Answer"
         android:checked="false"
         android:padding="16dp"
-        android:gravity="left" />
+        android:gravity="left"
+        style="@style/AppBaseTheme" />
 
 
     <LinearLayout

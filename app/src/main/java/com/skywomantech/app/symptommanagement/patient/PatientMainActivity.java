@@ -73,6 +73,7 @@ public class PatientMainActivity extends Activity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.patient_main, menu);
+        menu.findItem(R.id.action_settings).setVisible(true);
         return true;
     }
 
@@ -82,7 +83,6 @@ public class PatientMainActivity extends Activity
         if (id == R.id.action_settings) {
             getFragmentManager().beginTransaction()
                     .replace(R.id.container, new ReminderFragment())
-                    .addToBackStack(null)
                     .commit();
             return true;
         }

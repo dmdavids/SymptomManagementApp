@@ -1,11 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <item
+        android:id="@+id/action_patient_search"
+        android:orderInCategory="10"
+        android:showAsAction="ifRoom|withText"
+        android:title="Search"
+        android:icon="@android:drawable/ic_menu_search"/>
+
     <item android:id="@+id/action_sync_alerts"
         android:title="Check Alerts"
         android:orderInCategory="100"
         android:showAsAction="never" />
+
     <item android:id="@+id/physician_logout"
         android:title="Logout"
         android:orderInCategory="200"
         android:showAsAction="never" />
+
 </menu>

@@ -178,7 +178,6 @@ public class PatientMedicationFragment extends ListFragment {
         Collection<Medication> p = mPatient.getPrescriptions();
         p.remove(meds[position]);
         mPatient.setPrescriptions(new HashSet<Medication>(p));
-        // save updated patient to cloud
         sendPatientRecordToCloud(mPatient);
     }
 
@@ -209,7 +208,7 @@ public class PatientMedicationFragment extends ListFragment {
                                 .toArray(new Medication[mPatient.getPrescriptions().size()]);
                     }
                     setListAdapter(new PrescriptionAdapter(getActivity(), meds));
-                    // ? getListAdapter().notify();
+                    getListAdapter().notify();
                 }
 
                 @Override

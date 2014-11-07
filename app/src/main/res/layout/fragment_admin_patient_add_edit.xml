@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/admin_patient_add_edit_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="8dp"
+    android:padding="16dp"
     tools:context="com.skywomantech.app.symptommanagement.admin.Physician.AdminPatientDetailFragment">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:height="@android:dimen/app_icon_size"
-        android:text="PATIENT DETAILS :"
+        android:text="Patient Details :"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <LinearLayout
@@ -58,7 +63,7 @@
                 android:id="@+id/display_birthdate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Birthdate"
+                android:hint="mm-dd-yyyy"
                 android:padding="16dp"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -70,7 +75,8 @@
     <LinearLayout
         android:id="@+id/add_physician_layout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="12dp">
 
         <TextView
             android:id="@+id/patient_physicians_heading"
@@ -78,7 +84,7 @@
             android:layout_height="wrap_content"
             android:height="@android:dimen/app_icon_size"
             android:padding="12dp"
-            android:text="ASSIGNED PHYSICIANS :"
+            android:text="Physicians to Patient:"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
@@ -92,8 +98,8 @@
 
     <ListView
         android:id="@+id/admin_patient_physician_listview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></ListView>
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"/>
 
 
     <Button
@@ -103,4 +109,6 @@
         android:layout_gravity="center_horizontal"
         android:text="Save Patient"></Button>
 
-</LinearLayout>
+    </LinearLayout>
+
+</ScrollView>

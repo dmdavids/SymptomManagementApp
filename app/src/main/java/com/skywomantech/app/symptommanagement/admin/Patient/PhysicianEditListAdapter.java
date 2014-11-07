@@ -17,6 +17,7 @@ public class PhysicianEditListAdapter extends ArrayAdapter<Physician> {
     private final Context context;
     private final Physician[] physicians;
 
+
     public static class ViewHolder {
         public final ImageView deleteView;
         public final TextView textView;
@@ -27,10 +28,6 @@ public class PhysicianEditListAdapter extends ArrayAdapter<Physician> {
                     .setOnClickListener(new View.OnClickListener() {
                                             @Override
                                             public void onClick(View view) {
-                                                //TODO:
-                                                // delete the physician from
-                                                // the patients physician list
-                                                // then update the patient in the db
                                                 Physician p = (Physician) view.getTag();
                                             }
                                         }
