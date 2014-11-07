@@ -2,19 +2,24 @@ package com.skywomantech.app.symptommanagement.sync;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncRequest;
 import android.content.SyncResult;
 import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.skywomantech.app.symptommanagement.LoginActivity;
 import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
@@ -44,6 +49,8 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
     // use the class name for logging purposes
     private final String LOG_TAG = SymptomManagementSyncAdapter.class.getSimpleName();
+
+    private static final int SYMPTOM_MANAGEMENT_NOTIFICATION_ID = 1111;
 
     // keep track of our application environment context
     private final Context mContext;
@@ -471,6 +478,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                 public void success(Patient result) {
                     Log.d(LOG_TAG, "Returned Patient from Server:" + result.toDebugString());
                     mPatient = result;
+
                 }
 
                 @Override
@@ -490,9 +498,8 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         } else return;
 
         Log.d(LOG_TAG, "Processing Physician sync for id: " + mPhysicianId);
-        Collection<Alert> alerts = getPhysicianAlerts();
+        getPhysicianAlerts();
         //TODO: have to figure out physician alarm manager yet.
-//        notifyPhysicianAlerts(alerts);
     }
 
     /**
@@ -500,23 +507,23 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
      *
      * @return set of alerts for the logged in physician
      */
-    private Collection<Alert> getPhysicianAlerts() {
+    private void getPhysicianAlerts() {
 
         if (LoginUtility.isLoggedIn(getContext())
                 && LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PHYSICIAN) {
             mPhysicianId = LoginUtility.getLoginId(mContext);
             mPatientId = null;
         } else
-            return null;
+            return ;
 
-        Log.d(LOG_TAG, "get Alerts for Physician : " + mPhysicianId);
+        Log.d(LOG_TAG, "Get Alerts for Physician : " + mPhysicianId);
         final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Collection<Alert>>() {
 
                 @Override
                 public Collection<Alert> call() throws Exception {
-                    Log.d(LOG_TAG, "getting patient alerts for physician : " + mPhysicianId);
+                    Log.d(LOG_TAG, "Getting patient alerts for physician : " + mPhysicianId);
                     return svc.getPatientAlerts(mPhysicianId);
                 }
             }, new TaskCallback<Collection<Alert>>() {
@@ -524,9 +531,10 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                 @Override
                 public void success(Collection<Alert> result) {
                     if (result != null) {
-                        Log.d(LOG_TAG, "Found Alerts size of :" + result.size());
+                        Log.d(LOG_TAG, "Found Alerts :" + result.size());
                     }
                     mAlerts = result;
+                    createPhysicianNotification(mAlerts);
                 }
 
                 @Override
@@ -538,6 +546,50 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         } else {
             Log.d(LOG_TAG, "No SERVICE available? Is the internet gone?");
         }
-        return mAlerts;
     }
+
+    private void createPhysicianNotification(Collection<Alert> alerts) {
+
+        if (alerts == null || alerts.size() <= 0) return;
+
+        String title = "Symptom Management";
+
+        int numberOfAlerts = alerts.size();
+        String contentText = " Patient Alerts!";
+        if (numberOfAlerts == 1) {
+            Alert a = alerts.iterator().next();
+            if (a != null) {
+                contentText = a.getFormattedMessage();
+            }
+        } else {
+            contentText = "There are " + Integer.toString(numberOfAlerts)
+                    + "Severe Patients requiring attention.";
+        }
+
+        Log.d(LOG_TAG, "SENDING ALERT message : " + contentText);
+        int iconId = R.drawable.ic_launcher;
+        // set the notification to clear after a click
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(getContext())
+                        .setSmallIcon(iconId)
+                        .setContentTitle(title)
+                        .setContentText(contentText)
+                        .setOnlyAlertOnce(true)
+                        .setAutoCancel(true);
+
+        // Open the app when the user clicks on the notification.
+        Intent resultIntent = new Intent(getContext(), LoginActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getContext())
+                .addParentStack(LoginActivity.class)
+                .addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT );
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        NotificationManager mNotificationManager =
+                (NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(SYMPTOM_MANAGEMENT_NOTIFICATION_ID, mBuilder.build());
+    }
+
+
 }

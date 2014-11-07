@@ -41,7 +41,7 @@ public class Alert {
 	}
 	
 	public String getFormattedMessage() {
-		return patientName + " requires immediate attention.";
+		return patientName + " has severe symptoms.";
 	}
 	
 	@Override
