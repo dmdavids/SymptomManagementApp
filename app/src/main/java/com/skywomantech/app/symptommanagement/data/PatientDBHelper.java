@@ -32,16 +32,7 @@ public class PatientDBHelper extends SQLiteOpenHelper {
 
     /**
      * create the database tables when creating a new database
-     *
-     * Alternatively I could have designed this with Cascading tables
-     * all hinged on the main Patient table but in the past this
-     * has caused problems if not set up correctly and so with the
-     * limited time I have to work on this project I am just going
-     * to use separately managed tables and code-in all the
-     * rules vs use the database capabilities.
-     *
-     * BIG NOTE:  There is some logic fail here if more than one patient is
-     * using this device!!!
+     * This should make multiple patients on multiple devices work with this design now
      *
      * @param sqLiteDatabase database we are working with
      */
@@ -59,17 +50,20 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         PatientEntry.COLUMN_ACTIVE + " INTEGER, " +
                         PatientEntry.COLUMN_PROCESS_STATUS + " INTEGER, " +
                         PatientEntry.COLUMN_PROCESSED + " REAL, " +
-                "UNIQUE (" + PatientEntry.COLUMN_PATIENT_ID
-                        +") ON CONFLICT REPLACE"+
-                " );";
+                        "UNIQUE (" + PatientEntry.COLUMN_PATIENT_ID
+                        + ") ON CONFLICT REPLACE " +
+                        " );";
         sqLiteDatabase.execSQL(SQL_CREATE_PATIENT_TABLE);
 
         final String SQL_CREATE_PRESCRIPTION_TABLE =
                 "CREATE TABLE " + PrescriptionEntry.TABLE_NAME + " (" +
                         PrescriptionEntry._ID + " INTEGER PRIMARY KEY," +
                         PrescriptionEntry.COLUMN_PATIENT_ID + " TEXT  NOT NULL, " +
-                        PrescriptionEntry.COLUMN_MEDICATION_ID + " TEXT UNIQUE NOT NULL, " +
-                        PrescriptionEntry.COLUMN_NAME + " TEXT NOT NULL " +
+                        PrescriptionEntry.COLUMN_MEDICATION_ID + " TEXT NOT NULL, " +
+                        PrescriptionEntry.COLUMN_NAME + " TEXT NOT NULL, " +
+                        " UNIQUE (" + PrescriptionEntry.COLUMN_PATIENT_ID + ", "
+                        + PrescriptionEntry.COLUMN_MEDICATION_ID
+                        + ") ON CONFLICT IGNORE " +
                         " );";
         sqLiteDatabase.execSQL(SQL_CREATE_PRESCRIPTION_TABLE);
 
@@ -77,8 +71,11 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                 "CREATE TABLE " + PhysicianEntry.TABLE_NAME + " (" +
                         PhysicianEntry._ID + " INTEGER PRIMARY KEY," +
                         PhysicianEntry.COLUMN_PATIENT_ID + " TEXT  NOT NULL, " +
-                        PhysicianEntry.COLUMN_PHYSICIAN_ID + " TEXT , " +
-                        PhysicianEntry.COLUMN_NAME + " TEXT NOT NULL " +
+                        PhysicianEntry.COLUMN_PHYSICIAN_ID + " TEXT NOT NULL, " +
+                        PhysicianEntry.COLUMN_NAME + " TEXT NOT NULL, " +
+                        " UNIQUE (" + PhysicianEntry.COLUMN_PATIENT_ID + ", "
+                        + PhysicianEntry.COLUMN_PHYSICIAN_ID
+                        + ") ON CONFLICT IGNORE " +
                         " );";
         sqLiteDatabase.execSQL(SQL_CREATE_PHYSICIAN_TABLE);
 
@@ -89,7 +86,10 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         PainLogEntry.COLUMN_PAIN_LOG_ID + " BIGINT, " +
                         PainLogEntry.COLUMN_SEVERITY + " INTEGER, " +
                         PainLogEntry.COLUMN_EATING + " INTEGER, " +
-                        PainLogEntry.COLUMN_CREATED + " REAL  NOT NULL " +
+                        PainLogEntry.COLUMN_CREATED + " REAL NOT NULL, " +
+                        " UNIQUE (" + PainLogEntry.COLUMN_PATIENT_ID + ", "
+                        + PainLogEntry.COLUMN_CREATED
+                        + ") ON CONFLICT IGNORE " +
                         " );";
         sqLiteDatabase.execSQL(SQL_CREATE_PAIN_LOG_TABLE);
 
@@ -100,7 +100,10 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         MedLogEntry.COLUMN_MED_ID + " BIGINT, " +
                         MedLogEntry.COLUMN_MED_NAME + " TEXT NOT NULL, " +
                         MedLogEntry.COLUMN_TAKEN + " REAL NOT NULL, " +
-                        MedLogEntry.COLUMN_CREATED + " REAL NOT NULL " +
+                        MedLogEntry.COLUMN_CREATED + " REAL NOT NULL, " +
+                        " UNIQUE (" + MedLogEntry.COLUMN_PATIENT_ID + ", "
+                        + MedLogEntry.COLUMN_CREATED
+                        + ") ON CONFLICT IGNORE " +
                         " );";
         sqLiteDatabase.execSQL(SQL_CREATE_MED_LOG_TABLE);
 
@@ -111,7 +114,10 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         StatusLogEntry.COLUMN_STATUS_LOG_ID + " BIGINT, " +
                         StatusLogEntry.COLUMN_NOTE + " TEXT, " +
                         StatusLogEntry.COLUMN_IMAGE + " TEXT, " +
-                        StatusLogEntry.COLUMN_CREATED + " REAL NOT NULL " +
+                        StatusLogEntry.COLUMN_CREATED + " REAL NOT NULL, " +
+                        " UNIQUE (" + StatusLogEntry.COLUMN_PATIENT_ID + ", "
+                        + StatusLogEntry.COLUMN_CREATED
+                        + ") ON CONFLICT IGNORE " +
                         " );";
         sqLiteDatabase.execSQL(SQL_CREATE_STATUS_LOG_TABLE);
 
@@ -127,7 +133,10 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         ReminderEntry.COLUMN_MINUTES + " INTEGER, " +
                         ReminderEntry.COLUMN_CREATED + " REAL, " +
                         ReminderEntry.COLUMN_ALARM + " TEXT, " +
-                        ReminderEntry.COLUMN_ON + " INTEGER  NOT NULL " +
+                        ReminderEntry.COLUMN_ON + " INTEGER  NOT NULL, " +
+                        " UNIQUE (" + ReminderEntry.COLUMN_PATIENT_ID + ", "
+                        + ReminderEntry.COLUMN_NAME
+                        + ") ON CONFLICT REPLACE " +
                         " );";
         sqLiteDatabase.execSQL(SQL_CREATE_REMINDER_TABLE);
 
@@ -138,7 +147,10 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         PrefsEntry.COLUMN_PREF_ID + " BIGINT, " +
                         PrefsEntry.COLUMN_NOTIFICATION + " INTEGER, " +
                         PrefsEntry.COLUMN_TIMEZONE + " TEXT, " +
-                        PrefsEntry.COLUMN_CREATED + " REAL NOT NULL " +
+                        PrefsEntry.COLUMN_CREATED + " REAL NOT NULL, " +
+                        " UNIQUE (" + PrefsEntry.COLUMN_PATIENT_ID + ", "
+                        + PrefsEntry.COLUMN_CREATED
+                        + ") ON CONFLICT IGNORE " +
                         " );";
         sqLiteDatabase.execSQL(SQL_CREATE_PREFS_TABLE);
     }

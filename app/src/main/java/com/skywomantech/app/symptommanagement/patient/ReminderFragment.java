@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 
+import com.skywomantech.app.symptommanagement.data.PatientCPContract;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.ReminderEntry;
 import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 import com.skywomantech.app.symptommanagement.data.Reminder;
@@ -97,8 +98,10 @@ public class ReminderFragment extends Fragment {
         if (mReminders == null) {
             reminders = new HashSet<Reminder>();
             // search the local storage for the item id
+            String mPatientId = LoginUtility.getLoginId(getActivity());
+            String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
             Cursor cursor = getActivity().getContentResolver()
-                    .query(ReminderEntry.CONTENT_URI, null, null, null,null);
+                    .query(ReminderEntry.CONTENT_URI, null, selection, null,null);
             while (cursor.moveToNext()) {
                 Reminder item = new Reminder();
                 item.setDbId(cursor.getLong(cursor.getColumnIndex(ReminderEntry._ID)));

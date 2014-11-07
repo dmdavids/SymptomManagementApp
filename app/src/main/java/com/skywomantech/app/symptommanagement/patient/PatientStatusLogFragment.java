@@ -169,6 +169,7 @@ public class PatientStatusLogFragment extends Fragment {
         mLog.setNote(note.getText().toString()); // save the text from the note edit text
         String mPatientId = LoginUtility.getLoginId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLog);
+        Log.d(LOG_TAG, "Saving this status : " + mLog.toString());
         Uri uri = getActivity().getContentResolver().insert(StatusLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);
         if (objectId < 0) {

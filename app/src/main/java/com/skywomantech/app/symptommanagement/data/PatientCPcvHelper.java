@@ -16,6 +16,7 @@ public class PatientCPcvHelper {
         return cv;
     }
 
+    // used for updating
     public  static ContentValues createInsertValuesObject(String id, Patient patient) {
         ContentValues cv = new ContentValues();
         cv.put(PatientCPContract.PatientEntry.COLUMN_PATIENT_ID, id);
@@ -32,7 +33,9 @@ public class PatientCPcvHelper {
         cv.put(PatientCPContract.MedLogEntry.COLUMN_MED_ID, log.getMed().getId());
         cv.put(PatientCPContract.MedLogEntry.COLUMN_PATIENT_ID, id);
         cv.put(PatientCPContract.MedLogEntry.COLUMN_TAKEN, log.getTaken());
-        cv.put(PatientCPContract.MedLogEntry.COLUMN_CREATED, System.currentTimeMillis());
+        long thisTime = log.getCreated();
+        if (thisTime <= 0L) thisTime = System.currentTimeMillis();
+        cv.put(PatientCPContract.MedLogEntry.COLUMN_CREATED, thisTime);
         return cv;
     }
 
@@ -41,7 +44,9 @@ public class PatientCPcvHelper {
         cv.put(PatientCPContract.PainLogEntry.COLUMN_EATING, log.getEating().getValue());
         cv.put(PatientCPContract.PainLogEntry.COLUMN_SEVERITY, log.getSeverity().getValue());
         cv.put(PatientCPContract.PainLogEntry.COLUMN_PATIENT_ID, id);
-        cv.put(PatientCPContract.PainLogEntry.COLUMN_CREATED, System.currentTimeMillis());
+        long thisTime = log.getCreated();
+        if (thisTime <= 0L) thisTime = System.currentTimeMillis();
+        cv.put(PatientCPContract.PainLogEntry.COLUMN_CREATED, thisTime);
         return cv;
     }
 
@@ -50,10 +55,13 @@ public class PatientCPcvHelper {
         cv.put(PatientCPContract.StatusLogEntry.COLUMN_NOTE, log.getNote());
         cv.put(PatientCPContract.StatusLogEntry.COLUMN_IMAGE, log.getImage_location());
         cv.put(PatientCPContract.StatusLogEntry.COLUMN_PATIENT_ID, id);
-        cv.put(PatientCPContract.StatusLogEntry.COLUMN_CREATED, System.currentTimeMillis());
+        long thisTime = log.getCreated();
+        if (thisTime <= 0L) thisTime = System.currentTimeMillis();
+        cv.put(PatientCPContract.StatusLogEntry.COLUMN_CREATED, thisTime);
         return cv;
     }
 
+    // used for updating
     public static ContentValues createValuesObject(String id, Reminder rem) {
         ContentValues cv = new ContentValues();
         cv.put(PatientCPContract.ReminderEntry._ID, rem.getDbId());

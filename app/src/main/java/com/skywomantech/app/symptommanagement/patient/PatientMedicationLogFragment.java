@@ -83,11 +83,8 @@ public class PatientMedicationLogFragment extends Fragment {
         String mPatientId = LoginUtility.getLoginId(getActivity());
 
         String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'"  + mPatientId + "\'";
-
-        // only get prescriptions where cloud id = mPatientId
         Cursor cursor = getActivity().getContentResolver()
                 .query(PatientCPContract.PrescriptionEntry.CONTENT_URI, null, selection, null, null);
-
         Collection<Medication> prescriptions = new HashSet<Medication>();
         Log.d(LOG_TAG, "Number of prescriptions found: " + Integer.toString(cursor.getCount()));
         while (cursor.moveToNext()) {
@@ -118,6 +115,7 @@ public class PatientMedicationLogFragment extends Fragment {
         // save this one to the database
         String mPatientId = LoginUtility.getLoginId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLogList[position]);
+        Log.d(LOG_TAG, "Saving this Med Log : " + mLogList[position].toString());
         Uri uri = getActivity().getContentResolver().insert(MedLogEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);
         if (objectId < 0) {

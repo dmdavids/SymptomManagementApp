@@ -135,15 +135,11 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
         Account account = getSyncAccount(context);
         String authority = context.getString(R.string.content_authority);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            // we can enable inexact timers in our periodic sync
-            SyncRequest request = new SyncRequest.Builder().
-                    syncPeriodic(syncInterval, flexTime).
-                    setSyncAdapter(account, authority).build();
-            ContentResolver.requestSync(request);
-        } else {
-            ContentResolver.addPeriodicSync(account, authority, new Bundle(), syncInterval);
-        }
+        // we can enable inexact timers in our periodic sync
+        SyncRequest request = new SyncRequest.Builder().
+                syncPeriodic(syncInterval, flexTime).
+                setSyncAdapter(account, authority).build();
+        ContentResolver.requestSync(request);
     }
 
     /**
@@ -171,7 +167,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle bundle, String authority,
                               ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting onPerformSync");
-        if(LoginUtility.isLoggedIn(getContext())) {
+        if (LoginUtility.isLoggedIn(getContext())) {
             // only process if patient or physician... no processing for ADMIN
             if (LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PATIENT) {
                 Log.d(LOG_TAG, "SYNC Processing for PATIENT.");
@@ -182,33 +178,33 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                 // app is logged in as a PHYSICIAN
                 processPhysicianSync();
             }
-        }
-        else {
+        } else {
             Log.d(LOG_TAG, "Not Logged In so we won't need to anything for SYNC.");
         }
     }
 
     private void processPatientSync() {
 
-        if ( LoginUtility.isLoggedIn(getContext())
+        if (LoginUtility.isLoggedIn(getContext())
                 && LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PATIENT) {
             mPatientId = LoginUtility.getLoginId(mContext);
-        } else return ;
+        } else return;
 
         Log.d(LOG_TAG, "Processing Patient sync");
 
+        // first we update the device with the cloud data
         Patient patientRecord = getPatientRecordFromCloud();
         if (patientRecord == null) {
             Log.d(LOG_TAG, "No Patient Record Found yet.");
             return;
         }
-
-        // warning! do this first before updating the server
-        // or there could be overwrite problems
-        if (patientRecord.getPrescriptions() != null ) {
+        if (patientRecord.getPrescriptions() != null) {
             updatePrescriptionsToCP(patientRecord.getPrescriptions());
         }
+        updateLogsToCP(patientRecord);
+        updateRemindersToCP(patientRecord);
 
+        // then we update the cloud with the information from this device
         updateLastLoginFromCP(patientRecord);
         updateLogsFromCP(patientRecord);
 
@@ -220,15 +216,78 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         sendPatientRecordToCloud(patientRecord);
     }
 
+    private void updateRemindersToCP(Patient patient) {
+        if (patient.getPrefs() == null || patient.getPrefs().getAlerts() == null) return;
+        String id = patient.getId();
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getPrefs().getAlerts().size());
+        for (Reminder l: patient.getPrefs().getAlerts()) {
+            ContentValues cv = PatientCPcvHelper.createValuesObject(id, l);
+            cVVector.add(cv);
+        }
+        ContentValues[] cvArray = new ContentValues[cVVector.size()];
+        cVVector.toArray(cvArray);
+        mContext.getContentResolver().bulkInsert(PatientCPContract.ReminderEntry.CONTENT_URI, cvArray);
+    }
+
+    private void updateLogsToCP(Patient patient) {
+        Log.d(LOG_TAG, "Updating patient LOGs to CP Checking.. id is : " + patient.getId()
+        + " Logged in id is : " + mPatientId);
+        updatePainLogToCP(patient);
+        updateMedLogToCP(patient);
+        updateStatusLogToCP(patient);
+    }
+
+    private void updatePainLogToCP(Patient patient) {
+        if (patient.getPainLog() == null) return;
+        String id = patient.getId();
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getPainLog().size());
+        for (PainLog p: patient.getPainLog()) {
+           ContentValues cv = PatientCPcvHelper.createValuesObject(id, p);
+           cVVector.add(cv);
+        }
+        ContentValues[] cvArray = new ContentValues[cVVector.size()];
+        cVVector.toArray(cvArray);
+        mContext.getContentResolver().bulkInsert(PatientCPContract.PainLogEntry.CONTENT_URI, cvArray);
+    }
+
+    private void updateMedLogToCP(Patient patient) {
+        if (patient.getMedLog() == null) return;
+        String id = patient.getId();
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getMedLog().size());
+        for (MedicationLog l: patient.getMedLog()) {
+            ContentValues cv = PatientCPcvHelper.createValuesObject(id, l);
+            cVVector.add(cv);
+        }
+        ContentValues[] cvArray = new ContentValues[cVVector.size()];
+        cVVector.toArray(cvArray);
+        mContext.getContentResolver().bulkInsert(PatientCPContract.MedLogEntry.CONTENT_URI, cvArray);
+    }
+
+    private void updateStatusLogToCP(Patient patient) {
+        if (patient.getStatusLog() == null) return;
+        String id = patient.getId();
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getStatusLog().size());
+        for (StatusLog l: patient.getStatusLog()) {
+            ContentValues cv = PatientCPcvHelper.createValuesObject(id, l);
+            cVVector.add(cv);
+        }
+        ContentValues[] cvArray = new ContentValues[cVVector.size()];
+        cVVector.toArray(cvArray);
+        // db ensures that there are not duplicates
+        mContext.getContentResolver().bulkInsert(PatientCPContract.StatusLogEntry.CONTENT_URI, cvArray);
+    }
+
+
     private void updateLastLoginFromCP(Patient patientRecord) {
+        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
         Cursor cursor = mContext.getContentResolver()
-                .query(PatientCPContract.PatientEntry.CONTENT_URI, null, null, null,null);
+                .query(PatientCPContract.PatientEntry.CONTENT_URI, null, selection, null, null);
         if (cursor.moveToFirst()) {
-           patientRecord
-                   .setLastLogin(cursor
-                           .getLong(cursor
-                                   .getColumnIndex(PatientCPContract.PatientEntry.COLUMN_LAST_LOGIN)));
-            Log.v(LOG_TAG, "Last Login RESET to: " + Long.toString(patientRecord.getLastLogin()));
+            patientRecord
+                    .setLastLogin(cursor
+                            .getLong(cursor
+                                    .getColumnIndex(PatientCPContract.PatientEntry.COLUMN_LAST_LOGIN)));
+            Log.v(LOG_TAG, "==>Last Login RESET to: " + Long.toString(patientRecord.getLastLogin()));
         }
         cursor.close();
     }
@@ -236,7 +295,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     private Patient getPatientRecordFromCloud() {
 
         // are we a logged in patient?  don't bother the server if we aren't
-        if ( LoginUtility.isLoggedIn(getContext())
+        if (LoginUtility.isLoggedIn(getContext())
                 && LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PATIENT) {
             mPatientId = LoginUtility.getLoginId(mContext);
             mPhysicianId = null;
@@ -267,7 +326,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                             " No Internet? Try again later");
                 }
             });
-        } else  {
+        } else {
             // something is wrong .. maybe we don't have internet .. just keep on trying
             Log.d(LOG_TAG, "NO SERVICE... is the internet offline?");
         }
@@ -277,8 +336,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     /**
      * Take the prescriptions from the cloud patient, remove the ones from the local patient
      * and put the new ones in the CP.. just in case the doctor updated them.
-     *
-     * TODO: Can I flag this so there isn't an overwrite with Patient processing?
+     * <p/>
      *
      * @param prescriptions
      */
@@ -286,17 +344,21 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         if (prescriptions == null) return;
 
         mPatientId = LoginUtility.getLoginId(mContext);
-        // delete all of the patient's prescriptions
-        mContext.getContentResolver().delete(PrescriptionEntry.CONTENT_URI, null, null);
-
+        Log.d(LOG_TAG, "SYNC is Updating Prescriptions for patient : "  + mPatientId);
+//        // delete all of the patient's prescriptions DON'T NEED ANYMORE WITH UPDATE TABLES
+//        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
+//        int deleted = mContext.getContentResolver().delete(PrescriptionEntry.CONTENT_URI, selection, null);
+//        Log.d(LOG_TAG, "Deleted prescription count is :" + Integer.toString(deleted));
         //insert all of the prescriptions at once
         Vector<ContentValues> cVVector = new Vector<ContentValues>(prescriptions.size());
-        for(Medication m : prescriptions) {
+        for (Medication m : prescriptions) {
+            Log.d(LOG_TAG, "Adding a prescription : " + m.toDebugString());
             ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, m);
             cVVector.add(cv);
         }
         ContentValues[] cvArray = new ContentValues[cVVector.size()];
         cVVector.toArray(cvArray);
+        Log.d(LOG_TAG, "We have this many prescriptions to bulk insert : " + cVVector.size());
         mContext.getContentResolver().bulkInsert(PrescriptionEntry.CONTENT_URI, cvArray);
     }
 
@@ -317,9 +379,10 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private Set<PainLog> getUpdatedPainLogs() {
         Set<PainLog> logs = new HashSet<PainLog>();
+        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
         Cursor cursor = mContext.getContentResolver().query(
-                PatientCPContract.PainLogEntry.CONTENT_URI, null, null, null, null);
-        while (cursor.moveToNext()){
+                PatientCPContract.PainLogEntry.CONTENT_URI, null, selection, null, null);
+        while (cursor.moveToNext()) {
             PainLog log = new PainLog();
             log.setEating(PainLog.Eating.findByValue(cursor.getInt(cursor.getColumnIndex(PatientCPContract.PainLogEntry.COLUMN_EATING))));
             log.setSeverity(PainLog.Severity.findByValue(cursor.getInt(cursor.getColumnIndex(PatientCPContract.PainLogEntry.COLUMN_SEVERITY))));
@@ -332,8 +395,9 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private Set<MedicationLog> getUpdatedMedLogs() {
         Set<MedicationLog> logs = new HashSet<MedicationLog>();
+        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
         Cursor cursor = mContext.getContentResolver().query(
-                PatientCPContract.MedLogEntry.CONTENT_URI, null, null, null, null);
+                PatientCPContract.MedLogEntry.CONTENT_URI, null, selection, null, null);
         while (cursor.moveToNext()) {
             MedicationLog log = new MedicationLog();
             log.setMed(new Medication());
@@ -349,9 +413,10 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private Set<StatusLog> getUpdatedStatusLogs() {
         Set<StatusLog> logs = new HashSet<StatusLog>();
+        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
         Cursor cursor = mContext.getContentResolver().query(
-                PatientCPContract.StatusLogEntry.CONTENT_URI, null, null, null, null);
-        while (cursor.moveToNext()){
+                PatientCPContract.StatusLogEntry.CONTENT_URI, null, selection, null, null);
+        while (cursor.moveToNext()) {
             StatusLog log = new StatusLog();
             log.setNote(cursor.getString(cursor.getColumnIndex(PatientCPContract.StatusLogEntry.COLUMN_NOTE)));
             log.setImage_location(cursor.getString(cursor.getColumnIndex(PatientCPContract.StatusLogEntry.COLUMN_IMAGE)));
@@ -364,8 +429,9 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private Collection<Reminder> getUpdatedReminders() {
         Set<Reminder> reminders = new HashSet<Reminder>();
+        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
         Cursor cursor = mContext.getContentResolver().query(
-                PatientCPContract.ReminderEntry.CONTENT_URI, null, null, null, null);
+                PatientCPContract.ReminderEntry.CONTENT_URI, null, selection, null, null);
         while (cursor.moveToNext()) {
             Reminder log = new Reminder();
             log.setHour(cursor.getInt(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_HOUR)));
@@ -417,11 +483,11 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void processPhysicianSync() {
-        if ( LoginUtility.isLoggedIn(getContext())
+        if (LoginUtility.isLoggedIn(getContext())
                 && LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PHYSICIAN) {
             mPhysicianId = LoginUtility.getLoginId(mContext);
             mPatientId = null;
-        } else return ;
+        } else return;
 
         Log.d(LOG_TAG, "Processing Physician sync for id: " + mPhysicianId);
         Collection<Alert> alerts = getPhysicianAlerts();
@@ -436,12 +502,12 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
      */
     private Collection<Alert> getPhysicianAlerts() {
 
-        if ( LoginUtility.isLoggedIn(getContext())
+        if (LoginUtility.isLoggedIn(getContext())
                 && LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PHYSICIAN) {
             mPhysicianId = LoginUtility.getLoginId(mContext);
             mPatientId = null;
         } else
-            return  null;
+            return null;
 
         Log.d(LOG_TAG, "get Alerts for Physician : " + mPhysicianId);
         final SymptomManagementApi svc = SymptomManagementService.getService();

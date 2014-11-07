@@ -207,8 +207,7 @@ public class PatientMedicationFragment extends ListFragment {
                         meds = mPatient.getPrescriptions()
                                 .toArray(new Medication[mPatient.getPrescriptions().size()]);
                     }
-                    setListAdapter(new PrescriptionAdapter(getActivity(), meds));
-                    getListAdapter().notify();
+                    onResetAdapter();
                 }
 
                 @Override
@@ -219,4 +218,10 @@ public class PatientMedicationFragment extends ListFragment {
             });
         }
     }
+
+    public void onResetAdapter() {
+        setListAdapter(new PrescriptionAdapter(getActivity(), meds));
+       // getListAdapter().notify(); thread-safe issue with this
+    }
+
 }
