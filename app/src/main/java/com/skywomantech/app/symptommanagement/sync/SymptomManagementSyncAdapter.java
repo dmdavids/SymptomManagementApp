@@ -48,7 +48,7 @@ import java.util.concurrent.Callable;
 public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
     // use the class name for logging purposes
-    private final String LOG_TAG = SymptomManagementSyncAdapter.class.getSimpleName();
+    private final static String LOG_TAG = SymptomManagementSyncAdapter.class.getSimpleName();
 
     private static final int SYMPTOM_MANAGEMENT_NOTIFICATION_ID = 1111;
 
@@ -63,7 +63,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     private Patient mPatient;
     private String mPhysicianId;
     private String mPatientId;
-    private Collection<Alert> mAlerts;
+    private static Collection<Alert> mAlerts;
 
 
     public SymptomManagementSyncAdapter(Context context, boolean autoInitialize) {
@@ -591,5 +591,18 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         mNotificationManager.notify(SYMPTOM_MANAGEMENT_NOTIFICATION_ID, mBuilder.build());
     }
 
+    public static synchronized int getPatientSeverityLevel(Patient patient) {
+        Log.d(LOG_TAG, "Checking Patient for Severity Level: " + patient.getId());
+        if(mAlerts == null || mAlerts.size() <= 0)  return Alert.PAIN_SEVERITY_LEVEL_0;
+        for(Alert a: mAlerts) {
+            Log.d(LOG_TAG, "Checking Alert for Patient ID :" + a.getPatientId());
+            if(a.getPatientId().contentEquals(patient.getId())) {
+                Log.d(LOG_TAG, "MATCHES PATIENT .. High Severity Level found :" + a.getSeverityLevel());
+                patient.setSeverityLevel(a.getSeverityLevel());
+                return a.getSeverityLevel();
+            }
+        }
+        return Alert.PAIN_SEVERITY_LEVEL_0;
+    }
 
 }

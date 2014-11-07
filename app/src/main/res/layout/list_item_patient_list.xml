@@ -34,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="4"
         android:contentDescription="Alert Info"
-        android:src="@android:drawable/ic_menu_info_details" />
+        android:src="@drawable/ic_action_red_pain_log"
+        android:visibility="invisible" />
 
 </LinearLayout>

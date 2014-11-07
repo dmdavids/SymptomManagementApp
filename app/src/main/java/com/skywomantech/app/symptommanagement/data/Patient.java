@@ -9,6 +9,7 @@ public class Patient {
 
     private String id;
     private transient long dbId;  // local CP database id!!
+    private int severityLevel = 0; // boolean indicating if an alert exists for this patient
 
     private String firstName;
     private String lastName;
@@ -44,7 +45,8 @@ public class Patient {
         this.id = patient.getId();
     }
 
-    public Patient( String firstName, String lastName, String birthdate, long lastLogin,
+    public Patient( String firstName, String lastName, String birthdate, int severityLevel,
+                    long lastLogin,
                     Boolean active, Set<Medication> prescriptions,
                     Set<Physician> physicians, Set<PainLog> painLog,
                     Set<MedicationLog> medLog, Set<StatusLog> statusLog, PatientPrefs prefs) {
@@ -52,6 +54,7 @@ public class Patient {
         this.firstName = firstName.trim();
         this.lastName = lastName.trim();
         this.birthdate = birthdate;
+        this.severityLevel = 0;
         this.lastLogin = lastLogin;
         this.active = active;
         this.prescriptions = prescriptions;
@@ -182,6 +185,16 @@ public class Patient {
         this.prefs = prefs;
     }
 
+
+    public int getSeverityLevel() {
+        return severityLevel;
+    }
+
+    public void setSeverityLevel(int severityLevel) {
+        this.severityLevel = severityLevel;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -210,8 +223,8 @@ public class Patient {
     public String toDebugString() {
         return "Patient [id=" + id + ", " +  ", dbId=" + dbId +
                 "firstName=" + firstName + ", lastName="
-                + lastName + ", birthdate=" + birthdate + ", lastLogin="
-                + lastLogin + ", active=" + active + ", prescriptions="
+                + lastName + ", birthdate=" + birthdate + ", severityLevel=" + severityLevel
+                + ", lastLogin=" + lastLogin + ", active=" + active + ", prescriptions="
                 + prescriptions + ", physicians=" + physicians + ", painLog="
                 + painLog + ", medLog=" + medLog + ", statusLog=" + statusLog
                 + ", prefs=" + prefs + "]";

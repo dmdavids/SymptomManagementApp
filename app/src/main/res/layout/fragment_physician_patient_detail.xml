@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:height="@android:dimen/app_icon_size"
-        android:text="Patient Name"
+        android:text="Patient Name :"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textIsSelectable="true" />
 
@@ -26,15 +26,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:height="@android:dimen/app_icon_size"
-        android:text="Date of Birth:"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:text="Date of Birth :"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/view_birthdate" />
 
     <TextView
         android:id="@+id/physician_patient_detail_birthdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:height="@android:dimen/app_icon_size"
-        android:text="mm/dd/yy"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <TextView
@@ -42,14 +42,14 @@
         android:layout_height="wrap_content"
         android:height="@android:dimen/app_icon_size"
         android:text="Last Log Entry : "
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/view_log_entry" />
 
     <TextView
         android:id="@+id/physician_patient_last_log"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:height="@android:dimen/app_icon_size"
-        android:text="mm/dd/yy"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 

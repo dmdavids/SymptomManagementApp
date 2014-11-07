@@ -2,12 +2,20 @@ package com.skywomantech.app.symptommanagement.data;
 
 
 public class Alert {
-	
-	String id;
+
+    public static final int PAIN_SEVERITY_LEVEL_0 = 0;
+    public static final int PAIN_SEVERITY_LEVEL_1 = 10;
+    public static final int PAIN_SEVERITY_LEVEL_2 = 30;
+    public static final int PAIN_SEVERITY_LEVEL_3 = 90;
+    public static final int PAIN_SEVERITY_LEVEL_4 = 100;
+
+
+    String id;
 	String physicianId;
 	String patientId;
 	String patientName;
 	long created;
+    int severityLevel;
 	
 	public String getId() {
 		return id;
@@ -39,8 +47,14 @@ public class Alert {
 	public void setCreated(long created) {
 		this.created = created;
 	}
-	
-	public String getFormattedMessage() {
+    public int getSeverityLevel() {
+        return severityLevel;
+    }
+    public void setSeverityLevel(int severityLevel) {
+        this.severityLevel = severityLevel;
+    }
+
+    public String getFormattedMessage() {
 		return patientName + " has severe symptoms.";
 	}
 	
@@ -91,12 +105,13 @@ public class Alert {
 			return false;
 		return true;
 	}
-	
-	@Override
-	public String toString() {
-		return "Alert [id=" + id + ", physicianId=" + physicianId
-				+ ", patientId=" + patientId + ", patientName=" + patientName
-				+ ", created=" + created + "]";
-	}
+
+    @Override
+    public String toString() {
+        return "Alert [id=" + id + ", physicianId=" + physicianId
+                + ", patientId=" + patientId + ", patientName=" + patientName
+                + ", created=" + created + ", severityLevel=" + severityLevel
+                + "]";
+    }
 	
 }

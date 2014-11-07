@@ -9,7 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.skywomantech.app.symptommanagement.R;
+import com.skywomantech.app.symptommanagement.data.Alert;
 import com.skywomantech.app.symptommanagement.data.Patient;
+import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 
 public class PatientListAdapter extends ArrayAdapter<Patient> {
@@ -47,6 +49,10 @@ public class PatientListAdapter extends ArrayAdapter<Patient> {
             viewHolder.patient = patients[position];
             viewHolder.patientName.setText(patients[position].getName());
             viewHolder.lastLog.setText(patients[position].getFormattedLastLogged());
+            int severity = SymptomManagementSyncAdapter.getPatientSeverityLevel(patients[position]);
+            viewHolder.alertIcon
+                    .setVisibility(severity > Alert.PAIN_SEVERITY_LEVEL_0
+                            ? ImageView.VISIBLE : ImageView.INVISIBLE);
             rowView.setTag(viewHolder);
             view = rowView;
         } else {
@@ -57,6 +63,9 @@ public class PatientListAdapter extends ArrayAdapter<Patient> {
         holder.patientName.setText(patients[position].getName());
         holder.lastLog.setText(patients[position].getFormattedLastLogged());
         holder.patient = patients[position];
+        int severity = SymptomManagementSyncAdapter.getPatientSeverityLevel(patients[position]);
+        holder.alertIcon.setVisibility(severity > Alert.PAIN_SEVERITY_LEVEL_0
+                ? ImageView.VISIBLE : ImageView.INVISIBLE);
         return view;
     }
 }
