@@ -37,6 +37,7 @@ import java.util.concurrent.Callable;
 
 public class PatientMainActivity extends Activity
         implements
+        PatientMainFragment.Callbacks,
         MedicationLogListAdapter.Callbacks,
         MedicationTimeDialog.Callbacks,
         PatientPainLogFragment.Callbacks,
@@ -48,7 +49,7 @@ public class PatientMainActivity extends Activity
 
     public final static String LOG_TAG = PatientMainActivity.class.getSimpleName();
     private String mPatientId;  // cloud login db id
-    private Patient mPatient;
+    private static Patient mPatient;
     private long mLastLogged = System.currentTimeMillis();
     Context mContext;
 
@@ -56,8 +57,10 @@ public class PatientMainActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_main);
+        mContext = this;
+        getPatient(); // may need to go to the cloud here
         if (savedInstanceState == null) {
-            if (isCheckIn()) {
+            if (LoginUtility.isCheckin(this)) {
                 getFragmentManager().beginTransaction()
                         .add(R.id.container, new PatientPainLogFragment())
                         .commit();
@@ -67,7 +70,6 @@ public class PatientMainActivity extends Activity
                         .commit();
             }
         }
-        mContext = this;
     }
 
     @Override
@@ -94,7 +96,9 @@ public class PatientMainActivity extends Activity
             return true;
         } else if (id == R.id.patient_logout) {
             LoginUtility.logout(this);
-            startActivity(new Intent(this, LoginActivity.class));
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -103,48 +107,64 @@ public class PatientMainActivity extends Activity
         if ( LoginUtility.isLoggedIn(this)
                 && LoginUtility.getUserRole(this) == UserCredential.UserRole.PATIENT) {
             mPatientId = LoginUtility.getLoginId(mContext);
-        } else return null;
+        } else {
+            Log.d(LOG_TAG, "UNABLE to get Patient because login properties are " +
+                    "not completed or they are not correct.");
+            return null;
+        }
 
-        Log.d(LOG_TAG, "Getting PATIENT from CP with id : " + mPatientId);
+        Log.d(LOG_TAG, "Attempting to get PATIENT from CP with id : " + mPatientId);
         mPatient = null;
         if (mPatientId != null && !mPatientId.isEmpty()) {
-            mPatient = new Patient();
-            mPatient.setId(mPatientId); // cloud id
-            String selection = PatientEntry.COLUMN_PATIENT_ID + "=" + "\'"  + mPatientId + "\'";
-            Cursor cursor = getContentResolver()
-                    .query(PatientEntry.CONTENT_URI, null, selection, null,null); // where cloud id = mPatientId
-            if (cursor.getCount() > 1) {
-                Log.d(LOG_TAG, "There are multiple entries for the same DB patient! id : " + mPatientId);
-            }
-            if (cursor.moveToFirst()) {
-
-                mPatient.setDbId(cursor.getLong(cursor.getColumnIndex(PatientEntry._ID))); // local CP id
-                mPatient.setFirstName(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_FIRST_NAME)));
-                mPatient.setLastName(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_LAST_NAME)));
-                mPatient.setLastLogin(cursor.getLong(cursor.getColumnIndex(PatientEntry.COLUMN_LAST_LOGIN)));
-                Log.v(LOG_TAG, "Last Login Originally set to: " + Long.toString(mPatient.getLastLogin()));
-                if (mLastLogged > mPatient.getLastLogin()) {
-                    Log.v(LOG_TAG, "Last Login RESET to: " + Long.toString(mLastLogged));
-                    mPatient.setLastLogin(mLastLogged);
-                }
-                mPatient.setBirthdate(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_BIRTHDATE)));
-                Log.d(LOG_TAG, "Working with this PATIENT\n\tid : " + mPatientId
-                        + "\n\trecord : " + mPatient.toDebugString());
-            }
-            cursor.close();
+            mPatient = getPatientFromCP(mPatientId);
         }
         // CP didn't find it so try the internet
         // if found on the internet then save it to C
         if (mPatient == null ) {
             Log.d(LOG_TAG, "INSTEAD we are Getting PATIENT from CLOUD with id : " + mPatientId);
-            mPatient = getPatientFromCloud();  // this is asynchronous so don't expect immediate response
-            Log.d(LOG_TAG, "Working with this PATIENT\n\tid : " + mPatientId
-                    + "\n\trecord : " + mPatient.toDebugString());
+            getPatientFromCloud(mPatientId);  // this is asynchronous so don't expect immediate response
         }
         return mPatient;
     }
 
-    private Patient getPatientFromCloud() {
+    public Patient getPatientFromCP(String id) {
+        Log.d(LOG_TAG, "THIS IS THE CP attempt to get the Patient information.");
+        Patient patient = new Patient();
+        patient.setId(id); // cloud id
+        String selection = PatientEntry.COLUMN_PATIENT_ID + "=" + "\'"  + id + "\'";
+        Cursor cursor = getContentResolver()
+                .query(PatientEntry.CONTENT_URI, null, selection, null,null); // where cloud id = mPatientId
+        if (cursor.getCount() > 1) {
+            Log.d(LOG_TAG, "There are multiple entries for the same DB patient! id : " + id);
+        }
+        if (cursor.moveToFirst()) {
+
+            patient.setDbId(cursor.getLong(cursor.getColumnIndex(PatientEntry._ID))); // local CP id
+            patient.setFirstName(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_FIRST_NAME)));
+            patient.setLastName(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_LAST_NAME)));
+            patient.setLastLogin(cursor.getLong(cursor.getColumnIndex(PatientEntry.COLUMN_LAST_LOGIN)));
+            Log.v(LOG_TAG, "Last Login Originally set to: " + Long.toString(patient.getLastLogin()));
+
+//            if (mLastLogged > patient.getLastLogin()) {
+//                Log.v(LOG_TAG, "Last Login RESET to: " + Long.toString(mLastLogged));
+//                if(mPatient != null)  mPatient.setLastLogin(mLastLogged);
+//            }
+            patient.setBirthdate(cursor.getString(cursor.getColumnIndex(PatientEntry.COLUMN_BIRTHDATE)));
+            Log.d(LOG_TAG, "Working with this PATIENT\n\tid : " + id
+                    + "\n\trecord : " + patient.toDebugString());
+        }
+        cursor.close();
+        Log.d(LOG_TAG, "Found Patient in CP : " + patient.toDebugString());
+        // something went wrong and a bad record is inserted.
+        // TODO: I am assuming we have both first and last name ... not great
+        if (patient.getId() == null || patient.getId().isEmpty()
+                || patient.getFirstName() == null || patient.getFirstName().isEmpty()
+                || patient.getLastName() == null || patient.getLastName().isEmpty())
+            return null;
+        return patient;
+    }
+
+    private Patient getPatientFromCloud(final String id) {
 
         final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
@@ -154,7 +174,7 @@ public class PatientMainActivity extends Activity
                 public Patient call() throws Exception {
                     Log.d(LOG_TAG, "getting Patient from Internet");
                     mPatient = null;
-                    return svc.getPatient(mPatientId);
+                    return svc.getPatient(id);
                 }
             }, new TaskCallback<Patient>() {
 
@@ -162,10 +182,9 @@ public class PatientMainActivity extends Activity
                 public void success(Patient result) {
                     Log.d(LOG_TAG, "got the Patient!");
                     mPatient = result;
-                    //mPatientId = mPatient.getId();
                     if (mPatient != null) {
-                        Log.v(LOG_TAG, "Last Login set to: " + Long.toString(mLastLogged));
-                        mPatient.setLastLogin(mLastLogged);
+//                        Log.v(LOG_TAG, "Last Login set to: " + Long.toString(mLastLogged));
+//                        mPatient.setLastLogin(mLastLogged);
                         savePatientToCP(mPatient);
                     }
                 }
@@ -183,14 +202,15 @@ public class PatientMainActivity extends Activity
 
     private void savePatientToCP(Patient patient) {
         if (mPatientId != null && !mPatientId.isEmpty() &&  patient != null) {
-            Log.d(LOG_TAG, "INSERTING with this PATIENT\n\tid : " + mPatientId
-                    + "\n\trecord : " + patient.toDebugString());
+            Log.d(LOG_TAG, "INSERTING to CP with this PATIENT id : " + mPatientId
+                    + " record : " + patient.toDebugString());
             // test to see if it is already in the database
             String selection = PatientEntry.COLUMN_PATIENT_ID + "=" + "\'"  + mPatientId + "\'";
             Cursor cursor = getContentResolver()
                     .query(PatientEntry.CONTENT_URI, null, selection, null,null); // where cloud id = mPatientId
             if (cursor.getCount() > 0) {
-                Log.d(LOG_TAG, "NOT INSERTING. This Patient Id already exists in the CP : " + mPatientId);
+                Log.d(LOG_TAG, "UPDATING because This Patient Id already exists in the CP : " + mPatientId);
+                updatePatientToCP(patient);
             } else {
                 // its a new patient in the CP so we can go ahead and insert
                 ContentValues cvPatient = PatientCPcvHelper.createInsertValuesObject(mPatientId, patient);
@@ -216,29 +236,15 @@ public class PatientMainActivity extends Activity
             Log.d(LOG_TAG, "Updated Patients : " + Integer.toString(updated));
         }
         else {
-            Log.d(LOG_TAG, "Patient is not Updateable.  Try saving it INSTEAD?");
-            savePatientToCP(patient);
+            Log.d(LOG_TAG, "Patient is not Updateable.");
         }
-    }
-
-    // default to no checkin if the preference is not found
-    private boolean isCheckIn() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        return prefs.getBoolean("isCheckin", false);
-    }
-
-    public void setCheckIn(boolean value) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("isCheckin", value);
-        editor.apply();
     }
 
     @Override
     public boolean onPainLogComplete() {
-        if (isCheckIn()) {
+        if (LoginUtility.isCheckin(this)) {
             // replace fragment with the medication log fragment
-            setCheckIn(false);  // we go to the med logs and then back to the regular process
+            LoginUtility.setCheckin(this, false);  // we go to the med logs and then back to the regular process
             getFragmentManager().beginTransaction()
                     .replace(R.id.container, new PatientMedicationLogFragment())
                     .commit();
@@ -262,18 +268,19 @@ public class PatientMainActivity extends Activity
     }
 
     private void setLastLoggedTimestamp() {
-        mPatient = getPatient();
-        if (mPatient != null) {
-            Log.v(LOG_TAG, "Last Login RESET to: " + Long.toString(mLastLogged));
-            mPatient.setLastLogin(mLastLogged);
-            updatePatientToCP(mPatient);
-        }
+        // TODO: what the heck?
+        getPatient(); // may need to go to cloud don't expect immediate response
+//        if (mPatient != null) {
+//            Log.v(LOG_TAG, "Last Login RESET to: " + Long.toString(mLastLogged));
+//            mPatient.setLastLogin(mLastLogged);
+//            updatePatientToCP(mPatient);
+//        }
     }
 
     // this should be called when the timer goes off
     // timer can set the CheckIn value to be true too
     public void startCheckInProcess() {
-        setCheckIn(true);
+        LoginUtility.setCheckin(this, true);
         getFragmentManager().beginTransaction()
                     .replace(R.id.container, new PatientPainLogFragment())
                     .commit();
@@ -333,5 +340,10 @@ public class PatientMainActivity extends Activity
         ReminderFragment frag =
                 (ReminderFragment) getFragmentManager().findFragmentById(R.id.container);
         frag.deleteReminder(position);
+    }
+
+
+    public Patient getPatientCallback() {
+        return getPatientFromCP(mPatientId);
     }
 }

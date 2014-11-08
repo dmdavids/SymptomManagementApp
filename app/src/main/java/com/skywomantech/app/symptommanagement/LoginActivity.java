@@ -313,7 +313,9 @@ public class LoginActivity extends Activity {
                                      "Invalid Login. Please See Your Administrator.",
                                      Toast.LENGTH_LONG).show();
                              LoginUtility.logout(getApplicationContext());
-                             startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                             Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                             startActivity(i);
                          }
                     } else {
                         Log.d(LOG_TAG, "ERROR getting user credentials.");
@@ -322,7 +324,9 @@ public class LoginActivity extends Activity {
                                 "Invalid Login. Please Try Again.",
                                 Toast.LENGTH_LONG).show();
                         LoginUtility.logout(getApplicationContext());
-                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                        Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(i);
                     }
                 }
 
@@ -333,7 +337,9 @@ public class LoginActivity extends Activity {
                             "Unable to Login. Please check Internet connection.",
                             Toast.LENGTH_LONG).show();
                     LoginUtility.logout(getApplicationContext());
-                    startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                    Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
                 }
             });
         }

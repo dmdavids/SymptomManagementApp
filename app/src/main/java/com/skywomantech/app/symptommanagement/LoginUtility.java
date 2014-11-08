@@ -65,7 +65,7 @@ public class LoginUtility {
         SymptomManagementService.reset();
     }
 
-    private static synchronized boolean setCheckin(Context context, boolean value) {
+    public static synchronized boolean setCheckin(Context context, boolean value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("isCheckin", value);

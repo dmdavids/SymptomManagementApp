@@ -38,6 +38,7 @@ import com.skywomantech.app.symptommanagement.data.PatientPrefs;
 import com.skywomantech.app.symptommanagement.data.Reminder;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
 import com.skywomantech.app.symptommanagement.data.UserCredential;
+import com.skywomantech.app.symptommanagement.physician.PatientDataManager;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -213,7 +214,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
         // then we update the cloud with the information from this device
         updateLastLoginFromCP(patientRecord);
-        updateLogsFromCP(patientRecord);
+        PatientDataManager.getLogsFromCP(mContext, patientRecord);
 
         // update the reminders
         if (patientRecord.getPrefs() == null) {
@@ -369,70 +370,6 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         mContext.getContentResolver().bulkInsert(PrescriptionEntry.CONTENT_URI, cvArray);
     }
 
-    /**
-     * Put the logs that are on the local device into the cloud patient record
-     * Warning.. this pretty much assumes the patient is only use this device and
-     * not another one too... otherwise we would just put them in one by one
-     * and make sure that we aren't overwriting them.  We would need to put IDs in them
-     * on the cloud server too... too much work for this project
-     *
-     * @param patientRecord
-     */
-    private void updateLogsFromCP(Patient patientRecord) {
-        patientRecord.setPainLog(getUpdatedPainLogs());
-        patientRecord.setMedLog(getUpdatedMedLogs());
-        patientRecord.setStatusLog(getUpdatedStatusLogs());
-    }
-
-    private Set<PainLog> getUpdatedPainLogs() {
-        Set<PainLog> logs = new HashSet<PainLog>();
-        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
-        Cursor cursor = mContext.getContentResolver().query(
-                PatientCPContract.PainLogEntry.CONTENT_URI, null, selection, null, null);
-        while (cursor.moveToNext()) {
-            PainLog log = new PainLog();
-            log.setEating(PainLog.Eating.findByValue(cursor.getInt(cursor.getColumnIndex(PatientCPContract.PainLogEntry.COLUMN_EATING))));
-            log.setSeverity(PainLog.Severity.findByValue(cursor.getInt(cursor.getColumnIndex(PatientCPContract.PainLogEntry.COLUMN_SEVERITY))));
-            log.setCreated(cursor.getLong(cursor.getColumnIndex(PatientCPContract.PainLogEntry.COLUMN_CREATED)));
-            logs.add(log);
-        }
-        cursor.close();
-        return logs;
-    }
-
-    private Set<MedicationLog> getUpdatedMedLogs() {
-        Set<MedicationLog> logs = new HashSet<MedicationLog>();
-        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
-        Cursor cursor = mContext.getContentResolver().query(
-                PatientCPContract.MedLogEntry.CONTENT_URI, null, selection, null, null);
-        while (cursor.moveToNext()) {
-            MedicationLog log = new MedicationLog();
-            log.setMed(new Medication());
-            log.getMed().setId(cursor.getString(cursor.getColumnIndex(PatientCPContract.MedLogEntry.COLUMN_MED_ID)));
-            log.getMed().setName(cursor.getString(cursor.getColumnIndex(PatientCPContract.MedLogEntry.COLUMN_MED_NAME)));
-            log.setTaken(cursor.getLong(cursor.getColumnIndex(PatientCPContract.MedLogEntry.COLUMN_TAKEN)));
-            log.setCreated(cursor.getLong(cursor.getColumnIndex(PatientCPContract.MedLogEntry.COLUMN_CREATED)));
-            logs.add(log);
-        }
-        cursor.close();
-        return logs;
-    }
-
-    private Set<StatusLog> getUpdatedStatusLogs() {
-        Set<StatusLog> logs = new HashSet<StatusLog>();
-        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
-        Cursor cursor = mContext.getContentResolver().query(
-                PatientCPContract.StatusLogEntry.CONTENT_URI, null, selection, null, null);
-        while (cursor.moveToNext()) {
-            StatusLog log = new StatusLog();
-            log.setNote(cursor.getString(cursor.getColumnIndex(PatientCPContract.StatusLogEntry.COLUMN_NOTE)));
-            log.setImage_location(cursor.getString(cursor.getColumnIndex(PatientCPContract.StatusLogEntry.COLUMN_IMAGE)));
-            log.setCreated(cursor.getLong(cursor.getColumnIndex(PatientCPContract.StatusLogEntry.COLUMN_CREATED)));
-            logs.add(log);
-        }
-        cursor.close();
-        return logs;
-    }
 
     private Collection<Reminder> getUpdatedReminders() {
         Set<Reminder> reminders = new HashSet<Reminder>();
@@ -579,6 +516,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
         // Open the app when the user clicks on the notification.
         Intent resultIntent = new Intent(getContext(), LoginActivity.class);
+        resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(getContext())
                 .addParentStack(LoginActivity.class)
                 .addNextIntent(resultIntent);
@@ -590,6 +528,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                 (NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(SYMPTOM_MANAGEMENT_NOTIFICATION_ID, mBuilder.build());
     }
+
 
     public static synchronized int getPatientSeverityLevel(Patient patient) {
         Log.d(LOG_TAG, "Checking Patient for Severity Level: " + patient.getId());
@@ -604,5 +543,4 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         }
         return Alert.PAIN_SEVERITY_LEVEL_0;
     }
-
 }

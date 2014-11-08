@@ -112,7 +112,7 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
             // time is stored in 24 hour format - change to 12 hour with AM/PM
             //TODO: Time needs to be formatted better than this
             String am_pm = (reminders[position].getHour() < 12) ? " AM" : " PM";
-            String hours = (reminders[position].getHour() < 12)
+            String hours = (reminders[position].getHour() <= 12)
                     ? Integer.valueOf(reminders[position].getHour()).toString()
                     : Integer.valueOf(reminders[position].getHour() - 12).toString() ;
             String minutes =  (reminders[position].getMinutes() < 10)

@@ -13,16 +13,8 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.HistoryLog;
-import com.skywomantech.app.symptommanagement.data.MedicationLog;
-import com.skywomantech.app.symptommanagement.data.PainLog;
 import com.skywomantech.app.symptommanagement.data.Patient;
 
-import com.skywomantech.app.symptommanagement.data.StatusLog;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
 public class HistoryLogFragment extends ListFragment {
@@ -118,7 +110,7 @@ public class HistoryLogFragment extends ListFragment {
                 public void success(Patient result) {
                     Log.d(LOG_TAG, "getting Patient and all logs");
                     mPatient = result;
-                    HistoryLog[] logList = createLogList(mPatient);
+                    HistoryLog[] logList = PatientDataManager.createLogList(mPatient);
                     setListAdapter(new HistoryLogAdapter(getActivity(), logList));
                 }
 
@@ -133,60 +125,4 @@ public class HistoryLogFragment extends ListFragment {
         }
     }
 
-    private HistoryLog[] createLogList(Patient mPatient) {
-        HistoryLogSorter sorter = new HistoryLogSorter();
-        TreeSet<HistoryLog> sortedLogs = new TreeSet<HistoryLog>(
-                Collections.reverseOrder(sorter));
-        Collection<PainLog> plogs = mPatient.getPainLog();
-        if (plogs != null) {
-            for (PainLog p : plogs) {
-                HistoryLog h = new HistoryLog();
-                h.setCreated(p.getCreated());
-                h.setType(HistoryLog.LogType.PAIN_LOG);
-                String severity = (p.getSeverity() == PainLog.Severity.SEVERE) ? "SEVERE"
-                        : (p.getSeverity() == PainLog.Severity.MODERATE) ? "Moderate"
-                        : "Well-Defined";
-                String eating = (p.getEating() == PainLog.Eating.NOT_EATING) ? "NOT EATING"
-                        : (p.getEating() == PainLog.Eating.SOME_EATING) ? "Some Eating" : "Eating";
-                String info = "Pain : " + severity + " -- " + eating;
-                h.setInfo(info);
-                sortedLogs.add(h);
-            }
-        }
-        Collection<MedicationLog> mlogs = mPatient.getMedLog();
-        if (mlogs != null) {
-            for (MedicationLog m : mlogs) {
-                HistoryLog h = new HistoryLog();
-                h.setCreated(m.getCreated());
-                h.setType(HistoryLog.LogType.MED_LOG);
-                String name = m.getMed().getName();
-                String taken = m.getTakenDateFormattedString(" hh:mm a 'on' E, MMM d yyyy" );
-                String info = name + " taken " +  taken;
-                h.setInfo(info);
-                sortedLogs.add(h);
-            }
-        }
-        Collection<StatusLog> slogs = mPatient.getStatusLog();
-        if (slogs != null) {
-            for (StatusLog s : slogs) {
-                HistoryLog h = new HistoryLog();
-                h.setCreated(s.getCreated());
-                h.setType(HistoryLog.LogType.STATUS_LOG);
-                String image = (s.getImage_location() != null && !s.getImage_location().isEmpty())
-                        ? "Image Taken" : "";
-                String info = "Note: " + s.getNote() + " " + image;
-                h.setInfo(info);
-                sortedLogs.add(h);
-            }
-        }
-
-        if (sortedLogs.size() <= 0) return new HistoryLog[0];
-        return sortedLogs.toArray(new HistoryLog[sortedLogs.size()]);
-    }
-
-    private class HistoryLogSorter implements Comparator<HistoryLog> {
-        public int compare(HistoryLog x, HistoryLog y) {
-            return Long.compare(x.getCreated(), y.getCreated());
-        }
-    }
 }

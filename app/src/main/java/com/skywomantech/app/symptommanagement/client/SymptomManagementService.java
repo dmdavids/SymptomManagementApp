@@ -34,7 +34,9 @@ public class SymptomManagementService {
         } else {
             Log.d(LOG_TAG, "We do not have a service so we need to LOGIN!");
             LoginUtility.logout(ctx);  // make sure we are good and logged out
-            ctx.startActivity(new Intent(ctx, LoginActivity.class));
+            Intent i = new Intent(ctx, LoginActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            ctx.startActivity(i);
             return null;
         }
     }

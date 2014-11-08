@@ -39,7 +39,9 @@ public class AdminMain extends Activity {
             return true;
         } else if (id == R.id.action_logout) {
             LoginUtility.logout(this);
-            startActivity(new Intent(this, LoginActivity.class));
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
         }
         return super.onOptionsItemSelected(item);
     }
