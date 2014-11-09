@@ -63,15 +63,7 @@ public class PatientMainFragment extends Fragment {
         return rootView;
     }
 
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        Fragment frag = getFragmentManager().findFragmentById(R.id.patient_main_container);
-        Log.e(LOG_TAG, "THIS FRAGMENT IS AN INSTANCE OF xxxx " + frag.toString());
-        if (frag instanceof HistoryLogFragment) {
-            menu.removeItem(R.id.action_patient_history_log);
-        }
-        super.onPrepareOptionsMenu(menu);
-    }
+
 
     @OnClick(R.id.pain_log_button)
     public void enterPainLog() {
@@ -98,8 +90,9 @@ public class PatientMainFragment extends Fragment {
     }
 
     private String getNextCheckIn() {
+        if (mPatient == null) return "";
         reminders = PatientDataManager.loadSortedReminderList(getActivity(), mPatient.getId());
-        if (reminders.size() <= 0) return "No Check-Ins are Scheduled At This Time.";
+        if (reminders == null || reminders.size() <= 0) return "No Check-Ins are Scheduled At This Time.";
 
         Calendar rightNow = Calendar.getInstance();
         int checkValue = rightNow.get(Calendar.HOUR_OF_DAY) * 60 + rightNow.get(Calendar.MINUTE);

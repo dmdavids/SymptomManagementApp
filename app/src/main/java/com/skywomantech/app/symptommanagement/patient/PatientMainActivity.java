@@ -65,8 +65,12 @@ public class PatientMainActivity extends Activity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean value = super.onPrepareOptionsMenu(menu);
-        return value;
+        Fragment frag = getFragmentManager().findFragmentByTag("history_log_frag");
+        if (frag != null) {
+            Log.e(LOG_TAG, "FOUND HISTORY LOG SO WE ARE REMOVING THE ACTION ITEM.");
+            menu.removeItem(R.id.action_patient_history_log);
+        }
+       return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -101,7 +105,7 @@ public class PatientMainActivity extends Activity
             HistoryLogFragment fragment = new HistoryLogFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
-                    .replace(R.id.patient_main_container, fragment)
+                    .replace(R.id.patient_main_container, fragment, "history_log_frag")
                     .addToBackStack(null)
                     .commit();
             return true;

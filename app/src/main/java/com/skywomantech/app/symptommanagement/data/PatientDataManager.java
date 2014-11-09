@@ -206,21 +206,40 @@ public class PatientDataManager {
         if (patient.getPrefs() == null || patient.getPrefs().getAlerts() == null) return;
         String id = patient.getId();
         Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getPrefs().getAlerts().size());
-        for (Reminder l: patient.getPrefs().getAlerts()) {
-            ContentValues cv = PatientCPcvHelper.createValuesObject(id, l);
-            cVVector.add(cv);
+        for (Reminder r: patient.getPrefs().getAlerts()) {
+            if (isReminderInCP(context, r)) {
+                updateSingleReminder(context, patient.getId(), r);
+            } else {
+                ContentValues cv = PatientCPcvHelper.createInsertValuesObject(id, r);
+                cVVector.add(cv);
+            }
         }
-        ContentValues[] cvArray = new ContentValues[cVVector.size()];
-        cVVector.toArray(cvArray);
-        context.getContentResolver().bulkInsert(PatientCPContract.ReminderEntry.CONTENT_URI, cvArray);
+        if (cVVector.size() > 0 ) {
+            ContentValues[] cvArray = new ContentValues[cVVector.size()];
+            cVVector.toArray(cvArray);
+            context.getContentResolver().bulkInsert(PatientCPContract.ReminderEntry.CONTENT_URI, cvArray);
+        }
     }
 
-    public static synchronized int updateSingleReminder(Context context, String id, Reminder temp) {
+    public static synchronized boolean isReminderInCP(Context context, Reminder reminder) {
+        if (reminder == null || reminder.getDbId()<= 0 ) return false;
+        String selection = PatientCPContract.ReminderEntry._ID + "=" + "\'"
+                +  reminder.getDbId() + "\'";
+        Cursor cursor = context.getContentResolver()
+                .query(PatientCPContract.ReminderEntry.CONTENT_URI, null, selection, null,null);
+        boolean found = (cursor.getCount() > 0) ? true : false;
+        cursor.close();
+        Log.d(LOG_TAG, "Does Reminder " + reminder + " exist in DB? " + Boolean.toString(found));
+        return found;
+    }
+
+
+    public static synchronized int updateSingleReminder(Context context, String id, Reminder reminder) {
         int rowsUpdated = 0;
-        if (temp.getDbId() >= 0) {
-            ContentValues cv = PatientCPcvHelper.createValuesObject(id, temp);
+        if (reminder.getDbId() >= 0) {
+            ContentValues cv = PatientCPcvHelper.createValuesObject(id, reminder);
             String selection =
-                    PatientCPContract.ReminderEntry._ID + "=" + Long.toString(temp.getDbId());
+                    PatientCPContract.ReminderEntry._ID + "=" + Long.toString(reminder.getDbId());
              rowsUpdated = context.getContentResolver()
                     .update(PatientCPContract.ReminderEntry.CONTENT_URI, cv, selection, null);
             Log.v(LOG_TAG, "Reminder rows updated : " + Integer.toString(rowsUpdated));
