@@ -1,13 +1,11 @@
 package com.skywomantech.app.symptommanagement.admin;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.skywomantech.app.symptommanagement.LoginActivity;
-import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
@@ -20,7 +18,7 @@ public class AdminMain extends Activity {
         setContentView(R.layout.activity_admin_main);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.container, new AdminMainFragment())
+                    .add(R.id.patient_main_container, new AdminMainFragment())
                     .commit();
         }
     }
@@ -38,10 +36,7 @@ public class AdminMain extends Activity {
             SymptomManagementSyncAdapter.syncImmediately(this);
             return true;
         } else if (id == R.id.action_logout) {
-            LoginUtility.logout(this);
-            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
+            LoginActivity.restartLoginActivity(this);
         }
         return super.onOptionsItemSelected(item);
     }

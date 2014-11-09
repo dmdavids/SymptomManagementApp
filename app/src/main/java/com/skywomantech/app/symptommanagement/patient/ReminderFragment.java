@@ -22,9 +22,11 @@ import android.widget.Toast;
 import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 
+import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.ReminderEntry;
 import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
+import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 import com.skywomantech.app.symptommanagement.data.Reminder;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
@@ -96,22 +98,8 @@ public class ReminderFragment extends Fragment {
 
     private void loadReminderList() {
         if (mReminders == null) {
-            reminders = new HashSet<Reminder>();
-            // search the local storage for the item id
-            String mPatientId = LoginUtility.getLoginId(getActivity());
-            String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
-            Cursor cursor = getActivity().getContentResolver()
-                    .query(ReminderEntry.CONTENT_URI, null, selection, null,null);
-            while (cursor.moveToNext()) {
-                Reminder item = new Reminder();
-                item.setDbId(cursor.getLong(cursor.getColumnIndex(ReminderEntry._ID)));
-                item.setName(cursor.getString(cursor.getColumnIndex(ReminderEntry.COLUMN_NAME)));
-                item.setHour(cursor.getInt(cursor.getColumnIndex(ReminderEntry.COLUMN_HOUR)));
-                item.setMinutes(cursor.getInt(cursor.getColumnIndex(ReminderEntry.COLUMN_MINUTES)));
-                item.setOn((cursor.getInt(cursor.getColumnIndex(ReminderEntry.COLUMN_ON)) == 0 ? false : true));
-                reminders.add(item);
-            }
-            cursor.close();
+            reminders = PatientDataManager
+                    .loadReminderList(getActivity(), LoginUtility.getLoginId(getActivity()));
             mReminders = reminders.toArray(new Reminder[reminders.size()]);
         }
         mAdapter = new ReminderListAdapter(getActivity(), mReminders);
@@ -155,14 +143,12 @@ public class ReminderFragment extends Fragment {
         mAdapter.notifyDataSetChanged();
     }
 
+    // called by Add Edit Dialog
     public void updateReminder(int position, Reminder temp) {
         if (mReminders[position].getDbId() >= 0) {
-            String mPatientId = LoginUtility.getLoginId(getActivity());
-            ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, temp);
-            String selection =
-                    ReminderEntry._ID + "=" + Long.toString(mReminders[position].getDbId());
-            int rowsUpdated = getActivity().getContentResolver()
-                    .update(ReminderEntry.CONTENT_URI, cv, selection, null);
+            temp.setDbId(mReminders[position].getDbId());
+            int rowsUpdated = PatientDataManager.updateSingleReminder(getActivity(),
+                    LoginUtility.getLoginId(getActivity()), temp);
             Log.v(LOG_TAG, "Reminder rows updated : " + Integer.toString(rowsUpdated));
         }
         SymptomManagementSyncAdapter.syncImmediately(getActivity());

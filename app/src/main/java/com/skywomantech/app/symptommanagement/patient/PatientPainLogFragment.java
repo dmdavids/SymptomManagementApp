@@ -93,6 +93,7 @@ public class PatientPainLogFragment extends Fragment {
             Log.e(LOG_TAG, "Pain Log Insert Failed.");
         }
         SymptomManagementSyncAdapter.syncImmediately(getActivity());
+
         // tell the activity we're done and if check-in put up the med log fragment
         boolean isCheckIn = ((Callbacks) getActivity()).onPainLogComplete();
         if (!isCheckIn) {

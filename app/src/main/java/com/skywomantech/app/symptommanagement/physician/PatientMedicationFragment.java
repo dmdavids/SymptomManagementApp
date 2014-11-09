@@ -181,6 +181,8 @@ public class PatientMedicationFragment extends ListFragment {
         sendPatientRecordToCloud(mPatient);
     }
 
+    // The Sync Adapter for updating patients only works for a PATIENT
+    // so the Physician needs to do this immediately here.
     private void sendPatientRecordToCloud(final Patient patientRecord) {
 
         final SymptomManagementApi svc =  SymptomManagementService.getService();
@@ -191,8 +193,6 @@ public class PatientMedicationFragment extends ListFragment {
                 @Override
                 public Patient call() throws Exception {
                     Log.d(LOG_TAG, "Updating single Patient id : " + patientRecord.getId());
-                    Log.v(LOG_TAG, "Last Login SET to before Sent to Cloud: "
-                            + Long.toString(patientRecord.getLastLogin()));
                     return svc.updatePatient(patientRecord.getId(), patientRecord);
                 }
             }, new TaskCallback<Patient>() {
@@ -207,7 +207,7 @@ public class PatientMedicationFragment extends ListFragment {
                         meds = mPatient.getPrescriptions()
                                 .toArray(new Medication[mPatient.getPrescriptions().size()]);
                     }
-                    onResetAdapter();
+                    setListAdapter(new PrescriptionAdapter(getActivity(), meds));
                 }
 
                 @Override
@@ -218,10 +218,4 @@ public class PatientMedicationFragment extends ListFragment {
             });
         }
     }
-
-    public void onResetAdapter() {
-        setListAdapter(new PrescriptionAdapter(getActivity(), meds));
-       // getListAdapter().notify(); thread-safe issue with this
-    }
-
 }

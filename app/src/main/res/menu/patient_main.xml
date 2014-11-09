@@ -1,6 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.skywomantech.app.symptommanagement.patient.PatientMainActivity" >
+    <item
+        android:id="@+id/action_patient_history_log"
+        android:orderInCategory="10"
+        android:showAsAction="ifRoom|withText"
+        android:title="History"
+        android:icon="@drawable/ic_action_status_log"/>
+
     <item android:id="@+id/action_refresh"
         android:title="@string/action_refresh"
         android:orderInCategory="80"

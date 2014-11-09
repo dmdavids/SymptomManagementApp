@@ -49,7 +49,7 @@ public class PatientListAdapter extends ArrayAdapter<Patient> {
             viewHolder.patient = patients[position];
             viewHolder.patientName.setText(patients[position].getName());
             viewHolder.lastLog.setText(patients[position].getFormattedLastLogged());
-            int severity = SymptomManagementSyncAdapter.getPatientSeverityLevel(patients[position]);
+            int severity = SymptomManagementSyncAdapter.findPatientAlertSeverityLevel(patients[position]);
             viewHolder.alertIcon
                     .setVisibility(severity > Alert.PAIN_SEVERITY_LEVEL_0
                             ? ImageView.VISIBLE : ImageView.INVISIBLE);
@@ -63,7 +63,7 @@ public class PatientListAdapter extends ArrayAdapter<Patient> {
         holder.patientName.setText(patients[position].getName());
         holder.lastLog.setText(patients[position].getFormattedLastLogged());
         holder.patient = patients[position];
-        int severity = SymptomManagementSyncAdapter.getPatientSeverityLevel(patients[position]);
+        int severity = SymptomManagementSyncAdapter.findPatientAlertSeverityLevel(patients[position]);
         holder.alertIcon.setVisibility(severity > Alert.PAIN_SEVERITY_LEVEL_0
                 ? ImageView.VISIBLE : ImageView.INVISIBLE);
         return view;

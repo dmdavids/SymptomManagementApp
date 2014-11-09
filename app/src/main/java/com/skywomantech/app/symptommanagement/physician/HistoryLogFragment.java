@@ -13,14 +13,21 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.HistoryLog;
+import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
+import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 
 import java.util.concurrent.Callable;
 
 public class HistoryLogFragment extends ListFragment {
 
     private static final String LOG_TAG = HistoryLogFragment.class.getSimpleName();
-    private String  mPatientId;
+
+    public interface Callbacks {
+        public Patient getPatientForHistory(String id);
+    }
+
+    private String  mPatientId = null;
     private Patient mPatient;
 
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
@@ -65,7 +72,10 @@ public class HistoryLogFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
-        refreshAllLogs();
+        // get your patient information from the calling activity
+        mPatient = ((Callbacks) getActivity()).getPatientForHistory(mPatientId);
+        // if mPatient is null it will go to cloud to find it
+        refreshAllLogs(mPatient);
     }
 
     @Override
@@ -93,36 +103,42 @@ public class HistoryLogFragment extends ListFragment {
         mActivatedPosition = position;
     }
 
-    private void refreshAllLogs() {
+    private void refreshAllLogs(Patient patient) {
+        // we were given the patient to work with (PATIENT USER)
+        if (patient != null) {
+            HistoryLog[] logList = PatientDataManager.createLogList(mPatient);
+            setListAdapter(new HistoryLogAdapter(getActivity(), logList));
+        }
+        // we need to go find the patient in the cloud (PHYSICIAN USER)
+        else  if (mPatientId != null) { // try to find the history in the cloud
+            final SymptomManagementApi svc = SymptomManagementService.getService();
+            if (svc != null) {
+                CallableTask.invoke(new Callable<Patient>() {
 
-        final SymptomManagementApi svc =  SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Patient>() {
+                    @Override
+                    public Patient call() throws Exception {
+                        Log.d(LOG_TAG, "getting patient");
+                        return svc.getPatient(mPatientId);
+                    }
+                }, new TaskCallback<Patient>() {
 
-                @Override
-                public Patient call() throws Exception {
-                    Log.d(LOG_TAG, "getting patient");
-                    return svc.getPatient(mPatientId);
-                }
-            }, new TaskCallback<Patient>() {
+                    @Override
+                    public void success(Patient result) {
+                        Log.d(LOG_TAG, "getting Patient and all logs");
+                        mPatient = result;
+                        HistoryLog[] logList = PatientDataManager.createLogList(mPatient);
+                        setListAdapter(new HistoryLogAdapter(getActivity(), logList));
+                    }
 
-                @Override
-                public void success(Patient result) {
-                    Log.d(LOG_TAG, "getting Patient and all logs");
-                    mPatient = result;
-                    HistoryLog[] logList = PatientDataManager.createLogList(mPatient);
-                    setListAdapter(new HistoryLogAdapter(getActivity(), logList));
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Toast.makeText(
-                            getActivity(),
-                            "Unable to fetch the Patient Logs. Please check Internet connection.",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+                    @Override
+                    public void error(Exception e) {
+                        Toast.makeText(
+                                getActivity(),
+                                "Unable to fetch the Patient Logs. Please check Internet connection.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
         }
     }
-
 }

@@ -58,7 +58,6 @@ public class MedicationLogListAdapter extends ArrayAdapter<MedicationLog> {
                             MedicationLog log = (MedicationLog) holder.isTaken.getTag();
                             if (holder.isTaken.isChecked()) {
                                 ((Callbacks) activity).onRequestDateTime(position);
-                                // crossing fingers that the log shows up here?
                                 if (log.getTaken() > 0) {
                                     String summaryText = "Taken on " +
                                             log.getTakenDateFormattedString("E, MMM d yyyy 'at' hh:mm a");

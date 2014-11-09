@@ -20,6 +20,7 @@ import com.skywomantech.app.symptommanagement.data.MedicationLog;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract;
 import com.skywomantech.app.symptommanagement.data.PatientCPContract.MedLogEntry;
 import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
+import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.Collection;
@@ -71,31 +72,14 @@ public class PatientMedicationLogFragment extends Fragment {
 
     private void loadMedicationLogList() {
         // make a blank list of possible entries for the patient to fill in
-        Collection<Medication> prescriptions = getPrescriptionsFromCP();
+        Collection<Medication> prescriptions =
+                PatientDataManager.getPrescriptionsFromCP(getActivity(),
+                LoginUtility.getLoginId(getActivity()));
         if (mLogList == null) {
             createEmptyLogsList(prescriptions);
         }
         mAdapter = new MedicationLogListAdapter(getActivity(), mLogList);
         mLogListView.setAdapter(mAdapter);
-    }
-
-    private Collection<Medication> getPrescriptionsFromCP() {
-        String mPatientId = LoginUtility.getLoginId(getActivity());
-
-        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'"  + mPatientId + "\'";
-        Cursor cursor = getActivity().getContentResolver()
-                .query(PatientCPContract.PrescriptionEntry.CONTENT_URI, null, selection, null, null);
-        Collection<Medication> prescriptions = new HashSet<Medication>();
-        Log.d(LOG_TAG, "Number of prescriptions found: " + Integer.toString(cursor.getCount()));
-        while (cursor.moveToNext()) {
-            Medication med = new Medication();
-            med.setName(cursor.getString
-                    (cursor.getColumnIndex(PatientCPContract.PrescriptionEntry.COLUMN_NAME)));
-            Log.d(LOG_TAG, "Adding this prescription : " + med.toDebugString());
-            prescriptions.add(med);
-        }
-        cursor.close();
-        return prescriptions;
     }
 
     private void createEmptyLogsList(Collection<Medication> medications) {

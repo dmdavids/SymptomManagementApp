@@ -103,10 +103,6 @@ public class PatientStatusLogFragment extends Fragment {
 
     @OnClick(R.id.status_imageButton)
     public void processImage() {
-        // TODO: if no image then call up camera or gallery option
-        //  then attach the image by saving the file location here
-        // then update the image location text
-        // TODO: if an image is already attached display image
         if (mLog.getImage_location() == null) {
             addImage();
         }

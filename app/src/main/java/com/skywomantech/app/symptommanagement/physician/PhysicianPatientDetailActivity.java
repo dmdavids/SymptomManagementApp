@@ -16,6 +16,7 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Medication;
+import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.concurrent.Callable;
@@ -24,7 +25,8 @@ public class PhysicianPatientDetailActivity extends Activity implements
         PrescriptionAdapter.Callbacks,
         PatientMedicationFragment.Callbacks,
         MedicationListFragment.Callbacks,
-        MedicationAddEditDialog.Callbacks {
+        MedicationAddEditDialog.Callbacks,
+        HistoryLogFragment.Callbacks {
 
     private static final String LOG_TAG = PhysicianPatientDetailActivity.class.getSimpleName();
 
@@ -193,5 +195,11 @@ public class PhysicianPatientDetailActivity extends Activity implements
     @Override
     public void onCancelMedicationResult() {
         Log.d(LOG_TAG, "Add/Edit Medication was cancelled.");
+    }
+
+    @Override
+    public Patient getPatientForHistory(String id) {
+        // force the history log to go to the cloud
+        return null;
     }
 }

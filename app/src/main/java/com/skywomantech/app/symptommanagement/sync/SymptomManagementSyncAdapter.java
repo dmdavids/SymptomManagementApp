@@ -7,12 +7,10 @@ import android.app.PendingIntent;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SyncRequest;
 import android.content.SyncResult;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -27,23 +25,11 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Alert;
-import com.skywomantech.app.symptommanagement.data.Medication;
-import com.skywomantech.app.symptommanagement.data.MedicationLog;
-import com.skywomantech.app.symptommanagement.data.PainLog;
 import com.skywomantech.app.symptommanagement.data.Patient;
-import com.skywomantech.app.symptommanagement.data.PatientCPContract;
-import com.skywomantech.app.symptommanagement.data.PatientCPContract.PrescriptionEntry;
-import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
-import com.skywomantech.app.symptommanagement.data.PatientPrefs;
-import com.skywomantech.app.symptommanagement.data.Reminder;
-import com.skywomantech.app.symptommanagement.data.StatusLog;
 import com.skywomantech.app.symptommanagement.data.UserCredential;
-import com.skywomantech.app.symptommanagement.physician.PatientDataManager;
+import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Vector;
 import java.util.concurrent.Callable;
 
 public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
@@ -56,16 +42,18 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     // keep track of our application environment context
     private final Context mContext;
 
-    // Try to sync the data at approximately 5 minute intervals
+    // Try to sync the data at approximately 20 minute intervals
     // it can range plus or minus 6ish minutes
-    private static final int SYNC_INTERVAL = 60 * 15;  //  15 minutes syncs
+    private static final int SYNC_INTERVAL = 60 * 20;  //  abt 20 minutes sync intervals
     private static final int SYNC_FLEXTIME = SYNC_INTERVAL / 3;
 
-    private Patient mPatient;
-    private String mPhysicianId;
+    // Sync'd data for PATIENT
     private String mPatientId;
-    private static Collection<Alert> mAlerts;
+    private Patient mPatient;
 
+    // Sync'd data for Physician
+    private String mPhysicianId;
+    private static Collection<Alert> mAlerts;
 
     public SymptomManagementSyncAdapter(Context context, boolean autoInitialize) {
         super(context, autoInitialize);
@@ -161,9 +149,6 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
 
     /**
-     * When a sync occurs gets the JSON data from the API and then parses and processes it. Also
-     * cleans old data from the storage so that the storage is maintained and does not keep growing
-     * and growing.
      *
      * @param account               the account that should be synced
      * @param bundle                SyncAdapter-specific parameters
@@ -175,15 +160,13 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle bundle, String authority,
                               ContentProviderClient contentProviderClient, SyncResult syncResult) {
         Log.d(LOG_TAG, "Starting onPerformSync");
+        // Note: Admin does not need any sync processing
         if (LoginUtility.isLoggedIn(getContext())) {
-            // only process if patient or physician... no processing for ADMIN
             if (LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PATIENT) {
                 Log.d(LOG_TAG, "SYNC Processing for PATIENT.");
-                // app is logged in as a PATIENT
                 processPatientSync();
             } else if (LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PHYSICIAN) {
                 Log.d(LOG_TAG, "SYNC Processing for PHYSICIAN.");
-                // app is logged in as a PHYSICIAN
                 processPhysicianSync();
             }
         } else {
@@ -191,118 +174,23 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-    private void processPatientSync() {
 
+    /**
+     * PATIENT Sync
+     */
+    private void processPatientSync() {
         if (LoginUtility.isLoggedIn(getContext())
                 && LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PATIENT) {
             mPatientId = LoginUtility.getLoginId(mContext);
         } else return;
 
-        Log.d(LOG_TAG, "Processing Patient sync");
+        Log.d(LOG_TAG, "Logged In and Processing Patient sync : " + mPatientId);
 
-        // first we update the device with the cloud data
-        Patient patientRecord = getPatientRecordFromCloud();
-        if (patientRecord == null) {
-            Log.d(LOG_TAG, "No Patient Record Found yet.");
-            return;
-        }
-        if (patientRecord.getPrescriptions() != null) {
-            updatePrescriptionsToCP(patientRecord.getPrescriptions());
-        }
-        updateLogsToCP(patientRecord);
-        updateRemindersToCP(patientRecord);
-
-        // then we update the cloud with the information from this device
-        updateLastLoginFromCP(patientRecord);
-        PatientDataManager.getLogsFromCP(mContext, patientRecord);
-
-        // update the reminders
-        if (patientRecord.getPrefs() == null) {
-            patientRecord.setPrefs(new PatientPrefs());
-        }
-        patientRecord.getPrefs().setAlerts(getUpdatedReminders());
-        sendPatientRecordToCloud(patientRecord);
-    }
-
-    private void updateRemindersToCP(Patient patient) {
-        if (patient.getPrefs() == null || patient.getPrefs().getAlerts() == null) return;
-        String id = patient.getId();
-        Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getPrefs().getAlerts().size());
-        for (Reminder l: patient.getPrefs().getAlerts()) {
-            ContentValues cv = PatientCPcvHelper.createValuesObject(id, l);
-            cVVector.add(cv);
-        }
-        ContentValues[] cvArray = new ContentValues[cVVector.size()];
-        cVVector.toArray(cvArray);
-        mContext.getContentResolver().bulkInsert(PatientCPContract.ReminderEntry.CONTENT_URI, cvArray);
-    }
-
-    private void updateLogsToCP(Patient patient) {
-        Log.d(LOG_TAG, "Updating patient LOGs to CP Checking.. id is : " + patient.getId()
-        + " Logged in id is : " + mPatientId);
-        updatePainLogToCP(patient);
-        updateMedLogToCP(patient);
-        updateStatusLogToCP(patient);
-    }
-
-    private void updatePainLogToCP(Patient patient) {
-        if (patient.getPainLog() == null) return;
-        String id = patient.getId();
-        Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getPainLog().size());
-        for (PainLog p: patient.getPainLog()) {
-           ContentValues cv = PatientCPcvHelper.createValuesObject(id, p);
-           cVVector.add(cv);
-        }
-        ContentValues[] cvArray = new ContentValues[cVVector.size()];
-        cVVector.toArray(cvArray);
-        mContext.getContentResolver().bulkInsert(PatientCPContract.PainLogEntry.CONTENT_URI, cvArray);
-    }
-
-    private void updateMedLogToCP(Patient patient) {
-        if (patient.getMedLog() == null) return;
-        String id = patient.getId();
-        Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getMedLog().size());
-        for (MedicationLog l: patient.getMedLog()) {
-            ContentValues cv = PatientCPcvHelper.createValuesObject(id, l);
-            cVVector.add(cv);
-        }
-        ContentValues[] cvArray = new ContentValues[cVVector.size()];
-        cVVector.toArray(cvArray);
-        mContext.getContentResolver().bulkInsert(PatientCPContract.MedLogEntry.CONTENT_URI, cvArray);
-    }
-
-    private void updateStatusLogToCP(Patient patient) {
-        if (patient.getStatusLog() == null) return;
-        String id = patient.getId();
-        Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getStatusLog().size());
-        for (StatusLog l: patient.getStatusLog()) {
-            ContentValues cv = PatientCPcvHelper.createValuesObject(id, l);
-            cVVector.add(cv);
-        }
-        ContentValues[] cvArray = new ContentValues[cVVector.size()];
-        cVVector.toArray(cvArray);
-        // db ensures that there are not duplicates
-        mContext.getContentResolver().bulkInsert(PatientCPContract.StatusLogEntry.CONTENT_URI, cvArray);
-    }
-
-
-    private void updateLastLoginFromCP(Patient patientRecord) {
-        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
-        Cursor cursor = mContext.getContentResolver()
-                .query(PatientCPContract.PatientEntry.CONTENT_URI, null, selection, null, null);
-        if (cursor.moveToFirst()) {
-            patientRecord
-                    .setLastLogin(cursor
-                            .getLong(cursor
-                                    .getColumnIndex(PatientCPContract.PatientEntry.COLUMN_LAST_LOGIN)));
-            Log.v(LOG_TAG, "==>Last Login RESET to: " + Long.toString(patientRecord.getLastLogin()));
-        }
-        cursor.close();
+        // we are calling out for the patient..it will process when it gets here
+        getPatientRecordFromCloud();
     }
 
     private Patient getPatientRecordFromCloud() {
-
-        // are we a logged in patient?  don't bother the server if we aren't
         if (LoginUtility.isLoggedIn(getContext())
                 && LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PATIENT) {
             mPatientId = LoginUtility.getLoginId(mContext);
@@ -326,6 +214,8 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                 public void success(Patient result) {
                     Log.d(LOG_TAG, "Found Patient :" + result.toDebugString());
                     mPatient = result;
+                    Log.d(LOG_TAG, "Got a patient now we can process.");
+                    processPatientFromCloud(mPatient);
                 }
 
                 @Override
@@ -341,52 +231,15 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         return mPatient;
     }
 
-    /**
-     * Take the prescriptions from the cloud patient, remove the ones from the local patient
-     * and put the new ones in the CP.. just in case the doctor updated them.
-     * <p/>
-     *
-     * @param prescriptions
-     */
-    private void updatePrescriptionsToCP(Collection<Medication> prescriptions) {
-        if (prescriptions == null) return;
+    private void processPatientFromCloud(Patient patient) {
+        // patient record has been received.. save it via CP
+        PatientDataManager.processPatientToCP(mContext, patient);
 
-        mPatientId = LoginUtility.getLoginId(mContext);
-        Log.d(LOG_TAG, "SYNC is Updating Prescriptions for patient : "  + mPatientId);
-//        // delete all of the patient's prescriptions DON'T NEED ANYMORE WITH UPDATE TABLES
-//        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
-//        int deleted = mContext.getContentResolver().delete(PrescriptionEntry.CONTENT_URI, selection, null);
-//        Log.d(LOG_TAG, "Deleted prescription count is :" + Integer.toString(deleted));
-        //insert all of the prescriptions at once
-        Vector<ContentValues> cVVector = new Vector<ContentValues>(prescriptions.size());
-        for (Medication m : prescriptions) {
-            Log.d(LOG_TAG, "Adding a prescription : " + m.toDebugString());
-            ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, m);
-            cVVector.add(cv);
-        }
-        ContentValues[] cvArray = new ContentValues[cVVector.size()];
-        cVVector.toArray(cvArray);
-        Log.d(LOG_TAG, "We have this many prescriptions to bulk insert : " + cVVector.size());
-        mContext.getContentResolver().bulkInsert(PrescriptionEntry.CONTENT_URI, cvArray);
-    }
+        // then we update the cloud with the information from this device
+        PatientDataManager.processCPtoPatient(mContext, patient);
 
-
-    private Collection<Reminder> getUpdatedReminders() {
-        Set<Reminder> reminders = new HashSet<Reminder>();
-        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
-        Cursor cursor = mContext.getContentResolver().query(
-                PatientCPContract.ReminderEntry.CONTENT_URI, null, selection, null, null);
-        while (cursor.moveToNext()) {
-            Reminder log = new Reminder();
-            log.setHour(cursor.getInt(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_HOUR)));
-            log.setMinutes(cursor.getInt(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_MINUTES)));
-            log.setOn(cursor.getInt(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_ON)) == 1);
-            log.setName(cursor.getString(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_NAME)));
-            log.setReminderType(Reminder.ReminderType.findByValue(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_TYPE)));
-            reminders.add(log);
-        }
-        cursor.close();
-        return reminders;
+        // All updates are done so send it back for storing in cloud
+        sendPatientRecordToCloud(patient);
     }
 
     /**
@@ -427,6 +280,9 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
+    /**
+     * Physician Sync
+     */
     private void processPhysicianSync() {
         if (LoginUtility.isLoggedIn(getContext())
                 && LoginUtility.getUserRole(getContext()) == UserCredential.UserRole.PHYSICIAN) {
@@ -434,7 +290,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
             mPatientId = null;
         } else return;
 
-        Log.d(LOG_TAG, "Processing Physician sync for id: " + mPhysicianId);
+        Log.d(LOG_TAG, "Logged In and Processing Physician sync: " + mPhysicianId);
         getPhysicianAlerts();
         //TODO: have to figure out physician alarm manager yet.
     }
@@ -486,51 +342,44 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     private void createPhysicianNotification(Collection<Alert> alerts) {
-
         if (alerts == null || alerts.size() <= 0) return;
 
-        String title = "Symptom Management";
-
-        int numberOfAlerts = alerts.size();
         String contentText = " Patient Alerts!";
-        if (numberOfAlerts == 1) {
+        if (alerts.size() == 1) {
             Alert a = alerts.iterator().next();
-            if (a != null) {
-                contentText = a.getFormattedMessage();
-            }
+            if (a != null) contentText = a.getFormattedMessage();
         } else {
-            contentText = "There are " + Integer.toString(numberOfAlerts)
+            contentText = "There are " + Integer.toString(alerts.size())
                     + "Severe Patients requiring attention.";
         }
 
         Log.d(LOG_TAG, "SENDING ALERT message : " + contentText);
-        int iconId = R.drawable.ic_launcher;
-        // set the notification to clear after a click
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(getContext())
-                        .setSmallIcon(iconId)
-                        .setContentTitle(title)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("Symptom Management")
                         .setContentText(contentText)
                         .setOnlyAlertOnce(true)
                         .setAutoCancel(true);
 
-        // Open the app when the user clicks on the notification.
-        Intent resultIntent = new Intent(getContext(), LoginActivity.class);
-        resultIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getContext())
+        mBuilder.setContentIntent(
+                TaskStackBuilder.create(getContext())
                 .addParentStack(LoginActivity.class)
-                .addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0,PendingIntent.FLAG_UPDATE_CURRENT );
-        mBuilder.setContentIntent(resultPendingIntent);
-
-        NotificationManager mNotificationManager =
-                (NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(SYMPTOM_MANAGEMENT_NOTIFICATION_ID, mBuilder.build());
+                .addNextIntent(new Intent(getContext(), LoginActivity.class)
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+                .getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT));
+        ((NotificationManager)getContext().getSystemService(Context.NOTIFICATION_SERVICE))
+               .notify(SYMPTOM_MANAGEMENT_NOTIFICATION_ID, mBuilder.build());
     }
 
-
-    public static synchronized int getPatientSeverityLevel(Patient patient) {
+    /**
+     * Sync Adapter has the physician Alerts... Check them for a specific patient
+     * and return the alert severity level
+     *
+     * @param patient to check for an alert if not found return severity level 0
+     * @return int indicating the level of the alert for this patient
+     */
+    public static synchronized int findPatientAlertSeverityLevel(Patient patient) {
         Log.d(LOG_TAG, "Checking Patient for Severity Level: " + patient.getId());
         if(mAlerts == null || mAlerts.size() <= 0)  return Alert.PAIN_SEVERITY_LEVEL_0;
         for(Alert a: mAlerts) {

@@ -27,16 +27,13 @@ public class SymptomManagementService {
 
     // Use this one when you are already logged in and you just need your server connection
     // and if it isn't available you want to go back to login activity
-    public static synchronized SymptomManagementApi getServiceOrShowLogin(Context ctx) {
+    public static synchronized SymptomManagementApi getServiceOrShowLogin(Context context) {
         if (symptomManagementSvc != null) {
             Log.d(LOG_TAG, "We do have a service... no need to Login. Yeah!");
             return symptomManagementSvc;
         } else {
             Log.d(LOG_TAG, "We do not have a service so we need to LOGIN!");
-            LoginUtility.logout(ctx);  // make sure we are good and logged out
-            Intent i = new Intent(ctx, LoginActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            ctx.startActivity(i);
+            LoginActivity.restartLoginActivity(context);
             return null;
         }
     }
@@ -102,6 +99,5 @@ public class SymptomManagementService {
         mUser = "";
         symptomManagementSvc = null;
     }
-
 
 }

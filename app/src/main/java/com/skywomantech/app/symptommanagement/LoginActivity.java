@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 
@@ -41,22 +42,17 @@ import butterknife.OnClick;
 public class LoginActivity extends Activity {
 
     private static final String LOG_TAG = LoginActivity.class.getSimpleName();
-
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
     private UserLoginTask mAuthTask = null;
 
-    // UI references.
     @InjectView(R.id.username)
     EditText mUsernameView;
     @InjectView(R.id.sm_password)
     EditText mPasswordView;
-
     @InjectView(R.id.login_form)
     View mProgressView;
     @InjectView(R.id.login_progress)
     View mLoginFormView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,15 +77,24 @@ public class LoginActivity extends Activity {
         super.onStart();
         if (LoginUtility.isLoggedIn(this)) {
             Log.d(LOG_TAG, "We are already logged in so we just need to redirect.");
-            // we are still logged in from a previous session
-            // redirect to the appropriate Activity
-            processLoginRedirect();
+            processLoginRedirect(LoginUtility.getUserRole(this));
         }
         else {
             // just make sure that we are completely logged out
             LoginUtility.logout(this);
-            // then continue on with the Login Activity like nothing happened.
         }
+    }
+
+    /**
+     * Logout and remove everything on the backstack so LoginActivity
+     * is the only screen
+     *
+     * @param context
+     */
+    public static void restartLoginActivity(Context context) {
+        LoginUtility.logout(context);
+        context.startActivity(new Intent(context, LoginActivity.class)
+                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     @OnClick(R.id.username_sign_in_button)
@@ -100,9 +105,7 @@ public class LoginActivity extends Activity {
     public void attemptLogin() {
         Log.d(LOG_TAG, "Attempting to Login");
 
-        if (mAuthTask != null) {
-            return;
-        }
+        if (mAuthTask != null) return;
 
         mUsernameView.setError(null);
         mPasswordView.setError(null);
@@ -211,15 +214,15 @@ public class LoginActivity extends Activity {
             showProgress(false);
 
             if (success) {
-                Log.d(LOG_TAG, "Server connection was SUCCESSFUL! But we still need the credentials.");
+                Log.d(LOG_TAG, "Server connection was SUCCESSFUL! " +
+                        "But we still need the credentials.");
                 LoginUtility.setUsername(getApplicationContext(), mUsername);
                 getCredentialsAndRedirect();
             } else {
                 Log.d(LOG_TAG, "Server connection FAILED!");
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
-                LoginUtility.logout(getApplicationContext());
-                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                restartLoginActivity(getApplicationContext());
             }
         }
 
@@ -231,49 +234,36 @@ public class LoginActivity extends Activity {
     }
 
     public void getCredentialsAndRedirect() {
-        // already logged in
         if(LoginUtility.isLoggedIn(this)) {
-            processLoginRedirect();
+            // already logged in
+            processLoginRedirect(LoginUtility.getUserRole(this));
         } else {
             Log.d(LOG_TAG, "We have to retrieve the user credential FROM THE SERVICE first.");
             getUserCredentialsAndProcessLogin();
         }
     }
 
-    private void processLoginRedirect() {
-        processLoginRedirect(LoginUtility.getUserRole(this));
-    }
-
     private void processLoginRedirect(UserCredential.UserRole role) {
-        Log.d(LOG_TAG,
-                "Process Login REDIRECTing to appropriate screen flow for " + role.toString());
+        Log.d(LOG_TAG, "Process Login REDIRECTing to appropriate screen flow " +
+                "for " + role.toString());
         if (role == UserCredential.UserRole.ADMIN) {
             Log.d(LOG_TAG, "Starting Admin screen flow");
             startActivity(new Intent(this, AdminMain.class));
         } else if (role == UserCredential.UserRole.PATIENT) {
-            if (LoginUtility.isCheckin(this)) {
-                Log.d(LOG_TAG, "Starting Patient CHECKIN flow");
-                SymptomManagementSyncAdapter.syncImmediately(this);
-                startActivity(new Intent(this, PatientMainActivity.class));
-            } else {
-                Log.d(LOG_TAG, "Starting Patient screen flow");
-                SymptomManagementSyncAdapter.syncImmediately(this);
-                startActivity(new Intent(this, PatientMainActivity.class));
-            }
+            // check-in flow is handled by PatientMainActivity
+            SymptomManagementSyncAdapter.syncImmediately(this);
+            startActivity(new Intent(this, PatientMainActivity.class));
         } else if (role == UserCredential.UserRole.PHYSICIAN) {
             Log.d(LOG_TAG, "Starting Doctor screen flow");
             SymptomManagementSyncAdapter.syncImmediately(this);
             startActivity(new Intent(this, PhysicianListPatientsActivity.class));
         } else {
-            // I guess we aren't going anywhere
             Log.d(LOG_TAG, "INVALID ROLE ASSIGNED!!!");
             Toast.makeText(
                     this,
                     "Invalid Login. Please See Your Administrator for assistance.",
                     Toast.LENGTH_LONG).show();
-            //something is messed up so we are logging out and letting them re-login
-            LoginUtility.logout(this);
-            startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+            restartLoginActivity(this);
         }
     }
 
@@ -304,7 +294,7 @@ public class LoginActivity extends Activity {
                         // store the information from the credential
                          if (LoginUtility.setLoggedIn(getApplicationContext(), cred)) {
                              // now we finally have enough information to redirect
-                             processLoginRedirect();
+                             processLoginRedirect(LoginUtility.getUserRole(getApplicationContext()));
                          }
                         else {
                              Log.d(LOG_TAG, "ERROR saving the user credentials.");
@@ -312,10 +302,7 @@ public class LoginActivity extends Activity {
                                      getApplicationContext(),
                                      "Invalid Login. Please See Your Administrator.",
                                      Toast.LENGTH_LONG).show();
-                             LoginUtility.logout(getApplicationContext());
-                             Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                             startActivity(i);
+                             restartLoginActivity(getApplicationContext());
                          }
                     } else {
                         Log.d(LOG_TAG, "ERROR getting user credentials.");
@@ -323,10 +310,7 @@ public class LoginActivity extends Activity {
                                 getApplicationContext(),
                                 "Invalid Login. Please Try Again.",
                                 Toast.LENGTH_LONG).show();
-                        LoginUtility.logout(getApplicationContext());
-                        Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(i);
+                        restartLoginActivity(getApplicationContext());
                     }
                 }
 
@@ -336,14 +320,12 @@ public class LoginActivity extends Activity {
                             getApplicationContext(),
                             "Unable to Login. Please check Internet connection.",
                             Toast.LENGTH_LONG).show();
-                    LoginUtility.logout(getApplicationContext());
-                    Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);
+                   restartLoginActivity(getApplicationContext());
                 }
             });
         }
     }
+
 }
 
 

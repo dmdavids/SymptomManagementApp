@@ -37,6 +37,7 @@ public class PhysicianListPatientsActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_physician_patient_list);
+
     }
 
     @Override
@@ -57,10 +58,7 @@ public class PhysicianListPatientsActivity extends Activity
             SymptomManagementSyncAdapter.syncImmediately(this);
             return true;
         } else if (id == R.id.physician_logout) {
-            LoginUtility.logout(this);
-            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
+            LoginActivity.restartLoginActivity(this);
         }
         return super.onOptionsItemSelected(item);
     }
