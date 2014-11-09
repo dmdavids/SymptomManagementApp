@@ -99,7 +99,7 @@ public class ReminderFragment extends Fragment {
     private void loadReminderList() {
         if (mReminders == null) {
             reminders = PatientDataManager
-                    .loadReminderList(getActivity(), LoginUtility.getLoginId(getActivity()));
+                    .loadSortedReminderList(getActivity(), LoginUtility.getLoginId(getActivity()));
             mReminders = reminders.toArray(new Reminder[reminders.size()]);
         }
         mAdapter = new ReminderListAdapter(getActivity(), mReminders);
