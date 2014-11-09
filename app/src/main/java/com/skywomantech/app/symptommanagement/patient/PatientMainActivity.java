@@ -65,12 +65,12 @@ public class PatientMainActivity extends Activity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        Fragment frag = getFragmentManager().findFragmentByTag("history_log_frag");
-        if (frag != null) {
-            Log.e(LOG_TAG, "FOUND HISTORY LOG SO WE ARE REMOVING THE ACTION ITEM.");
+        Fragment hist_frag = getFragmentManager().findFragmentByTag("history_log_frag");
+        Fragment rem_frag = getFragmentManager().findFragmentByTag("reminder_frag");
+        if (hist_frag != null  || rem_frag != null) {
             menu.removeItem(R.id.action_patient_history_log);
         }
-       return super.onPrepareOptionsMenu(menu);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -85,11 +85,10 @@ public class PatientMainActivity extends Activity
         int id = item.getItemId();
         if (id == R.id.action_settings) {
             getFragmentManager().beginTransaction()
-                    .replace(R.id.patient_main_container, new ReminderFragment())
+                    .replace(R.id.patient_main_container, new ReminderFragment(), "reminder_frag")
                     .commit();
             return true;
-        }
-        else if (id == R.id.action_prefs) {
+        } else if (id == R.id.action_prefs) {
             startActivity(new Intent(this, SetPreferenceActivity.class));
             return true;
         } else if (id == R.id.action_refresh) {
@@ -115,7 +114,7 @@ public class PatientMainActivity extends Activity
 
     // TODO: ?? not sure if this is needed?
     private void getPatient() {
-        if ( LoginUtility.isLoggedIn(this)
+        if (LoginUtility.isLoggedIn(this)
                 && LoginUtility.getUserRole(this) == UserCredential.UserRole.PATIENT) {
             mPatientId = LoginUtility.getLoginId(mContext);
         } else {
@@ -130,7 +129,7 @@ public class PatientMainActivity extends Activity
         }
         // CP didn't find it so start a sync and let it find it
         // TODO: What if no internet?
-        if (mPatient == null ) {
+        if (mPatient == null) {
             SymptomManagementSyncAdapter.syncImmediately(this);
         }
     }
@@ -164,7 +163,7 @@ public class PatientMainActivity extends Activity
     private void setLastLoggedTimestamp() {
         Log.d(LOG_TAG, "Should be updating the last logged timestamp in the patient record.");
         getPatient(); // use this to make sure that we are logged in, etc.
-        if (mPatient != null ) {
+        if (mPatient != null) {
             mPatient.setLastLogin(System.currentTimeMillis());
             PatientDataManager.updateLastLoginFromCP(mContext, mPatient);
         } else {
@@ -215,7 +214,7 @@ public class PatientMainActivity extends Activity
     }
 
     @Override
-         public void onReminderUpdate(int position, Reminder reminder) {
+    public void onReminderUpdate(int position, Reminder reminder) {
         ReminderFragment frag =
                 (ReminderFragment) getFragmentManager().findFragmentById(R.id.patient_main_container);
         frag.updateReminder(position, reminder);
@@ -235,7 +234,7 @@ public class PatientMainActivity extends Activity
     @Override
     public Patient getPatientForHistory(String id) {
         // we need a valid patient id
-        if ( LoginUtility.isLoggedIn(this)
+        if (LoginUtility.isLoggedIn(this)
                 && LoginUtility.getUserRole(this) == UserCredential.UserRole.PATIENT) {
             mPatientId = LoginUtility.getLoginId(mContext);
         } else {

@@ -131,11 +131,11 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         ReminderEntry.COLUMN_DAY + " INTEGER, " +
                         ReminderEntry.COLUMN_HOUR + " INTEGER, " +
                         ReminderEntry.COLUMN_MINUTES + " INTEGER, " +
-                        ReminderEntry.COLUMN_CREATED + " REAL, " +
+                        ReminderEntry.COLUMN_CREATED + " REAL NOT NULL, " +
                         ReminderEntry.COLUMN_ALARM + " TEXT, " +
                         ReminderEntry.COLUMN_ON + " INTEGER  NOT NULL, " +
                         " UNIQUE (" + ReminderEntry.COLUMN_PATIENT_ID + ", "
-                        + ReminderEntry.COLUMN_NAME
+                        + ReminderEntry.COLUMN_CREATED
                         + ") ON CONFLICT REPLACE " +
                         " );";
         sqLiteDatabase.execSQL(SQL_CREATE_REMINDER_TABLE);

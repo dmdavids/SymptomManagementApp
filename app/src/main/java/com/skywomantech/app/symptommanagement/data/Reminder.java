@@ -8,13 +8,13 @@ public class Reminder {
     private transient long dbId;  // local database id
 
     private String name;
-
-
     private int dayOfWeek;
 	private int hour;
 	private int minutes;
 	private String alarm;
 	private boolean on;
+    private long created;
+
 
     public enum ReminderType {
         PAIN(1), MED(2), GENERIC(3);
@@ -130,25 +130,34 @@ public class Reminder {
         this.dbId = dbId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public long getCreated() {
+        return created;
+    }
 
-        Reminder reminder = (Reminder) o;
-
-        if (dbId != reminder.dbId) return false;
-        if (name != null ? !name.equals(reminder.name) : reminder.name != null) return false;
-
-        return true;
+    public void setCreated(long created) {
+        this.created = created;
     }
 
     @Override
     public int hashCode() {
-        int result = (int) (dbId ^ (dbId >>> 32));
-        result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (reminderType != null ? reminderType.hashCode() : 0);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + (int) (created ^ (created >>> 32));
         return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof Reminder))
+            return false;
+        Reminder other = (Reminder) obj;
+        if (created != other.created)
+            return false;
+        return true;
     }
 
     @Override
@@ -162,7 +171,9 @@ public class Reminder {
                 ", minutes=" + minutes +
                 ", alarm='" + alarm + '\'' +
                 ", on=" + on +
+                ", created=" + created +
                 ", reminderType=" + reminderType +
                 '}';
     }
+
 }

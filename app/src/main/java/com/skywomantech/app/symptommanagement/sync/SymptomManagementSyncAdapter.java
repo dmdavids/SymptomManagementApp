@@ -174,7 +174,6 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
         }
     }
 
-
     /**
      * PATIENT Sync
      */

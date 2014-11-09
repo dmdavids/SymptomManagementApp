@@ -39,15 +39,22 @@ public class PatientDataManager {
         if (patient.getPrescriptions() != null) {
             updatePrescriptionsToCP(context, patient.getPrescriptions());
         }
+        // NOTE:  We have to assume that this is the user's main device
+        // and they are not updating from other devices
+
         // insert any new logs into the local database
         // ... this could have been changed on another device
+        // BUT this might work OK because logs are insert only no editing/updating
         updateLogsToCP(context, patient);
-        // update the reminders
-        // ... this could have been changed on another device
-        updateRemindersToCP(context, patient);
+
+        // what about reminders... this is a catch 22 since they can be edited
+        // we can't just insert / update because we lose changes .. so for this project
+        // we leave it at this is the only device that patient is using.  if they change device
+        // then they manually change the reminders on that device.
 
         // what about physicians?  We don't use the physician information at this time
-        // we aren't using the prefs either so not bothering
+        // we aren't using the prefs either so not bothering  .. but same problem that the
+        // reminders have because of the local storage
     }
 
     /**
@@ -187,6 +194,7 @@ public class PatientDataManager {
             item.setHour(cursor.getInt(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_HOUR)));
             item.setMinutes(cursor.getInt(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_MINUTES)));
             item.setOn((cursor.getInt(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_ON)) == 0 ? false : true));
+            item.setCreated(cursor.getLong(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_CREATED)));
             reminders.add(item);
         }
         cursor.close();
@@ -222,9 +230,9 @@ public class PatientDataManager {
     }
 
     public static synchronized boolean isReminderInCP(Context context, Reminder reminder) {
-        if (reminder == null || reminder.getDbId()<= 0 ) return false;
-        String selection = PatientCPContract.ReminderEntry._ID + "=" + "\'"
-                +  reminder.getDbId() + "\'";
+        if (reminder == null || reminder.getCreated() <= 0 ) return false;
+        String selection = PatientCPContract.ReminderEntry.COLUMN_CREATED + "=" + "\'"
+                +  reminder.getCreated() + "\'";
         Cursor cursor = context.getContentResolver()
                 .query(PatientCPContract.ReminderEntry.CONTENT_URI, null, selection, null,null);
         boolean found = (cursor.getCount() > 0) ? true : false;
@@ -236,10 +244,10 @@ public class PatientDataManager {
 
     public static synchronized int updateSingleReminder(Context context, String id, Reminder reminder) {
         int rowsUpdated = 0;
-        if (reminder.getDbId() >= 0) {
+        if (reminder.getCreated() >= 0) {
             ContentValues cv = PatientCPcvHelper.createValuesObject(id, reminder);
             String selection =
-                    PatientCPContract.ReminderEntry._ID + "=" + Long.toString(reminder.getDbId());
+                    PatientCPContract.ReminderEntry.COLUMN_CREATED + "=" + Long.toString(reminder.getCreated());
              rowsUpdated = context.getContentResolver()
                     .update(PatientCPContract.ReminderEntry.CONTENT_URI, cv, selection, null);
             Log.v(LOG_TAG, "Reminder rows updated : " + Integer.toString(rowsUpdated));
@@ -259,6 +267,7 @@ public class PatientDataManager {
             log.setOn(cursor.getInt(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_ON)) == 1);
             log.setName(cursor.getString(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_NAME)));
             log.setReminderType(Reminder.ReminderType.findByValue(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_TYPE)));
+            log.setCreated(cursor.getLong(cursor.getColumnIndex(PatientCPContract.ReminderEntry.COLUMN_CREATED)));
             reminders.add(log);
         }
         cursor.close();
@@ -416,10 +425,9 @@ public class PatientDataManager {
         if (patient.getId() == null || patient.getId().isEmpty()
                 || patient.getFirstName() == null || patient.getFirstName().isEmpty()
                 || patient.getLastName() == null || patient.getLastName().isEmpty()) {
-            Log.d(LOG_TAG, "BUG ALERT!!! " +
-                    "I have some bugs if this is happening... which it was.." +
-                    "And I am forcing a restriction of first and last name on patients" +
-                    "and I should remove this check once I get the bugs out.");
+            Log.d(LOG_TAG, "ALERT!!! " +
+                    "This seems to happen on a new patient load.." +
+                    "And I am forcing a restriction of first and last name on patients");
             // this will force the sync adapter to find the patient again
             return null;
         }

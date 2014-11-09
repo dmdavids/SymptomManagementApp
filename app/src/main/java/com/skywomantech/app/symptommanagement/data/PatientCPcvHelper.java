@@ -70,6 +70,9 @@ public class PatientCPcvHelper {
         cv.put(PatientCPContract.ReminderEntry.COLUMN_PATIENT_ID, id);
         cv.put(PatientCPContract.ReminderEntry.COLUMN_MINUTES, rem.getMinutes());
         cv.put(PatientCPContract.ReminderEntry.COLUMN_NAME, rem.getName());
+        long thisTime = rem.getCreated();
+        if (thisTime <= 0L) thisTime = System.currentTimeMillis();
+        cv.put(PatientCPContract.StatusLogEntry.COLUMN_CREATED, thisTime);
         return cv;
     }
 
@@ -80,6 +83,9 @@ public class PatientCPcvHelper {
         cv.put(PatientCPContract.ReminderEntry.COLUMN_PATIENT_ID, id);
         cv.put(PatientCPContract.ReminderEntry.COLUMN_MINUTES, rem.getMinutes());
         cv.put(PatientCPContract.ReminderEntry.COLUMN_NAME, rem.getName());
+        long thisTime = rem.getCreated();
+        if (thisTime <= 0L) thisTime = System.currentTimeMillis();
+        cv.put(PatientCPContract.StatusLogEntry.COLUMN_CREATED, thisTime);
         return cv;
     }
 

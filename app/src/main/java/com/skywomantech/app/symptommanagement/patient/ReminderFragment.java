@@ -109,6 +109,7 @@ public class ReminderFragment extends Fragment {
     public void addReminder(Reminder newReminder) {
         // add to database first
         String mPatientId = LoginUtility.getLoginId(getActivity());
+        newReminder.setCreated(System.currentTimeMillis());
         ContentValues cv = PatientCPcvHelper.createInsertValuesObject(mPatientId, newReminder);
         Uri uri = getActivity().getContentResolver().insert(ReminderEntry.CONTENT_URI, cv);
         long objectId = ContentUris.parseId(uri);

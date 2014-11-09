@@ -60,6 +60,7 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
             holder.reminderName = (TextView) view.findViewById(R.id.reminder_name);
             holder.reminderSummary = (TextView) view.findViewById(R.id.reminder_time_summary);
             holder.isActive = (CheckBox) view.findViewById(R.id.reminder_turned_on);
+            holder.isActive.setChecked(reminders[position].isOn());
             // processing for when the checkbox is clicked
             holder.isActive
                     .setOnClickListener(new CompoundButton.OnClickListener() {
