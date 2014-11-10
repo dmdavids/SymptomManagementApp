@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
+import static com.skywomantech.app.symptommanagement.data.PatientCPContract.CredentialEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.MedLogEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PainLogEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PatientEntry;
@@ -38,8 +39,9 @@ public class PatientContentProvider extends ContentProvider {
     private static final int MED_LOG_ID = 710;
     private static final int STATUS_LOG = 800;
     private static final int STATUS_LOG_ID = 810;
+    private static final int CREDENTIAL = 900;
+    private static final int CREDENTIAL_ID = 910;
 
-//TODO: clean up these methods so there isn't so much duplicate code
 
     @Override
     public boolean onCreate() {
@@ -58,6 +60,28 @@ public class PatientContentProvider extends ContentProvider {
                         projection,
                         selection,     // selection
                         selectionArgs, // selection args
+                        null,     // group by
+                        null,     // having
+                        sortOrder);
+                break;
+            }
+            case CREDENTIAL: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        CredentialEntry.TABLE_NAME,
+                        projection,
+                        selection,     // selection
+                        selectionArgs, // selection args
+                        null,     // group by
+                        null,     // having
+                        sortOrder);
+                break;
+            }
+            case CREDENTIAL_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        CredentialEntry.TABLE_NAME,
+                        projection,
+                        CredentialEntry._ID + "=" + ContentUris.parseId(uri),// selection
+                        null,     // selection args
                         null,     // group by
                         null,     // having
                         sortOrder);
@@ -222,6 +246,12 @@ public class PatientContentProvider extends ContentProvider {
             case PATIENT: {
                 return PatientEntry.CONTENT_ITEM_TYPE;
             }
+            case CREDENTIAL: {
+                return CredentialEntry.CONTENT_ITEM_TYPE;
+            }
+            case CREDENTIAL_ID: {
+                return CredentialEntry.CONTENT_ITEM_TYPE;
+            }
             case PREF: {
                 return PrefsEntry.CONTENT_ITEM_TYPE;
             }
@@ -275,6 +305,16 @@ public class PatientContentProvider extends ContentProvider {
                 long _id = db.insert(PatientEntry.TABLE_NAME, null, contentValues);
                 if (_id > 0) {
                     returnUri = PatientEntry.buildPatientEntryUriWithPatientId(_id);
+                } else {
+                    throw new SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            }
+
+            case CREDENTIAL: {
+                long _id = db.insert(CredentialEntry.TABLE_NAME, null, contentValues);
+                if (_id > 0) {
+                    returnUri = CredentialEntry.buildCredentialEntryUriWithDBId(_id);
                 } else {
                     throw new SQLException("Failed to insert row into " + uri);
                 }
@@ -360,6 +400,10 @@ public class PatientContentProvider extends ContentProvider {
                 rowsDeleted = db.delete(PatientEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             }
+            case CREDENTIAL: {
+                rowsDeleted = db.delete(CredentialEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            }
             case PREF: {
                 rowsDeleted = db.delete(PrefsEntry.TABLE_NAME, selection, selectionArgs);
                 break;
@@ -406,6 +450,11 @@ public class PatientContentProvider extends ContentProvider {
         switch (sUriMatcher.match(uri)) {
             case PATIENT: {
                 rowsUpdated = db.update(PatientEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+            }
+            case CREDENTIAL:
+            case CREDENTIAL_ID: {
+                rowsUpdated = db.update(CredentialEntry.TABLE_NAME, values, selection, selectionArgs);
                 break;
             }
             case PREF: {
@@ -548,6 +597,8 @@ public class PatientContentProvider extends ContentProvider {
 
         // For each type of URI you want to add, create a corresponding code.
         matcher.addURI(authority, PatientCPContract.PATIENT_PATH, PATIENT);
+        matcher.addURI(authority, PatientCPContract.CREDENTIAL_PATH, CREDENTIAL);
+        matcher.addURI(authority, PatientCPContract.CREDENTIAL_PATH + "/#", CREDENTIAL_ID);
         matcher.addURI(authority, PatientCPContract.PREFS_PATH, PREF);
         matcher.addURI(authority, PatientCPContract.PRESCRIPTION_PATH, PRESCRIPTION);
         matcher.addURI(authority, PatientCPContract.PRESCRIPTION_PATH + "/#", PRESCRIPTION_ID);

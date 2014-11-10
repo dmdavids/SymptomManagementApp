@@ -27,6 +27,28 @@ public class PatientCPcvHelper {
         return cv;
     }
 
+    public  static ContentValues createValuesObject(String id, UserCredential credential) {
+        ContentValues cv = new ContentValues();
+        cv.put(PatientCPContract.CredentialEntry._ID, credential.getDbId()); // update needs this
+        cv.put(PatientCPContract.CredentialEntry.COLUMN_USER_ID, id);
+        cv.put(PatientCPContract.CredentialEntry.COLUMN_LAST_LOGIN, credential.getLastLogin());
+        cv.put(PatientCPContract.CredentialEntry.COLUMN_USER_NAME, credential.getUserName());
+        cv.put(PatientCPContract.CredentialEntry.COLUMN_PASSWORD, credential.getPassword());
+        cv.put(PatientCPContract.CredentialEntry.COLUMN_USER_TYPE_VALUE, credential.getUserRoleValue());
+        return cv;
+    }
+
+    public  static ContentValues createInsertValuesObject(String id, UserCredential credential) {
+        ContentValues cv = new ContentValues();
+        cv.put(PatientCPContract.CredentialEntry.COLUMN_USER_ID, id);
+        cv.put(PatientCPContract.CredentialEntry.COLUMN_LAST_LOGIN, credential.getLastLogin());
+        cv.put(PatientCPContract.CredentialEntry.COLUMN_USER_NAME, credential.getUserName());
+        cv.put(PatientCPContract.CredentialEntry.COLUMN_PASSWORD, credential.getPassword());
+        cv.put(PatientCPContract.CredentialEntry.COLUMN_USER_TYPE_VALUE, credential.getUserRoleValue());
+        return cv;
+    }
+
+
     public  static ContentValues createValuesObject(String id, MedicationLog log) {
         ContentValues cv = new ContentValues();
         cv.put(PatientCPContract.MedLogEntry.COLUMN_MED_NAME, log.getMed().getName());

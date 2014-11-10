@@ -18,9 +18,9 @@ public class PatientCPContract {
     public final static String STATUS_LOG_PATH = "statuslog";
     public final static String REMINDER_PATH = "reminder";
     public final static String PREFS_PATH = "pref";
+    public final static String CREDENTIAL_PATH = "credential";
 
 
-    // only one of these per device
     public static final class PatientEntry implements BaseColumns {
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATIENT_PATH).build();
@@ -45,7 +45,28 @@ public class PatientCPContract {
         }
     }
 
-    // all records are for this device which has only one patient at a time
+    public static final class CredentialEntry implements BaseColumns {
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(CREDENTIAL_PATH).build();
+
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + CREDENTIAL_PATH;
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + CREDENTIAL_PATH;
+
+        public static final String TABLE_NAME = "credential";
+        public static final String COLUMN_USER_ID = "user_id"; // patient or physician id
+        public static final String COLUMN_LAST_LOGIN = "last_login";
+        public static final String COLUMN_USER_NAME = "user_name";
+        public static final String COLUMN_PASSWORD = "password";
+        public static final String COLUMN_USER_TYPE_VALUE = "user_type_value";
+
+        public static Uri buildCredentialEntryUriWithDBId(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
+
     public static final class PrescriptionEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =

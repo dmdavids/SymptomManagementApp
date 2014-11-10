@@ -2,14 +2,25 @@ package com.skywomantech.app.symptommanagement.data;
 
 public class UserCredential {
 	
-	public enum UserRole {
-		NOT_ASSIGNED(-1), ADMIN(500), PHYSICIAN(300), PATIENT(200);
-	
-		private int value;
-		
-	    private UserRole(int value) {
-	        this.value = value;
-	    }
+
+
+    private String id;
+    private volatile long dbId; // local storage / CP id
+    private String userId;
+    private String userName;
+    private UserRole userRole = UserRole.NOT_ASSIGNED;
+    private int userRoleValue = UserRole.NOT_ASSIGNED.getValue();
+    private String password;
+    private volatile long lastLogin;
+
+    public enum UserRole {
+        NOT_ASSIGNED(-1), ADMIN(500), PHYSICIAN(300), PATIENT(200);
+
+        private int value;
+
+        private UserRole(int value) {
+            this.value = value;
+        }
 
         public int getValue() {
             return value;
@@ -24,14 +35,7 @@ public class UserCredential {
             }
             return NOT_ASSIGNED;
         }
-	}
-
-    private String id;
-    private String userId;
-    private String userName;
-    private UserRole userRole = UserRole.NOT_ASSIGNED;
-    private int userRoleValue = UserRole.NOT_ASSIGNED.getValue();
-    private String password;
+    }
 
     public String getId() {
         return id;
@@ -69,9 +73,26 @@ public class UserCredential {
     }
     public void setUserRoleValue(int userRoleValue) {
         this.userRoleValue = userRoleValue;
+        setUserType(UserRole.findByValue(userRoleValue));
     }
-	
-	@Override
+
+    public long getDbId() {
+        return dbId;
+    }
+
+    public void setDbId(long dbId) {
+        this.dbId = dbId;
+    }
+
+    public long getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(long lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -123,11 +144,13 @@ public class UserCredential {
     public String toString() {
         return "UserCredential{" +
                 "id='" + id + '\'' +
+                ", dbId=" + dbId +
                 ", userId='" + userId + '\'' +
                 ", userName='" + userName + '\'' +
                 ", userRole=" + userRole +
                 ", userRoleValue=" + userRoleValue +
                 ", password='" + password + '\'' +
+                ", lastLogin=" + lastLogin +
                 '}';
     }
 }

@@ -9,7 +9,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.skywomantech.app.symptommanagement.LoginUtility;
-import com.skywomantech.app.symptommanagement.patient.ReminderListAdapter;
+import com.skywomantech.app.symptommanagement.patient.Reminder.ReminderManager;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -85,7 +85,7 @@ public class PatientDataManager {
 
     private static synchronized Set<PainLog> getUpdatedPainLogs(Context context, String id) {
         Set<PainLog> logs = new HashSet<PainLog>();
-        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + id + "\'";
+        String selection = PatientCPContract.PainLogEntry.COLUMN_PATIENT_ID + "=" + "\'" + id + "\'";
         Cursor cursor = context.getContentResolver().query(
                 PatientCPContract.PainLogEntry.CONTENT_URI, null, selection, null, null);
         while (cursor.moveToNext()) {
@@ -101,7 +101,7 @@ public class PatientDataManager {
 
     private static synchronized Set<MedicationLog> getUpdatedMedLogs(Context context, String id) {
         Set<MedicationLog> logs = new HashSet<MedicationLog>();
-        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + id + "\'";
+        String selection = PatientCPContract.MedLogEntry.COLUMN_PATIENT_ID + "=" + "\'" + id + "\'";
         Cursor cursor = context.getContentResolver().query(
                 PatientCPContract.MedLogEntry.CONTENT_URI, null, selection, null, null);
         while (cursor.moveToNext()) {
@@ -119,7 +119,7 @@ public class PatientDataManager {
 
     private static synchronized Set<StatusLog> getUpdatedStatusLogs(Context context, String id) {
         Set<StatusLog> logs = new HashSet<StatusLog>();
-        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + id + "\'";
+        String selection = PatientCPContract.StatusLogEntry.COLUMN_PATIENT_ID + "=" + "\'" + id + "\'";
         Cursor cursor = context.getContentResolver().query(
                 PatientCPContract.StatusLogEntry.CONTENT_URI, null, selection, null, null);
         while (cursor.moveToNext()) {
@@ -133,6 +133,25 @@ public class PatientDataManager {
         return logs;
     }
 
+    // if we don't have internet but patient has been logged in on this device previously we can keep working
+    public static synchronized UserCredential getUserCredentials(Context context, String id) {
+        if (id == null || id.isEmpty()) return null;
+        UserCredential credential = null;
+        String selection = PatientCPContract.CredentialEntry.COLUMN_USER_ID + "=" + "\'" + id + "\'";
+        Cursor cursor = context.getContentResolver().query(
+                PatientCPContract.CredentialEntry.CONTENT_URI, null, selection, null, null);
+        if (cursor.moveToNext()) {
+            credential = new UserCredential();
+            credential.setDbId(cursor.getLong(cursor.getColumnIndex(PatientCPContract.CredentialEntry._ID)));
+            credential.setUserId(cursor.getString(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_USER_ID)));
+            credential.setUserName(cursor.getString(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_USER_NAME)));
+            credential.setUserRoleValue(cursor.getInt(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_USER_TYPE_VALUE)));
+            credential.setLastLogin(cursor.getLong(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_LAST_LOGIN)));
+            credential.setPassword(cursor.getString(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_PASSWORD)));
+        }
+        cursor.close();
+        return credential;
+    }
 
     private synchronized static void updateLogsToCP(Context context, Patient patient) {
         Log.d(LOG_TAG, "Updating patient LOGs to CP ...id is : " + patient.getId());
@@ -204,7 +223,7 @@ public class PatientDataManager {
     public static synchronized Collection<Reminder> loadSortedReminderList(Context context, String id) {
         Collection<Reminder> reminders = loadReminderList(context, id);
         if (reminders.size() > 0) {
-            Collection<Reminder> sorted = DataUtility.sortRemindersByTime(reminders);
+            Collection<Reminder> sorted = ReminderManager.sortRemindersByTime(reminders);
             return sorted;
         }
         return reminders;

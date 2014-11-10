@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import static com.skywomantech.app.symptommanagement.data.PatientCPContract.CredentialEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.MedLogEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PainLogEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PatientEntry;
@@ -54,6 +55,19 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         + ") ON CONFLICT REPLACE " +
                         " );";
         sqLiteDatabase.execSQL(SQL_CREATE_PATIENT_TABLE);
+
+        final String SQL_CREATE_CREDENTIAL_TABLE =
+                "CREATE TABLE " + CredentialEntry.TABLE_NAME + " (" +
+                        CredentialEntry._ID + " INTEGER PRIMARY KEY," +
+                        CredentialEntry.COLUMN_USER_ID + " TEXT UNIQUE NOT NULL, " +
+                        CredentialEntry.COLUMN_USER_NAME + " TEXT, " +
+                        CredentialEntry.COLUMN_PASSWORD + " TEXT, " +
+                        CredentialEntry.COLUMN_LAST_LOGIN + " REAL, " +
+                        CredentialEntry.COLUMN_USER_TYPE_VALUE + " REAL, " +
+                        "UNIQUE (" + CredentialEntry.COLUMN_USER_ID
+                        + ") ON CONFLICT REPLACE " +
+                        " );";
+        sqLiteDatabase.execSQL(SQL_CREATE_CREDENTIAL_TABLE);
 
         final String SQL_CREATE_PRESCRIPTION_TABLE =
                 "CREATE TABLE " + PrescriptionEntry.TABLE_NAME + " (" +
@@ -172,6 +186,7 @@ public class PatientDBHelper extends SQLiteOpenHelper {
         // TODO: if not then try to sync the data first  ... if this was real I would want
         // TODO: some more failsafes here
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PatientEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + CredentialEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PrescriptionEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PhysicianEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PainLogEntry.TABLE_NAME);

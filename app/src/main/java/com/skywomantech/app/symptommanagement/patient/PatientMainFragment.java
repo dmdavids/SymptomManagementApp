@@ -2,21 +2,18 @@ package com.skywomantech.app.symptommanagement.patient;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
-import com.skywomantech.app.symptommanagement.data.DataUtility;
 import com.skywomantech.app.symptommanagement.data.HistoryLog;
 import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.Reminder;
 import com.skywomantech.app.symptommanagement.data.PatientDataManager;
-import com.skywomantech.app.symptommanagement.physician.HistoryLogFragment;
+import com.skywomantech.app.symptommanagement.patient.Reminder.ReminderManager;
 
 import java.util.Calendar;
 import java.util.Collection;
@@ -130,7 +127,7 @@ public class PatientMainFragment extends Fragment {
         PatientDataManager.getLogsFromCP(getActivity(), tempPatient);
         // Create a sorted history list from the logs
         HistoryLog[] logList = PatientDataManager.createLogList(tempPatient);
-        long start_of_day = DataUtility.getStartOfToday();
+        long start_of_day = ReminderManager.getStartOfToday();
         int count = 0;
         // consider pain logs as the indicator of a check-in occurring
         for (HistoryLog h : logList) {
