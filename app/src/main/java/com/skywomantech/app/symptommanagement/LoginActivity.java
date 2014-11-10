@@ -23,6 +23,7 @@ import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
+import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 import com.skywomantech.app.symptommanagement.data.UserCredential;
 import com.skywomantech.app.symptommanagement.patient.PatientMainActivity;
 import com.skywomantech.app.symptommanagement.physician.PhysicianListPatientsActivity;
@@ -220,9 +221,19 @@ public class LoginActivity extends Activity {
                 getCredentialsAndRedirect();
             } else {
                 Log.d(LOG_TAG, "Server connection FAILED!");
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-                restartLoginActivity(getApplicationContext());
+                // check the credentials via CP to see if they are a patient and we stored the credentials
+                // if so then we can OK them without the internet
+                Log.d(LOG_TAG, "Checking for local storage of the credentials.");
+                UserCredential credential = checkCredentials(mUsername, mPassword);
+                if (credential != null) {
+                    Log.d(LOG_TAG, "Found credential in CP :" + credential.toString());
+                    LoginUtility.setUsername(getApplicationContext(), mUsername);
+                    LoginUtility.setLoggedIn(getApplicationContext(), credential);
+                } else {
+                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.requestFocus();
+                    restartLoginActivity(getApplicationContext());
+                }
             }
         }
 
@@ -231,6 +242,11 @@ public class LoginActivity extends Activity {
             mAuthTask = null;
             showProgress(false);
         }
+    }
+
+    private UserCredential checkCredentials(String username, String password) {
+        UserCredential credential = PatientDataManager.getUserCredentials(this, username, password );
+        return credential;
     }
 
     public void getCredentialsAndRedirect() {
@@ -296,6 +312,7 @@ public class LoginActivity extends Activity {
                         // store the information from the credential
                          if (LoginUtility.setLoggedIn(getApplicationContext(), cred)) {
                              // now we finally have enough information to redirect
+                             LoginUtility.savePatientCredential(getApplicationContext(), cred);
                              processLoginRedirect(LoginUtility.getUserRole(getApplicationContext()));
                          }
                         else {

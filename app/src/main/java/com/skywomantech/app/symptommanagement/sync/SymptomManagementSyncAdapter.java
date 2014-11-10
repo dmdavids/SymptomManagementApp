@@ -220,7 +220,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                 @Override
                 public void error(Exception e) {
                     Log.e(LOG_TAG, "Sync unable to UPDATE Patient record from internet." +
-                            " No Internet? Try again later");
+                            " No Internet? Try again later because all data is stored local.");
                 }
             });
         } else {
@@ -273,7 +273,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                 @Override
                 public void error(Exception e) {
                     Log.e(LOG_TAG, "Sync unable to UPDATE Patient record to Internet." +
-                            " Maybe no internet? Try again later");
+                            " Maybe no internet? Try again later. All data stored local so OK.");
                 }
             });
         }

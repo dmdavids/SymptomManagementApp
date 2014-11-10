@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
+import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 import com.skywomantech.app.symptommanagement.data.UserCredential;
 import com.skywomantech.app.symptommanagement.patient.Reminder.ReminderManager;
 
@@ -73,6 +74,17 @@ public class LoginUtility {
         // Go ahead and reset the service so that it has to reconnect next time its called
         SymptomManagementService.reset();
     }
+
+    public static synchronized void savePatientCredential(Context context, UserCredential credential) {
+        if (mRole == UserCredential.UserRole.PATIENT) {
+            Log.d(LOG_TAG, "Saving the PATIENT credentials to CP.");
+            PatientDataManager.addCredentialToCP(context, credential);
+        }
+        else {
+            Log.d(LOG_TAG, "Not saving these credentials because its not a PATIENT.");
+        }
+    }
+
 
     public static synchronized boolean setCheckin(Context context, boolean value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);

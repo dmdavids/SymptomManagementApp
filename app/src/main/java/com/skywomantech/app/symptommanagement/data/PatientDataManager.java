@@ -153,6 +153,42 @@ public class PatientDataManager {
         return credential;
     }
 
+    public static synchronized UserCredential getUserCredentials(Context context, String username, String password) {
+        if (username == null || username.isEmpty() || password == null ||password.isEmpty() ) return null;
+        UserCredential credential = null;
+        // get all the stored credentials on this device .. should not be significant number
+        Cursor cursor = context.getContentResolver().query(
+                PatientCPContract.CredentialEntry.CONTENT_URI, null, null, null, null);
+        while (cursor.moveToNext()) {
+            credential = new UserCredential();
+            credential.setDbId(cursor.getLong(cursor.getColumnIndex(PatientCPContract.CredentialEntry._ID)));
+            credential.setUserId(cursor.getString(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_USER_ID)));
+            credential.setUserName(cursor.getString(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_USER_NAME)));
+            credential.setUserRoleValue(cursor.getInt(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_USER_TYPE_VALUE)));
+            credential.setLastLogin(cursor.getLong(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_LAST_LOGIN)));
+            credential.setPassword(cursor.getString(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_PASSWORD)));
+            // find input has a match in the CP
+            if (credential.getUserName().toLowerCase().contentEquals(username.toLowerCase())) {
+                Log.d(LOG_TAG, "Credential User name matches.. " + credential.getUserName());
+                if(credential.getPassword().contentEquals(password)) {
+                    Log.d(LOG_TAG, "Password matches ... " + credential.getPassword());  // TODO: remove this debug before putting out there
+                    return credential;
+                }
+            }
+        }
+        cursor.close();
+        return credential;
+    }
+
+    public synchronized static void addCredentialToCP(Context context, UserCredential credential) {
+        if (credential == null) return;
+        ContentValues cv = PatientCPcvHelper.createInsertValuesObject(credential.getUserId(), credential);
+        Uri uri = context.getContentResolver().insert(PatientCPContract.CredentialEntry.CONTENT_URI, cv);
+        long objectId = ContentUris.parseId(uri);
+        credential.setDbId(objectId);  // set the local CP ID .. different for every device!
+        Log.d(LOG_TAG, "New Credential Inserted in local DB Id is : " + Long.toString(objectId));
+    }
+
     private synchronized static void updateLogsToCP(Context context, Patient patient) {
         Log.d(LOG_TAG, "Updating patient LOGs to CP ...id is : " + patient.getId());
         updatePainLogToCP(context, patient);
