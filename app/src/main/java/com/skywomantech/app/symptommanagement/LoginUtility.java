@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.data.UserCredential;
+import com.skywomantech.app.symptommanagement.patient.Reminder.ReminderManager;
 
 public class LoginUtility {
 
@@ -37,6 +38,10 @@ public class LoginUtility {
         Log.d(LOG_TAG, "User Role Value saved is " + Integer.toString(roleValue));
         mRole = getUserRole(context);
         Log.d(LOG_TAG, "User Role is: " + mRole);
+        if (mRole == UserCredential.UserRole.PATIENT) {
+            Log.d(LOG_TAG, "Starting Patient Reminders.");
+            ReminderManager.startPatientReminders(context, mLoginId);
+        }
         return true;
     }
 
@@ -54,6 +59,10 @@ public class LoginUtility {
 
     public static synchronized void logout(Context context ) {
         // reset all the values that make the app think we are logged in
+        if (mRole == UserCredential.UserRole.PATIENT) {
+            Log.d(LOG_TAG, "Cancelling Patient Reminders.");
+            ReminderManager.cancelPatientReminders(context, mLoginId);
+        }
         mUserName = "";
         mLoginId = "";
         mRole =  UserCredential.UserRole.NOT_ASSIGNED;

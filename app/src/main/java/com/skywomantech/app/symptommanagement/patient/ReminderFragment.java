@@ -28,6 +28,7 @@ import com.skywomantech.app.symptommanagement.data.PatientCPContract.ReminderEnt
 import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 import com.skywomantech.app.symptommanagement.data.Reminder;
+import com.skywomantech.app.symptommanagement.patient.Reminder.ReminderManager;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.Collection;
@@ -104,6 +105,10 @@ public class ReminderFragment extends Fragment {
         }
         mAdapter = new ReminderListAdapter(getActivity(), mReminders);
         mReminderView.setAdapter(mAdapter);
+        // start any reminders that might not have already been started.. hmmmmm?
+
+        ReminderManager.startPatientReminders(getActivity(), LoginUtility.getLoginId(getActivity()));
+        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
     }
 
     public void addReminder(Reminder newReminder) {
@@ -122,6 +127,12 @@ public class ReminderFragment extends Fragment {
             // if database add successful then
             reminders.add(newReminder);
             mReminders = reminders.toArray(new Reminder[reminders.size()]);
+
+            // start this alarm right now.
+            Log.d(LOG_TAG, "adding a Reminder " + newReminder.getName());
+            ReminderManager.printAlarms(getActivity(), mPatientId);
+            ReminderManager.setSingleReminderAlarm(getActivity(), newReminder);
+            ReminderManager.printAlarms(getActivity(), mPatientId);
             mAdapter = new ReminderListAdapter(getActivity(), mReminders);
             mReminderView.setAdapter(mAdapter);
         }
@@ -136,6 +147,10 @@ public class ReminderFragment extends Fragment {
                     .delete(ReminderEntry.CONTENT_URI, selection, null);
             Log.v(LOG_TAG, "Reminder rows deleted : " + Integer.toString(rowsDeleted));
         }
+        Log.d(LOG_TAG, "deleting a Reminder " + mReminders[position].getName());
+        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
+        ReminderManager.cancelSingleReminderAlarm(mReminders[position]);
+        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
         reminders.remove(mReminders[position]);
         mReminders = reminders.toArray(new Reminder[reminders.size()]);
         mAdapter = new ReminderListAdapter(getActivity(), mReminders);
@@ -152,6 +167,13 @@ public class ReminderFragment extends Fragment {
                     LoginUtility.getLoginId(getActivity()), temp);
             Log.v(LOG_TAG, "Reminder rows updated : " + Integer.toString(rowsUpdated));
         }
+        // cancel and restart the alarm related to this reminder
+        Log.d(LOG_TAG, "updating a Reminder " + mReminders[position].getName());
+        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
+        ReminderManager.cancelSingleReminderAlarm(mReminders[position]);
+        ReminderManager.setSingleReminderAlarm(getActivity(), mReminders[position]);
+        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
+
         SymptomManagementSyncAdapter.syncImmediately(getActivity());
         mAdapter.notifyDataSetChanged();
     }

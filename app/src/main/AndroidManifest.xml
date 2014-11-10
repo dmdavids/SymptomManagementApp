@@ -130,13 +130,13 @@
             android:syncable="true" />
 
         <receiver
-            android:name=".patient.ReminderReceiver"
+            android:name=".patient.Reminder.ReminderReceiver"
             android:enabled="true"
             android:exported="true" >
         </receiver>
 
         <service
-            android:name=".patient.ReminderService"
+            android:name=".patient.Reminder.ReminderService"
             android:enabled="true"
             android:exported="true" >
         </service>

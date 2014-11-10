@@ -19,6 +19,7 @@ import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 import com.skywomantech.app.symptommanagement.data.Reminder;
 import com.skywomantech.app.symptommanagement.data.UserCredential;
+import com.skywomantech.app.symptommanagement.patient.Reminder.ReminderManager;
 import com.skywomantech.app.symptommanagement.physician.HistoryLogFragment;
 import com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailFragment;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
@@ -225,6 +226,22 @@ public class PatientMainActivity extends Activity
         ReminderFragment frag =
                 (ReminderFragment) getFragmentManager().findFragmentById(R.id.patient_main_container);
         frag.deleteReminder(position);
+    }
+
+    @Override
+    public void onRequestReminderActivate(Reminder reminder) {
+        if (reminder == null) return;
+        Log.d(LOG_TAG, "Attempting to activate the alarm for reminder " + reminder.toString());
+        ReminderManager.printAlarms(this, LoginUtility.getLoginId(this));
+        if (reminder.isOn()) {
+            Log.d(LOG_TAG, "activating Reminder " + reminder.getName());
+            ReminderManager.cancelSingleReminderAlarm(reminder); // in case the reminder is updated
+            ReminderManager.setSingleReminderAlarm(this, reminder);
+        } else { // deactivate it
+            Log.d(LOG_TAG, "deactivating Reminder " + reminder.getName());
+            ReminderManager.cancelSingleReminderAlarm(reminder);
+        }
+        ReminderManager.printAlarms(this, LoginUtility.getLoginId(this));
     }
 
     public Patient getPatientCallback() {

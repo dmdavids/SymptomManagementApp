@@ -1,4 +1,4 @@
-package com.skywomantech.app.symptommanagement.patient;
+package com.skywomantech.app.symptommanagement.patient.Reminder;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

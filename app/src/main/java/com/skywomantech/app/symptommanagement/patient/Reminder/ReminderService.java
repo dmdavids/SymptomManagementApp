@@ -1,4 +1,4 @@
-package com.skywomantech.app.symptommanagement.patient;
+package com.skywomantech.app.symptommanagement.patient.Reminder;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,10 +14,13 @@ import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 
 public class ReminderService extends Service {
+
+    private static final String LOG_TAG = ReminderService.class.getSimpleName();
+    private static final int SYMPTOM_MANAGEMENT_NOTIFICATION_ID = 1111;
+    private NotificationManager mManager;
+
     public ReminderService() {
     }
-
-    private NotificationManager mManager;
 
     @Override
     public IBinder onBind(Intent arg0)
@@ -31,15 +34,9 @@ public class ReminderService extends Service {
         super.onCreate();
     }
 
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        // build the information to put into the notification
-        int iconId = R.drawable.ic_launcher;
-        String title = "SymptomManagementApp";
-
-        String news = "Time to CheckIn";
-        String contentText = news;
 
         // let the app know that it is time for a checkin so it will go directly into the checkin
         // flow for the patient
@@ -48,9 +45,9 @@ public class ReminderService extends Service {
         // set the notification to clear after a click
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(getApplicationContext())
-                        .setSmallIcon(iconId)
-                        .setContentTitle(title)
-                        .setContentText(contentText)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("SymptomManagementApp")
+                        .setContentText("Time to CheckIn")
                         .setOnlyAlertOnce(true)
                         .setAutoCancel(true);
 
@@ -67,7 +64,7 @@ public class ReminderService extends Service {
 
         NotificationManager mNotificationManager =
                 (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(1111, mBuilder.build());
+        mNotificationManager.notify(SYMPTOM_MANAGEMENT_NOTIFICATION_ID, mBuilder.build());
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -76,7 +73,6 @@ public class ReminderService extends Service {
     @Override
     public void onDestroy()
     {
-        // TODO Auto-generated method stub
         super.onDestroy();
     }
 }

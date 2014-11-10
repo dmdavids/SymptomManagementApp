@@ -248,6 +248,7 @@ public class LoginActivity extends Activity {
                 "for " + role.toString());
         if (role == UserCredential.UserRole.ADMIN) {
             Log.d(LOG_TAG, "Starting Admin screen flow");
+            LoginUtility.setCheckin(this, false);
             startActivity(new Intent(this, AdminMain.class));
         } else if (role == UserCredential.UserRole.PATIENT) {
             // check-in flow is handled by PatientMainActivity
@@ -255,6 +256,7 @@ public class LoginActivity extends Activity {
             startActivity(new Intent(this, PatientMainActivity.class));
         } else if (role == UserCredential.UserRole.PHYSICIAN) {
             Log.d(LOG_TAG, "Starting Doctor screen flow");
+            LoginUtility.setCheckin(this, false);
             SymptomManagementSyncAdapter.syncImmediately(this);
             startActivity(new Intent(this, PhysicianListPatientsActivity.class));
         } else {

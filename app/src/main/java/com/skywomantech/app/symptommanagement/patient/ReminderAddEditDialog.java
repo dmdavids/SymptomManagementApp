@@ -16,6 +16,8 @@ import com.skywomantech.app.symptommanagement.data.Reminder;
 
 public class ReminderAddEditDialog extends DialogFragment {
 
+    public final static String LOG_TAG = ReminderAddEditDialog.class.getSimpleName();
+
     public interface Callbacks {
         public void onReminderAdd(Reminder newReminder);
         public void onReminderUpdate(int position, Reminder reminder);

@@ -109,6 +109,10 @@ public class PatientMedicationLogFragment extends Fragment {
         }
         SymptomManagementSyncAdapter.syncImmediately(getActivity());
         mAdapter.notifyDataSetChanged();
+        // if we were in the checkin process we can tell everyone that we are done with it for now
+        if (LoginUtility.isCheckin(getActivity())) {
+            LoginUtility.setCheckin(getActivity(), false);
+        }
     }
 
     @Override

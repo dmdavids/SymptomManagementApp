@@ -3,6 +3,7 @@ package com.skywomantech.app.symptommanagement.patient;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +18,12 @@ import com.skywomantech.app.symptommanagement.data.Reminder;
 
 public class ReminderListAdapter extends ArrayAdapter<Reminder> {
 
+    public final static String LOG_TAG = ReminderAddEditDialog.class.getSimpleName();
+
     public interface Callbacks {
         public void onRequestReminderEdit(int position, Reminder reminder);
         public void onReminderDelete(int position, Reminder reminder);
+        public void onRequestReminderActivate(Reminder reminder);
     }
 
     private final Activity activity;  // need activity for callbacks
@@ -69,11 +73,12 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
                             Reminder reminder = (Reminder) holder.isActive.getTag();
                             if (holder.isActive.isChecked()) {
                                 reminder.setOn(true);
-                                // do something here to let the alarm manager know
                             } else {
                                 reminder.setOn(false);
-                                // do something here to let the alarm manager know
                             }
+                            Log.d(LOG_TAG, "REMINDER Clicked ... it is now "
+                                    + (reminder.isOn() ? "ON" : "OFF"));
+                            ((Callbacks) activity).onRequestReminderActivate(reminder);
                         }
                     });
 
