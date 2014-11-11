@@ -40,4 +40,5 @@ dependencies {
     compile 'com.squareup.retrofit:retrofit:1.7.0'
     compile 'com.google.code.gson:gson:2.3'
     compile 'commons-io:commons-io:2.4'
+    compile "com.androidplot:androidplot-core:0.6.1"
 }

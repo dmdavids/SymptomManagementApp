@@ -28,12 +28,6 @@
             </intent-filter>
         </activity>
 
-        <provider
-            android:name=".data.PatientContentProvider"
-            android:authorities="@string/content_authority"
-            android:exported="false"
-            android:syncable="true" />
-
         <activity
             android:name=".patient.SetPreferenceActivity"
             android:label="@string/action_settings"
