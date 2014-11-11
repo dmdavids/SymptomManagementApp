@@ -28,6 +28,7 @@ public class AdminMainFragment extends Fragment {
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_admin_main, container, false);
         ButterKnife.inject(this, rootView);
+        setRetainInstance(true); // save fragment across config changes
         return rootView;
     }
 

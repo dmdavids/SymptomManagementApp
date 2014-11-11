@@ -65,6 +65,7 @@ public class PatientDetailFragment extends Fragment {
         }
         View rootView = inflater.inflate(R.layout.fragment_admin_patient_detail, container, false);
         setHasOptionsMenu(true);
+        setRetainInstance(true); // save fragment across config changes
         ButterKnife.inject(this, rootView);
         return rootView;
     }

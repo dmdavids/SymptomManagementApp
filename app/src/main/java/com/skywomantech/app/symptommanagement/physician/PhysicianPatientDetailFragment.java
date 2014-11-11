@@ -74,6 +74,7 @@ public class PhysicianPatientDetailFragment extends Fragment {
             mPatientId = getArguments().getString(PATIENT_ID_KEY);
         }
         setHasOptionsMenu(true);
+        setRetainInstance(true);  // save the fragment state with rotations
     }
 
     @Override

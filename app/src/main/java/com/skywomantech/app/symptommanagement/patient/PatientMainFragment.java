@@ -57,6 +57,7 @@ public class PatientMainFragment extends Fragment {
         numCheckIns.setText(getNumCheckIns());
         nextCheckIn.setText(getNextCheckIn());
         setHasOptionsMenu(true);
+        setRetainInstance(true); // save fragment across config changes
         return rootView;
     }
 

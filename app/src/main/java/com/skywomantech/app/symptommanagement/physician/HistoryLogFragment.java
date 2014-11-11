@@ -43,7 +43,6 @@ public class HistoryLogFragment extends ListFragment {
         if (getArguments().containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY)) {
             mPatientId = getArguments().getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
         }
-        this.setRetainInstance(true);  // save the fragment state with rotations
     }
 
     @Override

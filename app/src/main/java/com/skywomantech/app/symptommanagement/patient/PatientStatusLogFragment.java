@@ -66,7 +66,6 @@ public class PatientStatusLogFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setRetainInstance(true);  // save the fragment state with rotations
     }
 
     @Override
@@ -74,6 +73,7 @@ public class PatientStatusLogFragment extends Fragment {
             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_status_log_entry, container, false);
         ButterKnife.inject(this, rootView);
+        this.setRetainInstance(true);  // save the fragment state with rotations
         return rootView;
     }
 

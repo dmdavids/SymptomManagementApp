@@ -62,6 +62,7 @@ import java.util.concurrent.Callable;
          }
          View rootView = inflater.inflate(R.layout.fragment_admin_physician_detail, container, false);
          setHasOptionsMenu(true);
+         setRetainInstance(true); // save fragment across config changes
          ButterKnife.inject(this, rootView);
          return rootView;
      }
