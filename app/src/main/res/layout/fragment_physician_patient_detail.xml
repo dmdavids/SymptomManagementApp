@@ -14,15 +14,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Patient Name"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <LinearLayout
+            android:id="@+id/patient_info_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
-            android:orientation="vertical"
-            android:id="@+id/patient_info_layout">
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -33,23 +33,35 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="ID : "
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
                 <TextView
                     android:id="@+id/patient_medical_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="123098129083loueoqiwueu" />
+                    android:text="123098129083loueoqiwueu"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/physician_patient_detail_birthdate"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="birthdate:  mm/dd/yy" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Birthdate : "
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <TextView
+                    android:id="@+id/physician_patient_detail_birthdate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="mm/dd/yy"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -58,9 +70,9 @@
             android:name="com.skywomantech.app.symptommanagement.physician.PatientChartFragment"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            tools:layout="@layout/fragment_patient_chart"
+            android:layout_alignParentStart="true"
             android:layout_below="@id/patient_info_layout"
-            android:layout_alignParentStart="true" />
+            tools:layout="@layout/fragment_patient_chart" />
 
     </RelativeLayout>
 

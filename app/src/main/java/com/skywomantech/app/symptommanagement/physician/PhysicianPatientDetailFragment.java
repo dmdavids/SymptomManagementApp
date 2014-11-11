@@ -53,6 +53,8 @@ public class PhysicianPatientDetailFragment extends Fragment {
     @InjectView(R.id.physician_patient_detail_birthdate)
     TextView mBDView;
 
+    @InjectView(R.id.patient_medical_id) TextView mRecordId;
+
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -161,6 +163,7 @@ public class PhysicianPatientDetailFragment extends Fragment {
                         // set the views with the patient data
                         mNameView.setText(mPatient.getName());
                         mBDView.setText(mPatient.getBirthdate());
+                        mRecordId.setText(mPatient.getId());
                     }
                 }
 
