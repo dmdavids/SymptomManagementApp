@@ -3,11 +3,8 @@ package com.skywomantech.app.symptommanagement.patient;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -88,6 +85,7 @@ public class PatientMainActivity extends Activity
                     .replace(R.id.patient_main_container, new ReminderFragment(), "reminder_frag")
                     .commit();
             return true;
+            // Not finding a need for preferences at this time
 //        } else if (id == R.id.action_prefs) {
 //            startActivity(new Intent(this, SetPreferenceActivity.class));
 //            return true;
@@ -105,14 +103,13 @@ public class PatientMainActivity extends Activity
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
                     .replace(R.id.patient_main_container, fragment, "history_log_frag")
-                    .addToBackStack(null)
+                    //.addToBackStack(null)
                     .commit();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    // TODO: ?? not sure if this is needed?
     private void getPatient() {
         if (LoginUtility.isLoggedIn(this)
                 && LoginUtility.getUserRole(this) == UserCredential.UserRole.PATIENT) {
@@ -128,7 +125,6 @@ public class PatientMainActivity extends Activity
             mPatient = PatientDataManager.findPatient(mContext, mPatientId);
         }
         // CP didn't find it so start a sync and let it find it
-        // TODO: What if no internet?
         if (mPatient == null) {
             SymptomManagementSyncAdapter.syncImmediately(this);
         }

@@ -46,8 +46,6 @@ public class PhysicianPatientDetailActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_physicianpatient_detail);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-
         if (savedInstanceState == null) {
             Bundle arguments = new Bundle();
             mPhysicianId =  getIntent().getStringExtra(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY);
@@ -87,10 +85,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home) {
-            navigateUpTo(new Intent(this, PhysicianListPatientsActivity.class));
-            return true;
-        } else if (id == R.id.action_medication_list) {
+        if (id == R.id.action_medication_list) {
             Bundle arguments = new Bundle();
             arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
             arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);

@@ -11,8 +11,8 @@ import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.HistoryLog;
 import com.skywomantech.app.symptommanagement.data.Patient;
-import com.skywomantech.app.symptommanagement.data.Reminder;
 import com.skywomantech.app.symptommanagement.data.PatientDataManager;
+import com.skywomantech.app.symptommanagement.data.Reminder;
 import com.skywomantech.app.symptommanagement.patient.Reminder.ReminderManager;
 
 import java.util.Calendar;
@@ -30,8 +30,6 @@ public class PatientMainFragment extends Fragment {
         public Patient getPatientCallback();
     }
 
-    private Collection<Reminder> reminders;
-
     @InjectView(R.id.check_ins_completed)
     TextView numCheckIns;
     @InjectView(R.id.next_check_in)
@@ -40,6 +38,7 @@ public class PatientMainFragment extends Fragment {
     TextView patientName;
 
     Patient mPatient;
+    private Collection<Reminder> reminders;
 
     public PatientMainFragment() {
     }
@@ -49,7 +48,6 @@ public class PatientMainFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_patient_main, container, false);
         ButterKnife.inject(this, rootView);
-
         mPatient = ((Callbacks) getActivity()).getPatientCallback(); // only checks the CP
         String displayName = "For " +
                 ((mPatient != null && mPatient.getName() != null) ? mPatient.toString() : "Patient");
@@ -61,13 +59,11 @@ public class PatientMainFragment extends Fragment {
         return rootView;
     }
 
-
-
     @OnClick(R.id.pain_log_button)
     public void enterPainLog() {
         getFragmentManager().beginTransaction()
                 .replace(R.id.patient_main_container, new PatientPainLogFragment())
-                .addToBackStack(null)
+             //   .addToBackStack(null)
                 .commit();
     }
 
@@ -75,7 +71,7 @@ public class PatientMainFragment extends Fragment {
     public void enterMedicationLog() {
         getFragmentManager().beginTransaction()
                 .replace(R.id.patient_main_container, new PatientMedicationLogFragment())
-                .addToBackStack(null)
+              //  .addToBackStack(null)
                 .commit();
     }
 
@@ -83,7 +79,7 @@ public class PatientMainFragment extends Fragment {
     public void enterStatusLog() {
         getFragmentManager().beginTransaction()
                 .replace(R.id.patient_main_container, new PatientStatusLogFragment())
-                .addToBackStack(null)
+             //   .addToBackStack(null)
                 .commit();
     }
 

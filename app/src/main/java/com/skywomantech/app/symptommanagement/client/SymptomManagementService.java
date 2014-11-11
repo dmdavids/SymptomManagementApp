@@ -43,7 +43,7 @@ public class SymptomManagementService {
         if (username == null || username.isEmpty() || password == null ) {
             Log.e(LOG_TAG, "INVALID username or password. Unable to login.");
             symptomManagementSvc = null;
-            return symptomManagementSvc;
+            return null;
         }
         mUser = username;
         mPassword = password;
