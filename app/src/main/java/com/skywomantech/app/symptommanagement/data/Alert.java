@@ -3,6 +3,14 @@ package com.skywomantech.app.symptommanagement.data;
 
 public class Alert {
 
+    String id;
+	String physicianId;
+	String patientId;
+	String patientName;
+	long created;
+    int severityLevel;
+    long physicianContacted = 0L;
+
     public static final int PAIN_SEVERITY_LEVEL_0 = 0;
     public static final int PAIN_SEVERITY_LEVEL_1 = 10;
     public static final int PAIN_SEVERITY_LEVEL_2 = 30;
@@ -10,14 +18,7 @@ public class Alert {
     public static final int PAIN_SEVERITY_LEVEL_4 = 100;
 
 
-    String id;
-	String physicianId;
-	String patientId;
-	String patientName;
-	long created;
-    int severityLevel;
-	
-	public String getId() {
+    public String getId() {
 		return id;
 	}
 	public void setId(String id) {
@@ -53,10 +54,15 @@ public class Alert {
     public void setSeverityLevel(int severityLevel) {
         this.severityLevel = severityLevel;
     }
-
     public String getFormattedMessage() {
 		return patientName + " has severe symptoms.";
 	}
+    public long getPhysicianContacted() {
+        return physicianContacted;
+    }
+    public void setPhysicianContacted(long physicianContacted) {
+        this.physicianContacted = physicianContacted;
+    }
 	
 	@Override
 	public int hashCode() {
@@ -108,10 +114,14 @@ public class Alert {
 
     @Override
     public String toString() {
-        return "Alert [id=" + id + ", physicianId=" + physicianId
-                + ", patientId=" + patientId + ", patientName=" + patientName
-                + ", created=" + created + ", severityLevel=" + severityLevel
-                + "]";
+        return "Alert{" +
+                "id='" + id + '\'' +
+                ", physicianId='" + physicianId + '\'' +
+                ", patientId='" + patientId + '\'' +
+                ", patientName='" + patientName + '\'' +
+                ", created=" + created +
+                ", severityLevel=" + severityLevel +
+                ", physicianContacted=" + physicianContacted +
+                '}';
     }
-	
 }

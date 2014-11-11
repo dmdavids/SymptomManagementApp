@@ -356,12 +356,27 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
     private void createPhysicianNotification(Collection<Alert> alerts) {
         if (alerts == null || alerts.size() <= 0) return;
 
-        String contentText = " Patient Alerts!";
+        // figure out if any alerts need notification
+        String contentText = "Patient Alerts!";  // default for more than one alert
         if (alerts.size() == 1) {
             Alert a = alerts.iterator().next();
-            if (a != null) contentText = a.getFormattedMessage();
+            if (a != null && a.getPhysicianContacted() <= 0L) {
+                contentText = a.getFormattedMessage();
+            } else {
+                Log.d(LOG_TAG, "Found an alert but the physician turned it off.");
+                // don't notify with this single alert since its turned off
+                return;
+            }
         } else {
-            contentText = "There are " + Integer.toString(alerts.size())
+            int count = 0;
+            for (Alert a: alerts) {
+                if (a.getPhysicianContacted() <= 0L) count++;
+            }
+            if (count == 0) {
+                Log.d(LOG_TAG, "All the alerts are turned off.");
+                return; // all alerts are turned off don't notify
+            }
+            contentText = "There are " + Integer.toString(count)
                     + "Severe Patients requiring attention.";
         }
 
