@@ -53,8 +53,6 @@ public class PhysicianPatientDetailFragment extends Fragment {
     @InjectView(R.id.physician_patient_detail_birthdate)
     TextView mBDView;
 
-    @InjectView(R.id.physician_patient_last_log)
-    TextView mLastLog;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -163,7 +161,6 @@ public class PhysicianPatientDetailFragment extends Fragment {
                         // set the views with the patient data
                         mNameView.setText(mPatient.getName());
                         mBDView.setText(mPatient.getBirthdate());
-                        mLastLog.setText(mPatient.getFormattedLastLogged());
                     }
                 }
 

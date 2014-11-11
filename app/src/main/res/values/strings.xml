@@ -50,5 +50,6 @@
     <string name="pref_popup_reminder_default" translatable="false">false</string>
     <string name="action_refresh">Sync Data</string>
     <string name="prompt_username">Username</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

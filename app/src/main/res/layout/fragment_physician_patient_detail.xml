@@ -1,56 +1,67 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
     android:padding="16dp"
     tools:context="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:height="@android:dimen/app_icon_size"
-        android:text="PATIENT DETAILS :"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/physician_patient_detail_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:height="@android:dimen/app_icon_size"
-        android:text="Patient Name :"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textIsSelectable="true" />
+        <TextView
+            android:id="@+id/physician_patient_detail_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Patient Name"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:height="@android:dimen/app_icon_size"
-        android:text="Date of Birth :"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/view_birthdate" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical"
+            android:id="@+id/patient_info_layout">
 
-    <TextView
-        android:id="@+id/physician_patient_detail_birthdate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:height="@android:dimen/app_icon_size"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:height="@android:dimen/app_icon_size"
-        android:text="Last Log Entry : "
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/view_log_entry" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ID : "
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <TextView
-        android:id="@+id/physician_patient_last_log"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:height="@android:dimen/app_icon_size"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+                <TextView
+                    android:id="@+id/patient_medical_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="123098129083loueoqiwueu" />
 
+            </LinearLayout>
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/physician_patient_detail_birthdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="birthdate:  mm/dd/yy" />
+
+        </LinearLayout>
+
+        <fragment
+            android:id="@+id/patient_chart_fragment"
+            android:name="com.skywomantech.app.symptommanagement.physician.PatientChartFragment"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            tools:layout="@layout/fragment_patient_chart"
+            android:layout_below="@id/patient_info_layout"
+            android:layout_alignParentStart="true" />
+
+    </RelativeLayout>
+
+</ScrollView>

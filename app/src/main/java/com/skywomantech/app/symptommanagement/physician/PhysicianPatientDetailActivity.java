@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -28,6 +29,7 @@ import java.util.HashSet;
 import java.util.concurrent.Callable;
 
 public class PhysicianPatientDetailActivity extends Activity implements
+        PatientChartFragment.OnFragmentInteractionListener,
         PhysicianPatientDetailFragment.Callbacks,
         PrescriptionAdapter.Callbacks,
         PatientMedicationFragment.Callbacks,
@@ -305,5 +307,10 @@ public class PhysicianPatientDetailActivity extends Activity implements
                 }
             });
         }
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }
