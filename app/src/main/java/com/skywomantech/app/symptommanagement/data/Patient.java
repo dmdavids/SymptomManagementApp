@@ -16,15 +16,13 @@ public class Patient {
     private String birthdate = "";
     private long lastLogin = 0L;
     private Boolean active = true;
-
+    private PatientPrefs prefs;
     private Set<Medication> prescriptions;
     private Set<Physician> physicians;
 
     private Set<PainLog> painLog;
     private Set<MedicationLog> medLog;
     private Set<StatusLog> statusLog;
-
-    private PatientPrefs prefs;
 
     public Patient() {
         super();

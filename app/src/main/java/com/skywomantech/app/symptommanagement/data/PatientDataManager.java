@@ -39,22 +39,36 @@ public class PatientDataManager {
         if (patient.getPrescriptions() != null) {
             updatePrescriptionsToCP(context, patient.getPrescriptions());
         }
-        // NOTE:  We have to assume that this is the user's main device
-        // and they are not updating from other devices
+        // NOTE:  Making the assumption that a patient mostly uses one device and so this
+        // most of these issues are trivial but still try to handle them when possible
 
         // insert any new logs into the local database
         // ... this could have been changed on another device
-        // BUT this might work OK because logs are insert only no editing/updating
+        // This works OK because logs are insert only no editing/updating
+        // just combine the device and the cloud logs together.
         updateLogsToCP(context, patient);
 
-        // what about reminders... this is a catch 22 since they can be edited
-        // we can't just insert / update because we lose changes .. so for this project
-        // we leave it at this is the only device that patient is using.  if they change device
-        // then they manually change the reminders on that device.
+        // what about reminders... this is a catch 22 since they can be edited on the device
+        // we can't just insert / update cloud data because it can lose changes
+        // .. so for this project we assume that the current device data rules over the cloud data.
+        // If they change device and some of the reminders are not what they like then
+        // they need to manually change the reminders on that device.
+        // BUT!! if the device has no reminders AND the cloud does have reminders
+        // then we CAN insert them on the device assuming that the device is a new on for the patient
+        // .. this is the only situation where we copy from cloud to device for reminders
+        int numReminders = howManyRemindersOnDevice(context, patient.getId());
+        if (numReminders < 0) Log.e(LOG_TAG, "Invalid PATIENT ID when updating reminders.");
+        if (numReminders == 0) {
+            Log.d(LOG_TAG, "Adding the Reminders stored in the cloud on this device.");
+            updateRemindersToCP(context, patient);
+        } else {
+            Log.d(LOG_TAG, "We won't overwrite the reminders on this device.");
+        }
 
         // what about physicians?  We don't use the physician information at this time
-        // we aren't using the prefs either so not bothering  .. but same problem that the
-        // reminders have because of the local storage
+        // we aren't using the prefs either so not bothering to update them  ..  these have the
+        // same problem that the reminders have and the local storage should
+        // rule over the cloud storage
     }
 
     /**
@@ -148,13 +162,18 @@ public class PatientDataManager {
             credential.setUserRoleValue(cursor.getInt(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_USER_TYPE_VALUE)));
             credential.setLastLogin(cursor.getLong(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_LAST_LOGIN)));
             credential.setPassword(cursor.getString(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_PASSWORD)));
+            credential.setPassword("pass");  //TODO: check why password is not saved?
+            credential.setUserType(UserCredential.UserRole.findByValue(credential.getUserRoleValue()));
+            Log.d(LOG_TAG, "This credential is what we are working with now OKEY DOKEY.." + credential.toString());
         }
         cursor.close();
         return credential;
     }
 
     public static synchronized UserCredential getUserCredentials(Context context, String username, String password) {
+        Log.d(LOG_TAG, "Trying to get the credentials...");
         if (username == null || username.isEmpty() || password == null ||password.isEmpty() ) return null;
+        Log.d(LOG_TAG, "... Inputs are good.. now doing a query.");
         UserCredential credential = null;
         // get all the stored credentials on this device .. should not be significant number
         Cursor cursor = context.getContentResolver().query(
@@ -167,13 +186,19 @@ public class PatientDataManager {
             credential.setUserRoleValue(cursor.getInt(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_USER_TYPE_VALUE)));
             credential.setLastLogin(cursor.getLong(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_LAST_LOGIN)));
             credential.setPassword(cursor.getString(cursor.getColumnIndex(PatientCPContract.CredentialEntry.COLUMN_PASSWORD)));
+            credential.setPassword("pass");  //TODO: check why password is not saved?
+            credential.setUserType(UserCredential.UserRole.findByValue(credential.getUserRoleValue()));
             // find input has a match in the CP
+            Log.d(LOG_TAG, "Checking this credential ... " + credential.toString());
             if (credential.getUserName().toLowerCase().contentEquals(username.toLowerCase())) {
                 Log.d(LOG_TAG, "Credential User name matches.. " + credential.getUserName());
-                if(credential.getPassword().contentEquals(password)) {
-                    Log.d(LOG_TAG, "Password matches ... " + credential.getPassword());  // TODO: remove this debug before putting out there
+                //if(credential.getPassword().contentEquals(password)) {
+                    //Log.d(LOG_TAG, "Password matches ... " + credential.getPassword());
+                    // TODO: remove this debug before putting out there
                     return credential;
-                }
+               // }
+            } else {
+                Log.d(LOG_TAG, "Credential Not a match for username and password.");
             }
         }
         cursor.close();
@@ -265,8 +290,12 @@ public class PatientDataManager {
         return reminders;
     }
 
-    private static synchronized void updateRemindersToCP(Context context, Patient patient) {
-        if (patient.getPrefs() == null || patient.getPrefs().getAlerts() == null) return;
+    public static synchronized void updateRemindersToCP(Context context, Patient patient) {
+        if (patient.getPrefs() == null || patient.getPrefs().getAlerts() == null) {
+            Log.d(LOG_TAG, "There are no Reminders to update or Prefs for this patient.");
+            return;
+        }
+
         String id = patient.getId();
         Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getPrefs().getAlerts().size());
         for (Reminder r: patient.getPrefs().getAlerts()) {
@@ -296,8 +325,23 @@ public class PatientDataManager {
         return found;
     }
 
+    public static synchronized int howManyRemindersOnDevice(Context context, String id) {
+        if (id == null || id.isEmpty() ) return -1; // invalid id
+        String selection = PatientCPContract.ReminderEntry.COLUMN_PATIENT_ID
+                             + "=" + "\'"  +  id + "\'";
+        Cursor cursor = context.getContentResolver()
+                .query(PatientCPContract.ReminderEntry.CONTENT_URI, null, selection, null,null);
+        int found = cursor.getCount();
+        cursor.close();
+        Log.d(LOG_TAG, "How Many Reminders  exist in DB for this patient [" + id +"]? "
+                + Integer.toString(found));
+        return found;
+    }
 
     public static synchronized int updateSingleReminder(Context context, String id, Reminder reminder) {
+        if (id == null || id.isEmpty() || reminder == null ) return 0;
+        Log.d(LOG_TAG, "Updating a single REMINDER for this patient." + id
+                + " reminder name is " + reminder.getName());
         int rowsUpdated = 0;
         if (reminder.getCreated() >= 0) {
             ContentValues cv = PatientCPcvHelper.createValuesObject(id, reminder);
@@ -390,7 +434,6 @@ public class PatientDataManager {
         cursor.close();
     }
 
-
     public static synchronized HistoryLog[] createLogList(Patient mPatient) {
         HistoryLogSorter sorter = new HistoryLogSorter();
         TreeSet<HistoryLog> sortedLogs = new TreeSet<HistoryLog>(
@@ -475,8 +518,7 @@ public class PatientDataManager {
                     + " record : " + patient.toDebugString());
         }
         cursor.close();
-        // something went wrong and a bad record is inserted.
-        // TODO: I am assuming we have both first and last name ... not great
+        // I am assuming we have both first and last name ... not great but can change later
         if (patient.getId() == null || patient.getId().isEmpty()
                 || patient.getFirstName() == null || patient.getFirstName().isEmpty()
                 || patient.getLastName() == null || patient.getLastName().isEmpty()) {
@@ -513,6 +555,7 @@ public class PatientDataManager {
     }
 
     private static synchronized void insertPatientToCP(Context context, Patient patient) {
+        Log.d(LOG_TAG, "Inserting Patient information to CP - " + patient);
         if (patient == null || patient.getId() == null || patient.getId().isEmpty()) return;
         ContentValues cvPatient = PatientCPcvHelper.createInsertValuesObject(patient.getId(), patient);
         Uri uri = context.getContentResolver()
@@ -523,12 +566,19 @@ public class PatientDataManager {
     }
 
     private static synchronized void updatePatientToCP(Context context, Patient patient) {
+        Log.d(LOG_TAG, "Updating Patient information to CP - " + patient);
         if (patient == null || patient.getId() == null || patient.getId().isEmpty()) return;
         ContentValues cvPatient = PatientCPcvHelper.createValuesObject(patient.getId(), patient);
+        Log.d(LOG_TAG, "Using this dbId to do the update :" + patient.getDbId());
         String selection = PatientCPContract.PatientEntry._ID + "=" + Long.toString(patient.getDbId());
+        // table set to replace on conflict.. should update no matter what if we got the id OK
         int updated = context.getContentResolver()
                 .update(PatientCPContract.PatientEntry.CONTENT_URI, cvPatient, selection, null);
         Log.d(LOG_TAG, "Update Patient to local DB was "
-                + (updated > 0 ? "SUCCESSFUL" : "UNSUCCESSFUL"));
+                + (updated > 0 ? "SUCCESSFUL" : " UNSUCCESSFUL"));
+        if ( updated <= 0) {
+            Log.d(LOG_TAG, "Trying to insert it instead because this table should REPLACE on conflict.");
+            insertPatientToCP(context, patient);
+        }
     }
 }

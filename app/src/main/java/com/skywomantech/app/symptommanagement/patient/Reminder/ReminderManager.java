@@ -71,11 +71,8 @@ public class ReminderManager {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-
             IntentSaver that = (IntentSaver) o;
-
             if (reminderCreated != that.reminderCreated) return false;
-
             return true;
         }
 
@@ -122,7 +119,7 @@ public class ReminderManager {
             Log.d(LOG_TAG, "Already have an alarm for this reminder. Not setting it.");
             return;
         }
-        Log.d(LOG_TAG, "Finally Creating a new Alarm for " + r.getName());
+        Log.d(LOG_TAG, "Finally Creating a new Alarm with Interval DAY for " + r.getName());
         getAlarmManager(context)
                 .setRepeating(AlarmManager.RTC_WAKEUP,
                               getAlarmTime(r.getHour(), r.getMinutes()),
@@ -149,7 +146,8 @@ public class ReminderManager {
     public static void cancelPatientReminders(Context context, String id) {
         Collection<Reminder> reminders = PatientDataManager.loadReminderList(context, id);
         for (Reminder r : reminders) {
-            for (IntentSaver s : getSavedIntents()) {
+            IntentSaver[] saverArray = getSavedIntents().toArray(new IntentSaver[getSavedIntents().size()]);
+            for (IntentSaver s : saverArray) {
                 if (s.getReminderCreated() == r.getCreated()) {
                     Log.d(LOG_TAG, "=> Found Intent for the Alarm " + r.getName() + " - Canceling");
                     cancelSingleReminderAlarm(s.getIntent());
@@ -168,7 +166,8 @@ public class ReminderManager {
 
     public static synchronized void cancelSingleReminderAlarm(Reminder reminder) {
         if (getSavedIntents() == null || getSavedIntents().size() <= 0) return;
-        for (IntentSaver s : getSavedIntents()) {
+        IntentSaver[] saverArray = getSavedIntents().toArray(new IntentSaver[getSavedIntents().size()]);
+        for (IntentSaver s : saverArray) {
             if (s.getReminderCreated() == reminder.getCreated()) {
                 Log.d(LOG_TAG, "=> Found Intent for the Alarm " + reminder.getName() + " - Canceling");
                 cancelSingleReminderAlarm(s.getIntent());

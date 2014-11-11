@@ -9,7 +9,7 @@ public class StatusLog {
 	private long created;
 	private String note;
 	private String image_location;
-	
+
 	public StatusLog() {
 		super();
 	}

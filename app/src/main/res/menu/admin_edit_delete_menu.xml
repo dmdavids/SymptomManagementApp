@@ -6,6 +6,7 @@
         android:orderInCategory="1"
         android:icon="@android:drawable/ic_menu_edit"
         android:showAsAction="ifRoom|withText"></item>
+
     <item android:id="@+id/action_delete"
         android:title="@string/admin_medication_delete"
         android:orderInCategory="2"

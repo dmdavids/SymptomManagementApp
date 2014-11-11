@@ -41,7 +41,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
     public interface Callbacks {
-        public void onItemSelected(String id);
+        public void onItemSelected(String physicianId, String patientId);
     }
 
     public PhysicianListPatientsFragment() {
@@ -98,7 +98,8 @@ public class PhysicianListPatientsFragment extends ListFragment {
                 + " id is : " + patient.getId());
         String patientId = patient.getId();
         Log.d(LOG_TAG, " String id value is : " + patientId);
-        ((Callbacks) getActivity()).onItemSelected(patientId);
+        mPhysicianId = LoginUtility.getLoginId(getActivity());
+        ((Callbacks) getActivity()).onItemSelected(mPhysicianId, patientId);
     }
 
     @Override

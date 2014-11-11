@@ -96,17 +96,16 @@ public class PatientMainFragment extends Fragment {
         int hour = -1;
         int minute = -1;
         for (Reminder r : reminders) {
-            if (hour == -1) {
-                hour = r.getHour();
-                minute = r.getMinutes();
-            }
-
-            if ((r.getHour() * 60 + r.getMinutes()) > checkValue) {
+            // if the time matches and the alarm is activated
+            if ((r.getHour() * 60 + r.getMinutes()) > checkValue
+                    && r.isOn()) {
                 hour = r.getHour();
                 minute = r.getMinutes();
                 break;
             }
         }
+
+        if (hour < 0 ) return "Today's Scheduled Check-Ins are Completed.";
 
         String am_pm = (hour < 12) ? " AM" : " PM";
         String hours = (hour <= 12)
@@ -115,7 +114,7 @@ public class PatientMainFragment extends Fragment {
         String minutes = (minute < 10)
                 ? "0" + Integer.toString(minute)
                 : Integer.toString(minute);
-        return "Next Scheduled Check-In is at " + hours + ":" + minutes + am_pm;
+        return "Next Scheduled Check-In Today is at " + hours + ":" + minutes + am_pm;
     }
 
     private String getNumCheckIns() {

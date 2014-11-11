@@ -16,7 +16,7 @@ public class UserCredential {
     public enum UserRole {
         NOT_ASSIGNED(-1), ADMIN(500), PHYSICIAN(300), PATIENT(200);
 
-        private int value;
+        private int value = -1;
 
         private UserRole(int value) {
             this.value = value;
@@ -73,7 +73,6 @@ public class UserCredential {
     }
     public void setUserRoleValue(int userRoleValue) {
         this.userRoleValue = userRoleValue;
-        setUserType(UserRole.findByValue(userRoleValue));
     }
 
     public long getDbId() {

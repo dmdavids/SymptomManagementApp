@@ -26,6 +26,7 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Alert;
 import com.skywomantech.app.symptommanagement.data.Patient;
+import com.skywomantech.app.symptommanagement.data.Physician;
 import com.skywomantech.app.symptommanagement.data.UserCredential;
 import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 
@@ -205,13 +206,22 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                 @Override
                 public Patient call() throws Exception {
                     Log.d(LOG_TAG, "getting single Patient id : " + mPatientId);
-                    return svc.getPatient(mPatientId);
+
+                    Patient result = null;
+                    try {
+                        result = svc.getPatient(mPatientId);
+                    } catch (Exception e) {
+                        Log.d(LOG_TAG, "Service Failed getting Patient from cloud.  Keep on going.");
+                        //e.printStackTrace();
+                    }
+                    return result;
                 }
             }, new TaskCallback<Patient>() {
 
                 @Override
                 public void success(Patient result) {
-                    Log.d(LOG_TAG, "Found Patient :" + result.toDebugString());
+                    if (result == null) return;
+                    Log.d(LOG_TAG, "Found Patient :" + result.toString());
                     mPatient = result;
                     Log.d(LOG_TAG, "Got a patient now we can process.");
                     processPatientFromCloud(mPatient);
@@ -232,9 +242,11 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
     private void processPatientFromCloud(Patient patient) {
         // patient record has been received.. save it via CP
+        // do this first but be careful of what you are overwriting
         PatientDataManager.processPatientToCP(mContext, patient);
 
         // then we update the cloud with the information from this device
+        // this device information takes precedence over the cloud information
         PatientDataManager.processCPtoPatient(mContext, patient);
 
         // All updates are done so send it back for storing in cloud
@@ -265,7 +277,7 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
                 @Override
                 public void success(Patient result) {
-                    Log.d(LOG_TAG, "Returned Patient from Server:" + result.toDebugString());
+                    Log.d(LOG_TAG, "Returned Patient from Server:" + result.toString());
                     mPatient = result;
 
                 }
@@ -291,13 +303,14 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
 
         Log.d(LOG_TAG, "Logged In and Processing Physician sync: " + mPhysicianId);
         getPhysicianAlerts();
-        //TODO: have to figure out physician alarm manager yet.
     }
 
     /**
      * go to cloud and find any alerts for the doctor who is logged in
+     * NOTE: if this physician posted a status log indicating that the patient was
+     * contacted then the alerts will no longer be displayed.
      *
-     * @return set of alerts for the logged in physician
+     * @return set of alerts for the logged in physician minus contacted patients
      */
     private void getPhysicianAlerts() {
 

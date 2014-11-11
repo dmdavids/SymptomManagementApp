@@ -177,10 +177,10 @@ public class PatientAddEditFragment extends Fragment  {
                     mPatient.setFirstName(mFirstName.getText().toString());
                     mPatient.setLastName(mLastName.getText().toString());
                     if (mPatientId == null) {
-                        Log.d(LOG_TAG, "adding patient :" + mPatient.toDebugString());
+                        Log.d(LOG_TAG, "adding patient :" + mPatient.toString());
                         return svc.addPatient(mPatient);
                     }else {
-                        Log.d(LOG_TAG, "updating patient :" + mPatient.toDebugString());
+                        Log.d(LOG_TAG, "updating patient :" + mPatient.toString());
                         return svc.updatePatient(mPatientId, mPatient);
                     }
                 }
@@ -229,7 +229,7 @@ public class PatientAddEditFragment extends Fragment  {
 
                 @Override
                 public Patient call() throws Exception {
-                    Log.d(LOG_TAG, "updating patient :" + mPatient.toDebugString());
+                    Log.d(LOG_TAG, "updating patient :" + mPatient.toString());
                     if (mPatientId == null || mPatient.getId() == null ||
                             mPatientId.isEmpty() || mPatient.getId().isEmpty()) {
                         return svc.addPatient(mPatient);

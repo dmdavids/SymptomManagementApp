@@ -24,7 +24,6 @@ import com.skywomantech.app.symptommanagement.physician.HistoryLogFragment;
 import com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailFragment;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
-
 public class PatientMainActivity extends Activity
         implements
         PatientMainFragment.Callbacks,
@@ -89,9 +88,9 @@ public class PatientMainActivity extends Activity
                     .replace(R.id.patient_main_container, new ReminderFragment(), "reminder_frag")
                     .commit();
             return true;
-        } else if (id == R.id.action_prefs) {
-            startActivity(new Intent(this, SetPreferenceActivity.class));
-            return true;
+//        } else if (id == R.id.action_prefs) {
+//            startActivity(new Intent(this, SetPreferenceActivity.class));
+//            return true;
         } else if (id == R.id.action_refresh) {
             SymptomManagementSyncAdapter.syncImmediately(this);
             return true;
@@ -137,9 +136,11 @@ public class PatientMainActivity extends Activity
 
     @Override
     public boolean onPainLogComplete() {
-        if (LoginUtility.isCheckin(this)) {
+        if (LoginUtility.isCheckin(getApplicationContext())) {
+            Log.d(LOG_TAG, "CHECKIN IS STILL SET TO TRUE!!!");
             // replace fragment with the medication log fragment
-            LoginUtility.setCheckin(this, false);  // we go to the med logs now
+            LoginUtility.setCheckin(getApplicationContext(), false);  // we go to the med logs now
+            Log.d(LOG_TAG, "CHECKIN IS NOW FALSE!!!");
             getFragmentManager().beginTransaction()
                     .replace(R.id.patient_main_container, new PatientMedicationLogFragment())
                     .commit();
@@ -157,6 +158,8 @@ public class PatientMainActivity extends Activity
 
     @Override
     public boolean onMedicationLogComplete() {
+        Log.d(LOG_TAG, "DOUBLE DOUBLE SET THE CHECKIN TO FALSE!!");
+        LoginUtility.setCheckin(getApplicationContext(), false);
         setLastLoggedTimestamp();
         return true;
     }
@@ -242,6 +245,7 @@ public class PatientMainActivity extends Activity
             ReminderManager.cancelSingleReminderAlarm(reminder);
         }
         ReminderManager.printAlarms(this, LoginUtility.getLoginId(this));
+        PatientDataManager.updateSingleReminder(mContext, mPatientId, reminder);
     }
 
     public Patient getPatientCallback() {

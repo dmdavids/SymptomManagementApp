@@ -54,6 +54,9 @@ public class LoginActivity extends Activity {
     @InjectView(R.id.login_progress)
     View mLoginFormView;
 
+    private String mUsername;
+    private String mPassword;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +107,7 @@ public class LoginActivity extends Activity {
     }
 
     public void attemptLogin() {
-        Log.d(LOG_TAG, "Attempting to Login");
+        Log.d(LOG_TAG, "Attempting to Login  mAuthTask is " + ((mAuthTask != null) ? "Not NULL" : "NULL"));
 
         if (mAuthTask != null) return;
 
@@ -193,6 +196,8 @@ public class LoginActivity extends Activity {
         private String mPassword;
 
         UserLoginTask(String username, String password) {
+            Log.d(LOG_TAG, "creating thread with username "
+                    + username + "and password " + password);
             mUsername = username.toLowerCase();
             mPassword = password;
         }
@@ -218,13 +223,13 @@ public class LoginActivity extends Activity {
                 Log.d(LOG_TAG, "Server connection was SUCCESSFUL! " +
                         "But we still need the credentials.");
                 LoginUtility.setUsername(getApplicationContext(), mUsername);
-                getCredentialsAndRedirect();
+                getCredentialsAndRedirect(mUsername, mPassword);
             } else {
                 Log.d(LOG_TAG, "Server connection FAILED!");
                 // check the credentials via CP to see if they are a patient and we stored the credentials
                 // if so then we can OK them without the internet
                 Log.d(LOG_TAG, "Checking for local storage of the credentials.");
-                UserCredential credential = checkCredentials(mUsername, mPassword);
+                UserCredential credential = checkCredentialsOnDevice(mUsername, mPassword);
                 if (credential != null) {
                     Log.d(LOG_TAG, "Found credential in CP :" + credential.toString());
                     LoginUtility.setUsername(getApplicationContext(), mUsername);
@@ -244,18 +249,20 @@ public class LoginActivity extends Activity {
         }
     }
 
-    private UserCredential checkCredentials(String username, String password) {
-        UserCredential credential = PatientDataManager.getUserCredentials(this, username, password );
+    private UserCredential checkCredentialsOnDevice(String username, String password) {
+        Log.d(LOG_TAG, "Looking for username " + username + " password " + password);
+        UserCredential credential =
+                PatientDataManager.getUserCredentials(getApplicationContext(), username, password );
         return credential;
     }
 
-    public void getCredentialsAndRedirect() {
+    public void getCredentialsAndRedirect(String username, String password) {
         if(LoginUtility.isLoggedIn(this)) {
             // already logged in
             processLoginRedirect(LoginUtility.getUserRole(this));
         } else {
             Log.d(LOG_TAG, "We have to retrieve the user credential FROM THE SERVICE first.");
-            getUserCredentialsAndProcessLogin();
+            getUserCredentialsAndProcessLogin(username, password);
         }
     }
 
@@ -264,7 +271,7 @@ public class LoginActivity extends Activity {
                 "for " + role.toString());
         if (role == UserCredential.UserRole.ADMIN) {
             Log.d(LOG_TAG, "Starting Admin screen flow");
-            LoginUtility.setCheckin(this, false);
+            LoginUtility.setCheckin(getApplicationContext(), false);
             startActivity(new Intent(this, AdminMain.class));
         } else if (role == UserCredential.UserRole.PATIENT) {
             // check-in flow is handled by PatientMainActivity
@@ -272,7 +279,7 @@ public class LoginActivity extends Activity {
             startActivity(new Intent(this, PatientMainActivity.class));
         } else if (role == UserCredential.UserRole.PHYSICIAN) {
             Log.d(LOG_TAG, "Starting Doctor screen flow");
-            LoginUtility.setCheckin(this, false);
+            LoginUtility.setCheckin(getApplicationContext(), false);
             SymptomManagementSyncAdapter.syncImmediately(this);
             startActivity(new Intent(this, PhysicianListPatientsActivity.class));
         } else {
@@ -285,7 +292,7 @@ public class LoginActivity extends Activity {
         }
     }
 
-    private void getUserCredentialsAndProcessLogin() {
+    private void getUserCredentialsAndProcessLogin(final String username, final String password) {
         Log.d(LOG_TAG, "Attempting to get the credentials to be fully logged in.");
         // we need the credentials or we can't be considered logged in!
         final SymptomManagementApi svc = SymptomManagementService.getService();
@@ -335,11 +342,21 @@ public class LoginActivity extends Activity {
 
                 @Override
                 public void error(Exception e) {
-                    Toast.makeText(
-                            getApplicationContext(),
-                            "Unable to Login. Please check Internet connection.",
-                            Toast.LENGTH_LONG).show();
-                   restartLoginActivity(getApplicationContext());
+                    Log.d(LOG_TAG, "Cloud Credential Check FAILED... so we can try the CP!!");
+                    UserCredential credential = checkCredentialsOnDevice(username, password);
+                    if (credential != null) {
+                        Log.d(LOG_TAG, "Found credential in CP :" + credential.toString());
+                        LoginUtility.setUsername(getApplicationContext(), mUsername);
+                        LoginUtility.setLoggedIn(getApplicationContext(), credential);
+                        processLoginRedirect(LoginUtility.getUserRole(getApplicationContext()));
+                    } else {
+                        Log.d(LOG_TAG, "CP Credential CHECK failed TOO! Just have to restart app.");
+                        Toast.makeText(
+                                getApplicationContext(),
+                                "Unable to Login. Please check Internet connection.",
+                                Toast.LENGTH_LONG).show();
+                        restartLoginActivity(getApplicationContext());
+                    }
                 }
             });
         }

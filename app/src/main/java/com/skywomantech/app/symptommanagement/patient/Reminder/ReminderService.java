@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import com.skywomantech.app.symptommanagement.LoginActivity;
 import com.skywomantech.app.symptommanagement.LoginUtility;
@@ -40,7 +41,8 @@ public class ReminderService extends Service {
 
         // let the app know that it is time for a checkin so it will go directly into the checkin
         // flow for the patient
-        LoginUtility.setCheckin(this,true);
+        Log.d(LOG_TAG, "NOTIFICATION IS BEING SET ...CHECKIN IS TRUE!!!");
+        LoginUtility.setCheckin(getApplicationContext(),true);
 
         // set the notification to clear after a click
         NotificationCompat.Builder mBuilder =

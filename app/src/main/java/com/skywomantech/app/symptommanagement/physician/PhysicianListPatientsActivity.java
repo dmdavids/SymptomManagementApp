@@ -19,6 +19,7 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
+import com.skywomantech.app.symptommanagement.data.Physician;
 import com.skywomantech.app.symptommanagement.patient.ReminderFragment;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
@@ -33,11 +34,12 @@ public class PhysicianListPatientsActivity extends Activity
 
     public final String LOG_TAG = PhysicianListPatientsActivity.class.getSimpleName();
 
+    private String mPhysicianId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_physician_patient_list);
-
     }
 
     @Override
@@ -64,9 +66,10 @@ public class PhysicianListPatientsActivity extends Activity
     }
 
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(String physicianId, String patientId) {
             Intent detailIntent = new Intent(this, PhysicianPatientDetailActivity.class);
-            detailIntent.putExtra(PhysicianPatientDetailFragment.PATIENT_ID_KEY, id);
+            detailIntent.putExtra(PhysicianPatientDetailFragment.PATIENT_ID_KEY, patientId);
+            detailIntent.putExtra(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, physicianId );
             startActivity(detailIntent);
         }
 

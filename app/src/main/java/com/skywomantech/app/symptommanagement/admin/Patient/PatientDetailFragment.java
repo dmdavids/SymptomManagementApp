@@ -120,7 +120,7 @@ public class PatientDetailFragment extends Fragment {
 
                 @Override
                 public void success(Patient result) {
-                    Log.d(LOG_TAG, "Found Patient :" + result.toDebugString());
+                    Log.d(LOG_TAG, "Found Patient :" + result.toString());
                     mPatient = result;
                     mTextView.setText(mPatient.getName());
                     mBirthdate.setText(mPatient.getBirthdate());
