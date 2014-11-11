@@ -1,6 +1,4 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.skywomantech.app.symptommanagement.patient.PatientMainActivity" >
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
         android:id="@+id/action_patient_history_log"
         android:orderInCategory="10"

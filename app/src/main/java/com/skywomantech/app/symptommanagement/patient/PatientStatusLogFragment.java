@@ -1,5 +1,6 @@
 package com.skywomantech.app.symptommanagement.patient;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -66,6 +67,8 @@ public class PatientStatusLogFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar actionBar = getActivity().getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

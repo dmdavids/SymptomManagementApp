@@ -1,9 +1,11 @@
 package com.skywomantech.app.symptommanagement.patient;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -43,6 +45,8 @@ public class PatientMainActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_patient_main);
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(false);
         mContext = this;
         getPatient(); // if the patient isn't in the db kicks off a sync to get it
         if (savedInstanceState == null) {
@@ -50,11 +54,13 @@ public class PatientMainActivity extends Activity
                     + (LoginUtility.isCheckin(this) ? "YES" : "NO"));
             if (LoginUtility.isCheckin(this)) {
                 getFragmentManager().beginTransaction()
-                        .add(R.id.patient_main_container, new PatientPainLogFragment())
+                        .add(R.id.patient_main_container,
+                                new PatientPainLogFragment(), "patient_pain_frag")
                         .commit();
             } else {
                 getFragmentManager().beginTransaction()
-                        .add(R.id.patient_main_container, new PatientMainFragment())
+                        .add(R.id.patient_main_container,
+                                new PatientMainFragment(), "patient_main_frag")
                         .commit();
             }
         }
@@ -110,6 +116,16 @@ public class PatientMainActivity extends Activity
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().findFragmentById(R.id.patient_main_container)
+                instanceof PatientMainFragment) {
+            startActivity(new Intent()
+                    .setAction(Intent.ACTION_MAIN)
+                    .addCategory(Intent.CATEGORY_HOME));
+        } else super.onBackPressed();
+    }
+
     private void getPatient() {
         if (LoginUtility.isLoggedIn(this)
                 && LoginUtility.getUserRole(this) == UserCredential.UserRole.PATIENT) {
@@ -138,7 +154,8 @@ public class PatientMainActivity extends Activity
             LoginUtility.setCheckin(getApplicationContext(), false);  // we go to the med logs now
             Log.d(LOG_TAG, "CHECKIN IS NOW FALSE!!!");
             getFragmentManager().beginTransaction()
-                    .replace(R.id.patient_main_container, new PatientMedicationLogFragment())
+                    .replace(R.id.patient_main_container,
+                            new PatientMedicationLogFragment(), "patient_medlog_frag")
                     .commit();
             return true;
         }

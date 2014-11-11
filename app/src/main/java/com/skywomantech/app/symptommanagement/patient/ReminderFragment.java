@@ -1,6 +1,7 @@
 package com.skywomantech.app.symptommanagement.patient;
 
 
+import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -60,6 +61,8 @@ public class ReminderFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         this.setRetainInstance(true);  // save the fragment state with rotations
+        ActionBar actionBar = getActivity().getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

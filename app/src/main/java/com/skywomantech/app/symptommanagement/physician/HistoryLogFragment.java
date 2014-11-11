@@ -1,5 +1,6 @@
 package com.skywomantech.app.symptommanagement.physician;
 
+import android.app.ActionBar;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.util.Log;
@@ -40,6 +41,8 @@ public class HistoryLogFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar actionBar = getActivity().getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
         if (getArguments().containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY)) {
             mPatientId = getArguments().getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
         }

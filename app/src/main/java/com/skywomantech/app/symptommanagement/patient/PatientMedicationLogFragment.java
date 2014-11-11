@@ -1,5 +1,6 @@
 package com.skywomantech.app.symptommanagement.patient;
 
+import android.app.ActionBar;
 import android.app.Fragment;
 
 import android.content.ContentUris;
@@ -53,6 +54,8 @@ public class PatientMedicationLogFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setRetainInstance(true);  // save the fragment state with rotations
+        ActionBar actionBar = getActivity().getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
