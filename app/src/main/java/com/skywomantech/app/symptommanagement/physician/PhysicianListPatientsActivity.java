@@ -1,5 +1,6 @@
 package com.skywomantech.app.symptommanagement.physician;
 
+import android.app.ActionBar;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.Physician;
+import com.skywomantech.app.symptommanagement.patient.PatientMainFragment;
 import com.skywomantech.app.symptommanagement.patient.ReminderFragment;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
@@ -40,6 +42,8 @@ public class PhysicianListPatientsActivity extends Activity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_physician_patient_list);
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(false);
     }
 
     @Override
@@ -63,6 +67,13 @@ public class PhysicianListPatientsActivity extends Activity
             LoginActivity.restartLoginActivity(this);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent()
+                .setAction(Intent.ACTION_MAIN)
+                .addCategory(Intent.CATEGORY_HOME));
     }
 
     @Override
