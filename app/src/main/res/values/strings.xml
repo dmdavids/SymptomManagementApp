@@ -51,5 +51,7 @@
     <string name="action_refresh">Sync Data</string>
     <string name="prompt_username">Username</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_test_patient_charts">Patient Charts</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

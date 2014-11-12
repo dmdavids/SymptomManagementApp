@@ -3,42 +3,23 @@ package com.skywomantech.app.symptommanagement.physician;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.PointF;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.util.FloatMath;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.androidplot.Plot;
 import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.LineAndPointFormatter;
-import com.androidplot.xy.PointLabelFormatter;
 import com.androidplot.xy.SimpleXYSeries;
 import com.androidplot.xy.XYPlot;
-import com.androidplot.xy.XYSeries;
 import com.skywomantech.app.symptommanagement.R;
 
 import java.text.DecimalFormat;
-import java.util.Arrays;
 import java.util.Random;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PatientChartFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link PatientChartFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class PatientChartFragment extends Fragment implements View.OnTouchListener {
+public class TestPatientChartsActivity extends Activity implements View.OnTouchListener {
 
     private static final int SERIES_SIZE = 200;
     private XYPlot mySimpleXYPlot;
@@ -47,55 +28,11 @@ public class PatientChartFragment extends Fragment implements View.OnTouchListen
     private PointF minXY;
     private PointF maxXY;
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PatientChartFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PatientChartFragment newInstance(String param1, String param2) {
-        PatientChartFragment fragment = new PatientChartFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public PatientChartFragment() {
-        // Required empty public constructor
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_patient_chart, container, false);
-        ButterKnife.inject(this, rootView);
-        // initialize our XYPlot reference:
-        resetButton = (Button) rootView.findViewById(R.id.resetButton);
+        setContentView(R.layout.test_patient_charts);
+        resetButton = (Button) findViewById(R.id.resetButton);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,7 +44,7 @@ public class PatientChartFragment extends Fragment implements View.OnTouchListen
                 mySimpleXYPlot.redraw();
             }
         });
-        mySimpleXYPlot = (XYPlot) rootView.findViewById(R.id.mySimpleXYPlot);
+        mySimpleXYPlot = (XYPlot) findViewById(R.id.mySimpleXYPlot);
         mySimpleXYPlot.setOnTouchListener(this);
         mySimpleXYPlot.getGraphWidget().setTicksPerRangeLabel(2);
         mySimpleXYPlot.getGraphWidget().setTicksPerDomainLabel(2);
@@ -147,42 +84,8 @@ public class PatientChartFragment extends Fragment implements View.OnTouchListen
         maxXY = new PointF(mySimpleXYPlot.getCalculatedMaxX().floatValue(),
                 mySimpleXYPlot.getCalculatedMaxY().floatValue());
 
-        return rootView;
+
     }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
-    }
-
 
     private void populateSeries(SimpleXYSeries series, int max) {
         Random r = new Random();

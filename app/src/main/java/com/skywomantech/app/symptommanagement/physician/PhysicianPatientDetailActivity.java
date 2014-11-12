@@ -23,6 +23,7 @@ import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.Physician;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
+import com.skywomantech.app.symptommanagement.patient.PatientMainActivity;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.HashSet;
@@ -111,6 +112,8 @@ public class PhysicianPatientDetailActivity extends Activity implements
             return true;
         } else if (id == R.id.physician_logout) {
             LoginActivity.restartLoginActivity(this);
+        } else if (id == R.id.action_chart) {
+            startActivity(new Intent(this, TestPatientChartsActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }

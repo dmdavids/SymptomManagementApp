@@ -14,6 +14,11 @@
         android:title="History"
         android:icon="@drawable/ic_action_status_log"/>
 
+    <item android:id="@+id/action_chart"
+        android:title="Test Chart"
+        android:orderInCategory="90"
+        android:showAsAction="never" />
+
     <item android:id="@+id/physician_logout"
         android:title="Logout"
         android:orderInCategory="200"
