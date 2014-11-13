@@ -30,7 +30,6 @@ import java.util.HashSet;
 import java.util.concurrent.Callable;
 
 public class PhysicianPatientDetailActivity extends Activity implements
-        PatientChartFragment.OnFragmentInteractionListener,
         PhysicianPatientDetailFragment.Callbacks,
         PrescriptionAdapter.Callbacks,
         PatientMedicationFragment.Callbacks,
@@ -312,8 +311,4 @@ public class PhysicianPatientDetailActivity extends Activity implements
         }
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
 }

@@ -233,10 +233,6 @@ public class Patient {
 		return getName();
 	}
 
-   // public String getFormattedBirthdate() {
-     //   return getFormattedDate(this.birthdate, "MM/dd/yyyy");
-    //}
-
     public String getFormattedDate(long dt, String fmt) {
         if (dt <= 0L) return "";
         Date date = new Date(dt);

@@ -15,14 +15,29 @@
   -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/sample_activity">
+    style="@style/sample_activity"
+    android:padding="8dp">
 
-    <TextView
-        android:id="@+id/physician_patient_detail_name"
+    <LinearLayout
+        android:id="@+id/patient_name_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Patient Name"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:orientation="vertical"
+        android:padding="4dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Patient Name : "
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/physician_patient_detail_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Patient Name"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/patient_info_layout"
@@ -30,7 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="4dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -47,7 +63,7 @@
                 android:id="@+id/patient_medical_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="123098129083loueoqiwueu"
+                android:text="123098129083l"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
         </LinearLayout>
@@ -99,7 +115,8 @@
         android:layout_above="@+id/resetButton"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/patient_info_layout"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:padding="24dp" />
 
     <Button
         android:id="@+id/resetButton"
