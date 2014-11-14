@@ -35,13 +35,15 @@ public class PhysicianPatientDetailActivity extends Activity implements
         PatientMedicationFragment.Callbacks,
         MedicationListFragment.Callbacks,
         MedicationAddEditDialog.Callbacks,
-        HistoryLogFragment.Callbacks {
+        HistoryLogFragment.Callbacks,
+        PatientGraphicsFragment.Callbacks {
 
     private static final String LOG_TAG = PhysicianPatientDetailActivity.class.getSimpleName();
 
     private static Physician mPhysician;
     private static String mPhysicianId;
     private String mPatientId;
+    private static Patient mPatient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,6 +251,11 @@ public class PhysicianPatientDetailActivity extends Activity implements
         }
     }
 
+    @Override
+    public void onPatientFound(Patient patient) {
+        mPatient = patient;
+    }
+
     private void savePhysician(final Physician physician) {
             if (physician == null) return;
             Log.d(LOG_TAG, "Saving Physician ID Key is : " + physician.getId());
@@ -311,4 +318,8 @@ public class PhysicianPatientDetailActivity extends Activity implements
         }
     }
 
+    @Override
+    public Patient getPatientDataForGraphing() {
+        return mPatient;
+    }
 }

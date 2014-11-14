@@ -44,7 +44,7 @@ public class TestPatientChartsActivity extends Activity implements View.OnTouchL
                 mySimpleXYPlot.redraw();
             }
         });
-        mySimpleXYPlot = (XYPlot) findViewById(R.id.mySimpleXYPlot);
+        mySimpleXYPlot = (XYPlot) findViewById(R.id.patientGraphicsPlot);
         mySimpleXYPlot.setOnTouchListener(this);
         mySimpleXYPlot.getGraphWidget().setTicksPerRangeLabel(2);
         mySimpleXYPlot.getGraphWidget().setTicksPerDomainLabel(2);

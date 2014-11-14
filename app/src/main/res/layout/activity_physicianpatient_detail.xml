@@ -1,7 +1,24 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/physician_patient_detail_container"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     tools:context="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailActivity"
-    tools:ignore="MergeRootFrame" />
+    android:orientation="vertical" >
+
+    <fragment
+        android:id="@+id/physician_patient_detail_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        class="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailFragment"
+        tools:layout="@layout/fragment_physician_patient_detail" />
+
+    <fragment
+        android:id="@+id/patient_graphics_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:name="com.skywomantech.app.symptommanagement.physician.PatientGraphicsFragment"
+        tools:layout="@layout/fragment_patient_graphics">
+    </fragment>
+
+</LinearLayout>
+

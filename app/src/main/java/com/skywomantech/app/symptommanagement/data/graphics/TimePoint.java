@@ -1,9 +1,10 @@
-package com.skywomantech.app.symptommanagement.data.graph;
+package com.skywomantech.app.symptommanagement.data.graphics;
 
 import java.util.Calendar;
 
 public class TimePoint {
     long timeValue;
+    long actual_date;
     int hour;
     int day_of_week;
     int day_of_month;
@@ -18,6 +19,11 @@ public class TimePoint {
         this.hour = cal.get(Calendar.HOUR_OF_DAY);
         this.day_of_week = cal.get(Calendar.DAY_OF_WEEK);
         this.day_of_month = cal.get(Calendar.DAY_OF_MONTH);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        this.actual_date = cal.getTimeInMillis();
     }
 
     public long getTimeValue() {
@@ -45,6 +51,14 @@ public class TimePoint {
         this.day_of_month = day_of_month;
     }
 
+    public long getActual_date() {
+        return actual_date;
+    }
+
+    public void setActual_date(long actual_date) {
+        this.actual_date = actual_date;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -66,6 +80,7 @@ public class TimePoint {
     public String toString() {
         return "TimePoint{" +
                 "timeValue=" + timeValue +
+                ", actual_date=" + actual_date +
                 ", hour=" + hour +
                 ", day_of_week=" + day_of_week +
                 ", day_of_month=" + day_of_month +

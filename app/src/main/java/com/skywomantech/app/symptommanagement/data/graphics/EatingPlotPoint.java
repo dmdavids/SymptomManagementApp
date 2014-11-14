@@ -1,4 +1,4 @@
-package com.skywomantech.app.symptommanagement.data.graph;
+package com.skywomantech.app.symptommanagement.data.graphics;
 
 public class EatingPlotPoint extends TimePoint {
     int eatingValue;

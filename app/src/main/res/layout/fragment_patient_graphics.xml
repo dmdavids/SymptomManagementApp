@@ -14,66 +14,67 @@
   ~    limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/sample_activity">
-
-    <TextView
-        android:id="@+id/physician_patient_detail_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Patient Name"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/sample_activity"
+    android:padding="8dp"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/patient_info_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
+        android:minWidth="50dp"
+        android:id="@+id/graphics_button_bar">
 
-        <LinearLayout
+        <Button
+            android:id="@+id/imageButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:text="Line Plot"
+            android:layout_weight="2"
+            android:contentDescription="Line Plot"
+            android:minWidth="60dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="ID : "
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/patient_medical_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="123098129083loueoqiwueu"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        </LinearLayout>
-
-        <LinearLayout
+        <Button
+            android:id="@+id/imageButton2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:text="Fuzzy"
+            android:layout_weight="2"
+            android:contentDescription="Fuzzy"
+            android:minWidth="60dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Birthdate : "
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+        <Button
+            android:id="@+id/imageButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scatter (Day)"
+            android:layout_weight="2"
+            android:contentDescription="Scatter by Day"
+            android:minWidth="60dp" />
 
-            <TextView
-                android:id="@+id/physician_patient_detail_birthdate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="mm/dd/yy"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/imageButton4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scatter (Week)"
+            android:layout_weight="2"
+            android:contentDescription="Scatter By Week"
+            android:minWidth="60dp" />
+
+        <Button
+            android:id="@+id/imageButton5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pie Chart"
+            android:layout_weight="2"
+            android:contentDescription="Scatter By Week"
+            android:minWidth="60dp" />
 
     </LinearLayout>
 
-    <com.androidplot.xy.XYPlot
+    <com.androidplot.xy.XYPlotZoomPan
         android:id="@+id/patientGraphicsPlot"
         androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
         androidPlot.graphWidget.domainLabelPaint.textSize="@dimen/domain_tick_label_font_size"
@@ -92,21 +93,21 @@
         androidPlot.legendWidget.textPaint.textSize="@dimen/legend_text_font_size"
         androidPlot.legendWidget.widthMetric.value="1"
         androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
-        androidPlot.title="ScrollZoom Example"
-        androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size"
+        androidPlot.title="Patient Severity + Eating Ability"
+        androidPlot.titleWidget.labelPaint.textSize="16dp"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_above="@+id/resetButton"
-        android:layout_alignParentEnd="true"
-        android:layout_below="@+id/patient_info_layout"
-        android:layout_weight="1" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:nestedScrollingEnabled="true"
+        android:contentDescription="No Patient Data Found"
+        android:clickable="true" />
 
     <Button
         android:id="@+id/resetButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:text="Reset" />
+        android:text="Reset"
+        android:contentDescription="Reset Chart"/>
 
-</RelativeLayout>
+</LinearLayout>

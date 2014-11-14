@@ -24,15 +24,34 @@
     <fragment
         android:id="@+id/physician_patient_list"
         android:name="com.skywomantech.app.symptommanagement.physician.PhysicianListPatientsFragment"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_weight="3"
         tools:layout="@android:layout/list_content" />
 
-    <FrameLayout
-        android:id="@+id/physician_patient_detail_container"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="3" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        tools:context="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailActivity"
+        android:orientation="vertical" >
+
+        <fragment
+            android:id="@+id/physician_patient_detail_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            class="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailFragment"
+            tools:layout="@layout/fragment_physician_patient_detail" />
+
+        <fragment
+            android:id="@+id/patient_graphics_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:name="com.skywomantech.app.symptommanagement.physician.PatientGraphicsFragment"
+            tools:layout="@layout/fragment_patient_graphics">
+        </fragment>
+
+    </LinearLayout>
 
 </LinearLayout>
