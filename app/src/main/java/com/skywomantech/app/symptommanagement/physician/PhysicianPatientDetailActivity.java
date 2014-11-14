@@ -62,6 +62,11 @@ public class PhysicianPatientDetailActivity extends Activity implements
                     .add(R.id.physician_patient_detail_container, fragment)
                     .commit();
             getPhysician(mPhysicianId);  // needed for any physician status log processing
+            PatientGraphicsFragment graphicsFragment = new PatientGraphicsFragment();
+            graphicsFragment.setArguments(arguments);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.patient_graphics_container, graphicsFragment)
+                    .commit();
         }
     }
 
@@ -253,6 +258,8 @@ public class PhysicianPatientDetailActivity extends Activity implements
 
     @Override
     public void onPatientFound(Patient patient) {
+        if (patient == null)  return;
+        Log.d(LOG_TAG, "Current Selected Patient is : " + patient.toString());
         mPatient = patient;
     }
 
@@ -320,6 +327,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
 
     @Override
     public Patient getPatientDataForGraphing() {
+        Log.d(LOG_TAG, "GETTING Selected Patient for Graphing : " + mPatient);
         return mPatient;
     }
 }

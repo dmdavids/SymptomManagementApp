@@ -5,20 +5,15 @@
     tools:context="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailActivity"
     android:orientation="vertical" >
 
-    <fragment
+    <FrameLayout
         android:id="@+id/physician_patient_detail_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        class="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailFragment"
-        tools:layout="@layout/fragment_physician_patient_detail" />
+        android:layout_height="wrap_content" />
 
-    <fragment
+    <FrameLayout
         android:id="@+id/patient_graphics_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:name="com.skywomantech.app.symptommanagement.physician.PatientGraphicsFragment"
-        tools:layout="@layout/fragment_patient_graphics">
-    </fragment>
+        android:layout_height="match_parent" />
 
 </LinearLayout>
 

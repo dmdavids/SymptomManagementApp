@@ -28,48 +28,49 @@
         android:id="@+id/graphics_button_bar">
 
         <Button
-            android:id="@+id/imageButton"
+            android:id="@+id/line_plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Line Plot"
+            android:text="Line Graph"
             android:layout_weight="2"
-            android:contentDescription="Line Plot"
+            android:contentDescription="Line Graph"
             android:minWidth="60dp" />
 
         <Button
-            android:id="@+id/imageButton2"
+            android:id="@+id/bar_plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fuzzy"
+            android:text="Bar Chart"
             android:layout_weight="2"
-            android:contentDescription="Fuzzy"
+            android:contentDescription="Bar Chart"
             android:minWidth="60dp" />
 
         <Button
-            android:id="@+id/imageButton3"
+            android:id="@+id/fuzzy_plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Scatter (Day)"
+            android:text="Fuzzy Chart"
             android:layout_weight="2"
-            android:contentDescription="Scatter by Day"
+            android:contentDescription="Fuzzy Chart"
             android:minWidth="60dp" />
 
         <Button
-            android:id="@+id/imageButton4"
+            android:id="@+id/scatter_plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Scatter (Week)"
+            android:text="Scatter Chart"
             android:layout_weight="2"
-            android:contentDescription="Scatter By Week"
+            android:contentDescription="Scatter Chart"
             android:minWidth="60dp" />
 
+
         <Button
-            android:id="@+id/imageButton5"
+            android:id="@+id/pie_plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Pie Chart"
             android:layout_weight="2"
-            android:contentDescription="Scatter By Week"
+            android:contentDescription="Pie"
             android:minWidth="60dp" />
 
     </LinearLayout>
@@ -99,7 +100,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:padding="8dp"
-        android:nestedScrollingEnabled="true"
         android:contentDescription="No Patient Data Found"
         android:clickable="true" />
 

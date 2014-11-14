@@ -43,16 +43,12 @@ public class PatientGraphicsFragment extends Fragment {
 
     public final static String LOG_TAG = PatientGraphicsFragment.class.getSimpleName();
 
-    private String mPatientId;
-    private Patient mPatient;
+    public interface Callbacks {
+        public Patient getPatientDataForGraphing();
+    }
 
-    private XYPlotZoomPan simplePatientXYPlot;
-    private SimpleXYSeries eatingSeries = null;
-    private SimpleXYSeries severitySeries = null;
-    private SimpleXYSeries medicationSeries = null;
-    private SimpleXYSeries testPoints = null;
-    private PointF minXY;
-    private PointF maxXY;
+    public static final String PATIENT_ID_KEY = "patient_id";
+    public static final String PHYSICIAN_ID_KEY = "physician_id";
 
     public enum PatientGraph {
         NO_CHART(0), LINE_PLOT(100), FUZZY_CHART(200), SCATTER_CHART_DAY(300),
@@ -78,7 +74,17 @@ public class PatientGraphicsFragment extends Fragment {
         }
     }
 
-    private PatientGraph graph = PatientGraph.FUZZY_CHART;
+    private Patient mPatient;
+    private String mPatientId = null;
+    private XYPlotZoomPan simplePatientXYPlot;
+    private SimpleXYSeries eatingSeries = null;
+    private SimpleXYSeries severitySeries = null;
+    private SimpleXYSeries medicationSeries = null;
+    private SimpleXYSeries testPoints = null;
+    private PointF minXY;
+    private PointF maxXY;
+
+    private PatientGraph graph = PatientGraph.NO_CHART;
 
     private List<SeverityPlotPoint> severityPoints = null;
     private List<EatingPlotPoint> eatingPoints = null;
@@ -87,13 +93,13 @@ public class PatientGraphicsFragment extends Fragment {
     public PatientGraphicsFragment() {
     }
 
-    public interface Callbacks {
-        public Patient getPatientDataForGraphing();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null && getArguments().containsKey(PATIENT_ID_KEY)) {
+            mPatientId = getArguments().getString(PATIENT_ID_KEY);
+        }
         setRetainInstance(true);  // save the fragment state with rotations
     }
 
@@ -102,18 +108,113 @@ public class PatientGraphicsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_patient_graphics, container, false);
         ButterKnife.inject(this, rootView);
-        // ButterKnife doesn't want to inject this one
+        // ButterKnife doesn't want to inject this one so we do it manually
         simplePatientXYPlot = (XYPlotZoomPan) rootView.findViewById(R.id.patientGraphicsPlot);
-        // find the patient and the details then generate plotting data
-        mPatient = ((Callbacks)getActivity()).getPatientDataForGraphing();
         return rootView;
     }
 
-    private void createGraph(PatientGraphicsFragment frag, Patient patient) {
+    @OnClick(R.id.line_plot)
+    public void onClickLinePlot(View view) {
+        Log.d(LOG_TAG, "Line Plot Clicked");
+        if (patientReadyForGraphing()) {
+            createLinePlot();
+        }
+    }
 
-        // make this fragment a listener for events in this plot
-        //simplePatientXYPlot.setOnTouchListener(frag);
-        // set up the graph that isn't already done in the xml
+
+    @OnClick(R.id.bar_plot)
+    public void onClickBarPlot(View view) {
+        Log.d(LOG_TAG, "Bar Chart Clicked");
+        if (patientReadyForGraphing()) {
+            createLinePlot();
+        }
+    }
+
+    @OnClick(R.id.fuzzy_plot)
+    public void onClickFuzzyPlot(View view) {
+        Log.d(LOG_TAG, "Fuzzy Plot Clicked");
+        if (patientReadyForGraphing()) {
+            createLinePlot();
+        }
+    }
+
+    @OnClick(R.id.scatter_plot)
+    public void onClickScatterPlot(View view) {
+        Log.d(LOG_TAG, "Scatter Plot Clicked");
+        if (patientReadyForGraphing()) {
+            createLinePlot();
+        }
+    }
+
+    @OnClick(R.id.pie_plot)
+    public void onClickPiePlot(View view) {
+        Log.d(LOG_TAG, "Pie Plot Clicked");
+        if (patientReadyForGraphing()) {
+            createLinePlot();
+        }
+    }
+
+    // if the reset button is pressed then go back to initial view of graph
+    @OnClick(R.id.resetButton)
+    public void onClickResetButton(View view) {
+        // The x-axis is our date range! so both eating and severity have exactly
+        // find the min and max X date range for this plot and reset them
+        if( testPoints != null ) {
+            minXY.x = testPoints.getX(0).floatValue();
+            maxXY.x = testPoints.getX(testPoints.size() - 1).floatValue();
+            simplePatientXYPlot.setDomainBoundaries(minXY.x, maxXY.x, BoundaryMode.FIXED);
+            simplePatientXYPlot.redraw();
+        }
+    }
+
+    private boolean patientReadyForGraphing() {
+        if (mPatient == null || mPatientId == null) {
+            mPatient = ((Callbacks) getActivity()).getPatientDataForGraphing();
+
+            if (mPatient == null || mPatient.getId() == null) {
+                Log.d(LOG_TAG, "NO Patient Data for Graphing!");
+                return false;
+            }
+            if(mPatientId == null) mPatientId = mPatient.getId();
+            if(!mPatient.getId().contentEquals(mPatientId) ||
+                    severityPoints == null || eatingPoints == null || medicationPoints == null) {
+                Log.d(LOG_TAG, "This is a new patient so we need to recalculate the series.");
+                generatePatientDataLists(mPatient);
+            }
+            Log.d(LOG_TAG, "Current Patient to be Graphed : " + mPatient);
+        }
+        return true;
+    }
+
+    private void generatePatientDataLists(Patient patient) {
+        if (patient == null) return;
+        Collection<PainLog> painLogs = patient.getPainLog();
+
+        if (painLogs != null && painLogs.size() > 0) {
+            severityPoints = new ArrayList<SeverityPlotPoint>();
+            eatingPoints = new ArrayList<EatingPlotPoint>();
+            for (PainLog p : painLogs) {
+                Log.d(LOG_TAG, "Adding Pain Log to Graph Data " + p.toString());
+                severityPoints.add(new SeverityPlotPoint(p.getCreated(), p.getSeverity().getValue()));
+                eatingPoints.add((new EatingPlotPoint(p.getCreated(), p.getEating().getValue())));
+            }
+        }
+        Collection<MedicationLog> medicationLogs = patient.getMedLog();
+        if (medicationLogs != null && medicationLogs.size() > 0) {
+            medicationPoints = new ArrayList<MedicationPlotPoint>();
+            for (MedicationLog m : medicationLogs) {
+                Log.d(LOG_TAG, "Adding Medication Log to Graph Data " + m.toString());
+                medicationPoints.add(new MedicationPlotPoint(m.getTaken(),
+                        m.getMed().getId(), m.getMed().getName()));
+            }
+        }
+        Log.d(LOG_TAG, "Severity Points : " + severityPoints.toString());
+        Log.d(LOG_TAG, "Eating Points : " + eatingPoints.toString());
+        Log.d(LOG_TAG, "Med Log Points : " + medicationPoints.toString());
+    }
+
+    private void createLinePlot() {
+
         simplePatientXYPlot.getGraphWidget().setTicksPerRangeLabel(2);
         simplePatientXYPlot.getGraphWidget().setTicksPerDomainLabel(2);
         simplePatientXYPlot.getGraphWidget().getBackgroundPaint().setColor(Color.TRANSPARENT);
@@ -134,9 +235,6 @@ public class PatientGraphicsFragment extends Fragment {
         simplePatientXYPlot.getGraphWidget().getDomainOriginLinePaint().setColor(Color.BLACK);
         simplePatientXYPlot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.BLACK);
         simplePatientXYPlot.setRangeBoundaries(0, 400, BoundaryMode.FIXED);
-
-        // This creates four series of plot data
-        generatePatientDataLists(patient);
 
         int count = 0;
         if (severityPoints != null) count++;
@@ -184,7 +282,6 @@ public class PatientGraphicsFragment extends Fragment {
                 private SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd\nhh:mm a");
                 @Override
                 public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
-                    // our timestamps already *1000
                     long timestamp = ((Number) obj).longValue();
                     Date date = new Date(timestamp);
                     return dateFormat.format(date, toAppendTo, pos);
@@ -206,46 +303,6 @@ public class PatientGraphicsFragment extends Fragment {
                 simplePatientXYPlot.getCalculatedMinY().floatValue());
         maxXY = new PointF(simplePatientXYPlot.getCalculatedMaxX().floatValue(),
                 simplePatientXYPlot.getCalculatedMaxY().floatValue());
-    }
-
-    // if the reset button is pressed then go back to initial view of graph
-    @OnClick(R.id.resetButton)
-    public void onClick(View view) {
-        // The x-axis is our date range! so both eating and severity have exactly
-        // find the min and max X date range for this plot and reset them
-        if( testPoints != null ) {
-            minXY.x = testPoints.getX(0).floatValue();
-            maxXY.x = testPoints.getX(testPoints.size() - 1).floatValue();
-            simplePatientXYPlot.setDomainBoundaries(minXY.x, maxXY.x, BoundaryMode.FIXED);
-            simplePatientXYPlot.redraw();
-        }
-    }
-
-    private void generatePatientDataLists(Patient patient) {
-        if (patient == null) return;
-        Collection<PainLog> painLogs = patient.getPainLog();
-
-        if (painLogs != null && painLogs.size() > 0) {
-            severityPoints = new ArrayList<SeverityPlotPoint>();
-            eatingPoints = new ArrayList<EatingPlotPoint>();
-            for (PainLog p : painLogs) {
-                Log.d(LOG_TAG, "Adding Pain Log to Graph Data " + p.toString());
-                severityPoints.add(new SeverityPlotPoint(p.getCreated(), p.getSeverity().getValue()));
-                eatingPoints.add((new EatingPlotPoint(p.getCreated(), p.getEating().getValue())));
-            }
-        }
-        Collection<MedicationLog> medicationLogs = patient.getMedLog();
-        if (medicationLogs != null && medicationLogs.size() > 0) {
-            medicationPoints = new ArrayList<MedicationPlotPoint>();
-            for (MedicationLog m : medicationLogs) {
-                Log.d(LOG_TAG, "Adding Medication Log to Graph Data " + m.toString());
-                medicationPoints.add(new MedicationPlotPoint(m.getTaken(),
-                        m.getMed().getId(), m.getMed().getName()));
-            }
-        }
-        Log.d(LOG_TAG, "Severity Points : " + severityPoints.toString());
-        Log.d(LOG_TAG, "Eating Points : " + eatingPoints.toString());
-        Log.d(LOG_TAG, "Med Log Points : " + medicationPoints.toString());
     }
 
     private class TimePointSorter implements Comparator<TimePoint> {

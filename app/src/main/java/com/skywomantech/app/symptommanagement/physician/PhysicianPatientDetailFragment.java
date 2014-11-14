@@ -64,7 +64,7 @@ public class PhysicianPatientDetailFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments().containsKey(PATIENT_ID_KEY)) {
+        if (getArguments() != null && getArguments().containsKey(PATIENT_ID_KEY)) {
             mPatientId = getArguments().getString(PATIENT_ID_KEY);
         }
         setHasOptionsMenu(true);
