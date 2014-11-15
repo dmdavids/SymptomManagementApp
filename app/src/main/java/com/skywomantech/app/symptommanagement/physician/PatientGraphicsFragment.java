@@ -3,14 +3,21 @@ package com.skywomantech.app.symptommanagement.physician;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
+import android.graphics.EmbossMaskFilter;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.androidplot.Plot;
+import com.androidplot.pie.PieChart;
+import com.androidplot.pie.Segment;
+import com.androidplot.pie.SegmentFormatter;
 import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
@@ -37,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
+import butterknife.InjectView;
 import butterknife.OnClick;
 
 public class PatientGraphicsFragment extends Fragment {
@@ -51,8 +59,8 @@ public class PatientGraphicsFragment extends Fragment {
     public static final String PHYSICIAN_ID_KEY = "physician_id";
 
     public enum PatientGraph {
-        NO_CHART(0), LINE_PLOT(100), FUZZY_CHART(200), SCATTER_CHART_DAY(300),
-        SCATTER_CHART_WEEK(400);
+        NO_CHART(0), LINE_PLOT(100), FUZZY_CHART(200), SCATTER_CHART(300),
+        PIE_CHART(400), BAR_CHART(500);
 
         private final int value;
 
@@ -78,17 +86,41 @@ public class PatientGraphicsFragment extends Fragment {
     private String mPatientId = null;
     private XYPlotZoomPan simplePatientXYPlot;
     private SimpleXYSeries eatingSeries = null;
+    int notEatingCount = 0;
+    int eatingSomeCount = 0;
+    int eatingOkCount = 0;
     private SimpleXYSeries severitySeries = null;
+    int severeCount = 0;
+    int moderateCount = 0;
+    int controlledCount =0;
     private SimpleXYSeries medicationSeries = null;
+
     private SimpleXYSeries testPoints = null;
     private PointF minXY;
     private PointF maxXY;
+
+    private PieChart pie;
+    SegmentFormatter sf1;
+    SegmentFormatter sf2;
+    SegmentFormatter sf3;
+    SegmentFormatter sf4;
+
+    private Segment painSevere;
+    private Segment painModerate;
+    private Segment painControlled;
+    private Segment eatingOK;
+    private Segment eatingSome;
+    private Segment eatingNone;
 
     private PatientGraph graph = PatientGraph.NO_CHART;
 
     private List<SeverityPlotPoint> severityPoints = null;
     private List<EatingPlotPoint> eatingPoints = null;
     private List<MedicationPlotPoint> medicationPoints = null;
+
+    LinearLayout xyChartLayout;
+    LinearLayout pieChartLayout;
+
 
     public PatientGraphicsFragment() {
     }
@@ -108,8 +140,12 @@ public class PatientGraphicsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_patient_graphics, container, false);
         ButterKnife.inject(this, rootView);
-        // ButterKnife doesn't want to inject this one so we do it manually
+        // ButterKnife doesn't want to inject these so we do it manually
+        xyChartLayout = (LinearLayout) rootView.findViewById(R.id.xy_chart_layout);
         simplePatientXYPlot = (XYPlotZoomPan) rootView.findViewById(R.id.patientGraphicsPlot);
+
+        pieChartLayout = (LinearLayout) rootView.findViewById(R.id.pie_chart_layout);
+        pie = (PieChart) rootView.findViewById(R.id.PatientPieChart);
         return rootView;
     }
 
@@ -150,7 +186,7 @@ public class PatientGraphicsFragment extends Fragment {
     public void onClickPiePlot(View view) {
         Log.d(LOG_TAG, "Pie Plot Clicked");
         if (patientReadyForGraphing()) {
-            createLinePlot();
+            createPieChart();
         }
     }
 
@@ -188,6 +224,7 @@ public class PatientGraphicsFragment extends Fragment {
 
     private void generatePatientDataLists(Patient patient) {
         if (patient == null) return;
+        resetCounts();
         Collection<PainLog> painLogs = patient.getPainLog();
 
         if (painLogs != null && painLogs.size() > 0) {
@@ -196,7 +233,10 @@ public class PatientGraphicsFragment extends Fragment {
             for (PainLog p : painLogs) {
                 Log.d(LOG_TAG, "Adding Pain Log to Graph Data " + p.toString());
                 severityPoints.add(new SeverityPlotPoint(p.getCreated(), p.getSeverity().getValue()));
+                updateSeverityCounts(p.getSeverity().getValue());
                 eatingPoints.add((new EatingPlotPoint(p.getCreated(), p.getEating().getValue())));
+                updateEatingCounts(p.getEating().getValue());
+
             }
         }
         Collection<MedicationLog> medicationLogs = patient.getMedLog();
@@ -213,7 +253,120 @@ public class PatientGraphicsFragment extends Fragment {
         Log.d(LOG_TAG, "Med Log Points : " + medicationPoints.toString());
     }
 
+    private void resetCounts() {
+         notEatingCount = 0;
+         eatingSomeCount = 0;
+         eatingOkCount = 0;
+         severeCount = 0;
+         moderateCount = 0;
+         controlledCount =0;
+    }
+
+    private void updateSeverityCounts(int value) {
+        if (PainLog.Severity.SEVERE.getValue() == value) {
+            severeCount++;
+        } else if (PainLog.Severity.MODERATE.getValue() == value) {
+            moderateCount++;
+        }else if (PainLog.Severity.WELL_CONTROLLED.getValue() == value) {
+            controlledCount++;
+        }
+    }
+
+    private void updateEatingCounts(int value) {
+        if (PainLog.Eating.NOT_EATING.getValue() == value) {
+            notEatingCount++;
+        } else if (PainLog.Eating.SOME_EATING.getValue() == value) {
+            eatingSomeCount++;
+        }else if (PainLog.Eating.EATING.getValue() == value) {
+            eatingOkCount++;
+        }
+    }
+
+    private void createPieChart() {
+
+        setLayout(PatientGraph.PIE_CHART);
+        pie.clear();
+        pie.setTitle("Percentage Pain Severity/Eating Ability");
+        painSevere = new Segment("Severe", severeCount);
+        painModerate = new Segment("Moderate", moderateCount);
+        painControlled = new Segment("Well-Controlled", controlledCount);
+
+        eatingNone = new Segment("Not Eating", notEatingCount);
+        eatingSome = new Segment("Some", eatingSomeCount);
+        eatingOK = new Segment("Eating OK", eatingOkCount);
+
+        EmbossMaskFilter emf = new EmbossMaskFilter(
+                new float[]{1, 1, 1}, 0.4f, 10, 8.2f);
+
+        sf1 = new SegmentFormatter();
+        sf1.configure(getActivity(), R.xml.pie_segment_formatter1);
+
+        sf1.getFillPaint().setMaskFilter(emf);
+
+        sf2 = new SegmentFormatter();
+        sf2.configure(getActivity(), R.xml.pie_segment_formatter2);
+
+        sf2.getFillPaint().setMaskFilter(emf);
+
+        sf3 = new SegmentFormatter();
+        sf3.configure(getActivity(), R.xml.pie_segment_formatter3);
+
+        sf3.getFillPaint().setMaskFilter(emf);
+
+        sf4 = new SegmentFormatter();
+        sf4.configure(getActivity(), R.xml.pie_segment_formatter4);
+
+        sf4.getFillPaint().setMaskFilter(emf);
+
+        // default to severity level pie chart
+        onPieChartGroup(getView().findViewById(R.id.pie_chart_severity));
+        ((RadioGroup) getView().findViewById(R.id.pie_chart_radio_group))
+                .check(R.id.pie_chart_severity);
+
+        pie.getBorderPaint().setColor(Color.TRANSPARENT);
+        pie.getBackgroundPaint().setColor(Color.TRANSPARENT);
+    }
+
+    @OnClick({ R.id.pie_chart_severity, R.id.pie_chart_eating,})
+    public void onPieChartGroup(View v) {
+        switch (v.getId()) {
+            case R.id.pie_chart_severity:
+                pie.removeSeries(eatingOK);
+                pie.removeSeries(eatingSome);
+                pie.removeSeries(eatingNone);
+                pie.addSeries(painSevere, sf1);
+                pie.addSeries(painModerate, sf2);
+                pie.addSeries(painControlled, sf3);
+                pie.redraw();
+                break;
+            case R.id.pie_chart_eating:
+                pie.removeSeries(painSevere);
+                pie.removeSeries(painModerate);
+                pie.removeSeries(painControlled);
+                pie.addSeries(eatingNone, sf1);
+                pie.addSeries(eatingSome, sf2);
+                pie.addSeries(eatingOK, sf3);
+                pie.redraw();
+                break;
+        }
+    }
+
+    private void setLayout(PatientGraph graph) {
+        switch(graph) {
+            case PIE_CHART:
+                xyChartLayout.setVisibility(View.GONE);
+                pieChartLayout.setVisibility(View.VISIBLE);
+                break;
+            default:
+                pieChartLayout.setVisibility(View.GONE);
+                xyChartLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+
     private void createLinePlot() {
+        setLayout(PatientGraph.LINE_PLOT);
+        simplePatientXYPlot.clear();
 
         simplePatientXYPlot.getGraphWidget().setTicksPerRangeLabel(2);
         simplePatientXYPlot.getGraphWidget().setTicksPerDomainLabel(2);

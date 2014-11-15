@@ -16,98 +16,143 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/sample_activity"
-    android:padding="8dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="8dp">
 
     <LinearLayout
+        android:id="@+id/graphics_button_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="center_horizontal"
         android:minWidth="50dp"
-        android:id="@+id/graphics_button_bar">
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/line_plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Line Graph"
             android:layout_weight="2"
             android:contentDescription="Line Graph"
-            android:minWidth="60dp" />
+            android:minWidth="60dp"
+            android:text="Line Graph" />
 
         <Button
             android:id="@+id/bar_plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bar Chart"
             android:layout_weight="2"
             android:contentDescription="Bar Chart"
-            android:minWidth="60dp" />
+            android:minWidth="60dp"
+            android:text="Bar Chart" />
 
         <Button
             android:id="@+id/fuzzy_plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fuzzy Chart"
             android:layout_weight="2"
             android:contentDescription="Fuzzy Chart"
-            android:minWidth="60dp" />
+            android:minWidth="60dp"
+            android:text="Fuzzy Chart" />
 
         <Button
             android:id="@+id/scatter_plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Scatter Chart"
             android:layout_weight="2"
             android:contentDescription="Scatter Chart"
-            android:minWidth="60dp" />
+            android:minWidth="60dp"
+            android:text="Scatter Chart" />
 
 
         <Button
             android:id="@+id/pie_plot"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Pie Chart"
             android:layout_weight="2"
             android:contentDescription="Pie"
-            android:minWidth="60dp" />
+            android:minWidth="60dp"
+            android:text="Pie Chart" />
 
     </LinearLayout>
 
-    <com.androidplot.xy.XYPlotZoomPan
-        android:id="@+id/patientGraphicsPlot"
-        androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
-        androidPlot.graphWidget.domainLabelPaint.textSize="@dimen/domain_tick_label_font_size"
-        androidPlot.graphWidget.domainOriginLabelPaint.textSize="@dimen/domain_tick_label_font_size"
-        androidPlot.graphWidget.marginBottom="25dp"
-        androidPlot.graphWidget.marginLeft="15dp"
-        androidPlot.graphWidget.marginRight="10dp"
-        androidPlot.graphWidget.marginTop="20dp"
-        androidPlot.graphWidget.rangeLabelPaint.textSize="@dimen/range_tick_label_font_size"
-        androidPlot.graphWidget.rangeOriginLabelPaint.textSize="@dimen/range_tick_label_font_size"
-        androidPlot.legendWidget.heightMetric.value="25dp"
-        androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
-        androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
-        androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
-        androidPlot.legendWidget.positionMetrics.xPositionMetric.value="0"
-        androidPlot.legendWidget.textPaint.textSize="@dimen/legend_text_font_size"
-        androidPlot.legendWidget.widthMetric.value="1"
-        androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
-        androidPlot.title="Patient Severity + Eating Ability"
-        androidPlot.titleWidget.labelPaint.textSize="16dp"
+    <LinearLayout
+        android:id="@+id/xy_chart_layout"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:padding="8dp"
-        android:contentDescription="No Patient Data Found"
-        android:clickable="true" />
+        android:orientation="vertical"
+        android:visibility="visible">
 
-    <Button
-        android:id="@+id/resetButton"
+        <com.androidplot.xy.XYPlotZoomPan
+            android:id="@+id/patientGraphicsPlot"
+            androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
+            androidPlot.graphWidget.domainLabelPaint.textSize="@dimen/domain_tick_label_font_size"
+            androidPlot.graphWidget.domainOriginLabelPaint.textSize="@dimen/domain_tick_label_font_size"
+            androidPlot.graphWidget.marginBottom="25dp"
+            androidPlot.graphWidget.marginLeft="15dp"
+            androidPlot.graphWidget.marginRight="10dp"
+            androidPlot.graphWidget.marginTop="20dp"
+            androidPlot.graphWidget.rangeLabelPaint.textSize="@dimen/range_tick_label_font_size"
+            androidPlot.graphWidget.rangeOriginLabelPaint.textSize="@dimen/range_tick_label_font_size"
+            androidPlot.legendWidget.heightMetric.value="25dp"
+            androidPlot.legendWidget.iconSizeMetrics.heightMetric.value="15dp"
+            androidPlot.legendWidget.iconSizeMetrics.widthMetric.value="15dp"
+            androidPlot.legendWidget.positionMetrics.anchor="right_bottom"
+            androidPlot.legendWidget.positionMetrics.xPositionMetric.value="0"
+            androidPlot.legendWidget.textPaint.textSize="@dimen/legend_text_font_size"
+            androidPlot.legendWidget.widthMetric.value="1"
+            androidPlot.rangeLabelWidget.labelPaint.textSize="@dimen/range_label_font_size"
+            androidPlot.title="No Plot Selected"
+            androidPlot.titleWidget.labelPaint.textSize="16dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:padding="8dp" />
+
+        <Button
+            android:id="@+id/resetButton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="Reset Chart"
+            android:text="Reset" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/pie_chart_layout"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="Reset"
-        android:contentDescription="Reset Chart"/>
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.androidplot.pie.PieChart
+            android:id="@+id/PatientPieChart"
+            androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" />
+
+        <RadioGroup
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal"
+            android:id="@+id/pie_chart_radio_group">
+
+            <RadioButton
+                android:id="@+id/pie_chart_severity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pain Severity" />
+
+            <RadioButton
+                android:id="@+id/pie_chart_eating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Eating Ability" />
+
+        </RadioGroup>
+
+    </LinearLayout>
 
 </LinearLayout>
