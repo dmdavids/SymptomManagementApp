@@ -79,7 +79,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Fragment frag =
-                getFragmentManager().findFragmentById(R.id.physician_patient_detail_container);
+                getFragmentManager().findFragmentById(R.id.patient_graphics_container);
         if(frag instanceof PatientMedicationFragment) {
             menu.removeItem(R.id.action_medication_list);
         } else if (frag instanceof HistoryLogFragment) {
@@ -101,7 +101,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
             PatientMedicationFragment fragment = new PatientMedicationFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
-                    .replace(R.id.physician_patient_detail_container, fragment)
+                    .replace(R.id.patient_graphics_container, fragment)
                     .addToBackStack(null)
                     .commit();
             return true;
@@ -112,7 +112,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
             HistoryLogFragment fragment = new HistoryLogFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
-                    .replace(R.id.physician_patient_detail_container, fragment)
+                    .replace(R.id.patient_graphics_container, fragment)
                     .addToBackStack(null)
                     .commit();
             return true;
@@ -128,7 +128,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
     public void onPrescriptionDelete(int position, Medication medication) {
         PatientMedicationFragment frag =
                 (PatientMedicationFragment) getFragmentManager()
-                        .findFragmentById(R.id.physician_patient_detail_container);
+                        .findFragmentById(R.id.patient_graphics_container);
         frag.deletePrescription(position);
     }
 
@@ -136,7 +136,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
     public boolean onRequestPrescriptionAdd() {
         MedicationListFragment fragment = new MedicationListFragment();
         getFragmentManager().beginTransaction()
-                .replace(R.id.physician_patient_detail_container, fragment)
+                .replace(R.id.patient_graphics_container, fragment)
                 .addToBackStack(null)
                 .commit();
         return true;
@@ -148,7 +148,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
         onBackPressed();
         PatientMedicationFragment frag =
                 (PatientMedicationFragment) getFragmentManager()
-                        .findFragmentById(R.id.physician_patient_detail_container);
+                        .findFragmentById(R.id.patient_graphics_container);
         frag.addPrescription(medication);
     }
 
@@ -193,7 +193,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
                     Log.d(LOG_TAG, "Medication change was successful.");
                     // if we are still in the medication list view then update the list
                     Fragment fragment = getFragmentManager()
-                            .findFragmentById(R.id.physician_patient_detail_container);
+                            .findFragmentById(R.id.patient_graphics_container);
                     if (fragment instanceof MedicationListFragment) {
                         ((MedicationListFragment) fragment).refreshAllMedications();
                     }

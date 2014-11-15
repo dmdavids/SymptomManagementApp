@@ -376,8 +376,8 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
                 Log.d(LOG_TAG, "All the alerts are turned off.");
                 return; // all alerts are turned off don't notify
             }
-            contentText = "There are " + Integer.toString(count)
-                    + "Severe Patients requiring attention.";
+            contentText =  Integer.toString(count)
+                    + " severe patients require attention.";
         }
 
         Log.d(LOG_TAG, "SENDING ALERT message : " + contentText);
