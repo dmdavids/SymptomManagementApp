@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.skywomantech.app.symptommanagement.R;
@@ -36,7 +37,7 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
     }
 
     public static class ViewHolder {
-        CheckBox isActive;
+        Switch isActive;
         TextView reminderName;
         TextView reminderSummary;
         ImageView deleteView;
@@ -63,24 +64,19 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
             holder.reminderHolder = new ReminderHolder();
             holder.reminderName = (TextView) view.findViewById(R.id.reminder_name);
             holder.reminderSummary = (TextView) view.findViewById(R.id.reminder_time_summary);
-            holder.isActive = (CheckBox) view.findViewById(R.id.reminder_turned_on);
+            holder.isActive = (Switch) view.findViewById(R.id.reminder_switch);
             holder.isActive.setChecked(reminders[position].isOn());
             // processing for when the checkbox is clicked
-            holder.isActive
-                    .setOnClickListener(new CompoundButton.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Reminder reminder = (Reminder) holder.isActive.getTag();
-                            if (holder.isActive.isChecked()) {
-                                reminder.setOn(true);
-                            } else {
-                                reminder.setOn(false);
-                            }
-                            Log.d(LOG_TAG, "REMINDER Clicked ... it is now "
-                                    + (reminder.isOn() ? "ON" : "OFF"));
-                            ((Callbacks) activity).onRequestReminderActivate(reminder);
-                        }
-                    });
+            holder.isActive.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    Reminder reminder = (Reminder) buttonView.getTag();
+                    reminder.setOn(isChecked);
+                    Log.d(LOG_TAG, "REMINDER Clicked ... it is now "
+                            + (reminder.isOn() ? "ON" : "OFF"));
+                    ((Callbacks) activity).onRequestReminderActivate(reminder);
+                }
+            });
 
             holder.deleteView = (ImageView) view.findViewById(R.id.reminder_delete_button);
             holder.deleteView.setOnClickListener(new View.OnClickListener() {
@@ -128,7 +124,6 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
         }
         holder.reminderSummary.setText(summary);
         holder.isActive.setChecked(reminders[position].isOn());
-
         return view;
     }
 }

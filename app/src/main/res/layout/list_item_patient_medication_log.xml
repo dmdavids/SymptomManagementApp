@@ -4,21 +4,19 @@
     android:orientation="horizontal"
     android:divider="@color/sm_blue"
     android:showDividers="beginning|none|middle|end"
+    android:paddingLeft="24dp"
     android:baselineAligned="false">
 
     <CheckBox
         android:id="@+id/patient_medication_check_answer"
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="7"
         android:contentDescription="Medication Check Answer"
         android:checked="false"
         android:padding="16dp"
-        android:gravity="left"
-        android:textColor="#333"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:paddingLeft="24dp"
-        android:paddingStart="36dp" />
+        android:gravity="center"
+        android:button="@android:drawable/checkbox_off_background" />
 
 
     <LinearLayout

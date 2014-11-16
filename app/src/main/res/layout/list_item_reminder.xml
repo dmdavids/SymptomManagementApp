@@ -12,13 +12,15 @@
         android:orientation="horizontal"
         android:layout_weight="1">
 
-        <CheckBox
-            android:id="@+id/reminder_turned_on"
-            android:layout_width="match_parent"
+        <Switch
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="6dip"
+            android:id="@+id/reminder_switch"
             android:checked="false"
-            android:textColor="#333"/>
+            android:layout_gravity="left"
+            android:layout_marginEnd="12dp"
+            android:background="@drawable/reminder_switch"/>
+
 
         <LinearLayout
             android:layout_width="match_parent"
