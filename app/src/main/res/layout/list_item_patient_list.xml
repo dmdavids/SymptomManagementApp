@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:descendantFocusability="blocksDescendants"
+    android:showDividers="beginning|none|middle|end"
+    android:divider="@color/sm_blue"
     android:orientation="horizontal">
 
     <LinearLayout
@@ -35,6 +35,8 @@
         android:layout_weight="4"
         android:contentDescription="Alert Info"
         android:src="@drawable/ic_action_red_pain_log"
-        android:visibility="invisible" />
+        android:background="@null"
+        android:visibility="invisible"
+        android:padding="6dp" />
 
 </LinearLayout>

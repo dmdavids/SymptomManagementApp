@@ -1,74 +1,77 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent">
 
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/notes_image_page"
-    android:clickable="true">
-
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/notes_image_page"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Symptom Notes"
-        android:id="@+id/symptom_note_header"
-        android:layout_gravity="center_horizontal"
-        android:padding="16dp"
-        />
+        android:clickable="true"
+        android:orientation="vertical">
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:inputType="textMultiLine"
-        android:ems="10"
-        android:lines="3"
-        android:id="@+id/symptom_note"
-        android:gravity="left|top"
-        android:layout_gravity="center_horizontal"
-        android:hint="Enter Notes Here"
-        android:padding="24dp"
-        android:background="#fffff7de" />
+        <TextView
+            android:id="@+id/symptom_note_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="24dp"
+            android:text="Notes"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <ImageButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/status_imageButton"
-        android:layout_gravity="center_horizontal"
-        android:src="@android:drawable/ic_menu_camera"
-        android:layout_margin="16dp"
-        android:padding="8dp" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/camera_picture_view"
-        android:layout_gravity="center_horizontal"
-         />
+            <EditText
+                android:id="@+id/symptom_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/light_grey"
+                android:ems="10"
+                android:gravity="left|top"
+                android:hint="Enter Notes Here"
+                android:inputType="textMultiLine"
+                android:lines="3"
+                android:padding="24dp"
+                android:scrollbars="vertical"
+                android:minWidth="400dp"/>
+        </FrameLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="No Image for this Note"
-        android:id="@+id/image_status"
-        android:layout_gravity="center_horizontal"
-        android:padding="8dp" />
+        <ImageButton
+            android:id="@+id/status_imageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="8dp"
+            android:padding="24dp"
+            android:src="@android:drawable/ic_menu_camera" />
 
+        <ImageView
+            android:id="@+id/camera_picture_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal" />
 
+        <TextView
+            android:id="@+id/image_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:padding="8dp"
+            android:text=""
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save"
-        android:id="@+id/status_save_button"
-        android:layout_gravity="center_horizontal"
-        android:padding="4dp"
-        android:layout_margin="8dp"/>
+        <Button
+            android:id="@+id/status_save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="8dp"
+            android:minWidth="400dp"
+            android:padding="4dp"
+            android:text="Save" />
 
-</LinearLayout>
+    </LinearLayout>
 </ScrollView>

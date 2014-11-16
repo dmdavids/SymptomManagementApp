@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:padding="8dp"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/grey">
 
     <LinearLayout
         android:id="@+id/patient_name_layout"
@@ -14,15 +15,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Patient Name : "
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:text="Patient : "
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
             android:id="@+id/physician_patient_detail_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Patient Name"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceLarge" />
     </LinearLayout>
 
     <LinearLayout

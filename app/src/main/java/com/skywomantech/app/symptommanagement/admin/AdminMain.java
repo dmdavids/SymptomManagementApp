@@ -37,10 +37,11 @@ public class AdminMain extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            SymptomManagementSyncAdapter.syncImmediately(this);
-            return true;
-        } else if (id == R.id.action_logout) {
+//        if (id == R.id.action_refresh) {
+//            SymptomManagementSyncAdapter.syncImmediately(this);
+//            return true;
+//        } else
+        if (id == R.id.action_logout) {
             LoginActivity.restartLoginActivity(this);
         }
         return super.onOptionsItemSelected(item);

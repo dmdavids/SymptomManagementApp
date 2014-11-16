@@ -4,7 +4,10 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.EmbossMaskFilter;
+import android.graphics.LinearGradient;
+import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.Shader;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,7 +23,10 @@ import com.androidplot.pie.SegmentFormatter;
 import com.androidplot.xy.BoundaryMode;
 import com.androidplot.xy.LineAndPointFormatter;
 import com.androidplot.xy.SimpleXYSeries;
+import com.androidplot.xy.StepFormatter;
 import com.androidplot.xy.XYPlotZoomPan;
+import com.androidplot.xy.XYSeries;
+import com.androidplot.xy.XYStepMode;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.MedicationLog;
 import com.skywomantech.app.symptommanagement.data.PainLog;
@@ -36,6 +42,7 @@ import java.text.Format;
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -164,7 +171,7 @@ public class PatientGraphicsFragment extends Fragment {
     public void onClickBarPlot(View view) {
         Log.d(LOG_TAG, "Bar Chart Clicked");
         if (patientReadyForGraphing()) {
-            createLinePlot();
+            createBarChart();
         }
     }
 
@@ -255,6 +262,131 @@ public class PatientGraphicsFragment extends Fragment {
         Log.d(LOG_TAG, "Med Log Points : " + medicationPoints.toString());
     }
 
+    private void createBarChart() {
+
+        setLayout(PatientGraph.BAR_CHART);
+        simplePatientXYPlot.clear();
+
+        int count = 0;
+        if (severityPoints != null) count++;
+        if (eatingPoints != null) count++;
+        if (count == 0) {
+            Log.d(LOG_TAG, "NO DATA to work with on the graphing!");
+            simplePatientXYPlot.redraw();
+            return;
+        }
+
+        simplePatientXYPlot.setTitle("HTTP Server State (15  Sec)");
+        simplePatientXYPlot.getGraphWidget().getGridBackgroundPaint().setColor(Color.WHITE);
+//        simplePatientXYPlot.getGraphWidget().getRangeGridLinePaint().setColor(Color.BLACK);
+//        simplePatientXYPlot.getGraphWidget().getRangeGridLinePaint().setPathEffect(new DashPathEffect(new float[]{1,1}, 1));
+        simplePatientXYPlot.getGraphWidget().getDomainGridLinePaint().setColor(Color.BLACK);
+        simplePatientXYPlot.getGraphWidget().getDomainGridLinePaint().setPathEffect(new DashPathEffect(new float[]{1, 1}, 1));
+        simplePatientXYPlot.getGraphWidget().getDomainOriginLinePaint().setColor(Color.BLACK);
+        simplePatientXYPlot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.BLACK);
+        simplePatientXYPlot.getGraphWidget().setMarginRight(5);
+
+        simplePatientXYPlot.setBorderStyle(Plot.BorderStyle.SQUARE, null, null);
+        simplePatientXYPlot.getBorderPaint().setStrokeWidth(1);
+        simplePatientXYPlot.getBorderPaint().setAntiAlias(false);
+        simplePatientXYPlot.getBorderPaint().setColor(Color.WHITE);
+
+        Log.d(LOG_TAG, "Creating data to plot");
+        if (severityPoints != null) {
+            severitySeries = new SimpleXYSeries("Severity Level");
+            Collections.sort(severityPoints, new TimePointSorter());
+            for (SeverityPlotPoint s : severityPoints) {
+                severitySeries.addLast(s.getTimeValue(), s.getSeverityValue());
+            }
+        }
+        if (eatingPoints != null) {
+            eatingSeries = new SimpleXYSeries("Eating Ability");
+            Collections.sort(eatingPoints, new TimePointSorter());
+            for (EatingPlotPoint eat : eatingPoints) {
+                eatingSeries.addLast(eat.getTimeValue(), eat.getEatingValue());
+            }
+        }
+
+
+//        // y-vals to plot:
+//        Number[] series1Numbers = {1, 2, 3, 4, 2, 3, 4, 2, 2, 2, 3, 4, 2, 3, 2, 2};
+//
+//        // create our series from our array
+//        XYSeries series2 = new SimpleXYSeries(
+//                Arrays.asList(series1Numbers),
+//                SimpleXYSeries.ArrayFormat.Y_VALS_ONLY,
+//                "Thread #1");
+//
+        severitySeries.setTitle("Severity");
+
+        simplePatientXYPlot.setBorderStyle(Plot.BorderStyle.SQUARE, null, null);
+        simplePatientXYPlot.getBorderPaint().setStrokeWidth(1);
+        simplePatientXYPlot.getBorderPaint().setAntiAlias(false);
+        simplePatientXYPlot.getBorderPaint().setColor(Color.WHITE);
+
+        // Create a formatter to use for drawing a series using LineAndPointRenderer:
+        LineAndPointFormatter series1Format = new LineAndPointFormatter(
+                Color.rgb(0, 100, 0),                   // line color
+                Color.rgb(0, 100, 0),                   // point color
+                Color.rgb(100, 200, 0), null);          // fill color
+
+        // setup our line fill paint to be a slightly transparent gradient:
+        Paint lineFill = new Paint();
+        lineFill.setAlpha(200);
+        lineFill.setShader(new LinearGradient(0, 0, 0, 250, Color.WHITE, Color.BLUE, Shader.TileMode.MIRROR));
+
+        StepFormatter stepFormatter  = new StepFormatter(Color.rgb(0, 0,0), Color.BLUE);
+        stepFormatter.getLinePaint().setStrokeWidth(1);
+
+        stepFormatter.getLinePaint().setAntiAlias(false);
+        stepFormatter.setFillPaint(lineFill);
+        simplePatientXYPlot.addSeries(severitySeries, stepFormatter);
+
+        // adjust the domain/range ticks to make more sense; label per tick for range and label per 5 ticks domain:
+        simplePatientXYPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 1);
+        simplePatientXYPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 1);
+        simplePatientXYPlot.setTicksPerRangeLabel(1);
+        simplePatientXYPlot.setTicksPerDomainLabel(5);
+
+        // customize our domain/range labels
+        simplePatientXYPlot.setDomainLabel("Time (Secs)");
+        simplePatientXYPlot.setRangeLabel("Server State");
+
+        // get rid of decimal points in our domain labels:
+        simplePatientXYPlot.setDomainValueFormat(new DecimalFormat("0"));
+
+        // create a custom formatter to draw our state names as range tick labels:
+        simplePatientXYPlot.setRangeValueFormat(new Format() {
+            @Override
+            public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+                Number num = (Number) obj;
+                switch(num.intValue()) {
+                    case 1:
+                        toAppendTo.append("Init");
+                        break;
+                    case 2:
+                        toAppendTo.append("Idle");
+                        break;
+                    case 3:
+                        toAppendTo.append("Recv");
+                        break;
+                    case 4:
+                        toAppendTo.append("Send");
+                        break;
+                    default:
+                        toAppendTo.append("Unknown");
+                        break;
+                }
+                return toAppendTo;
+            }
+
+            @Override
+            public Object parseObject(String source, ParsePosition pos) {
+                return null;
+            }
+        });
+        simplePatientXYPlot.redraw();
+    }
 
     private void createScatterPlot() {
 
@@ -355,7 +487,6 @@ public class PatientGraphicsFragment extends Fragment {
                 simplePatientXYPlot.getCalculatedMaxY().floatValue());
     }
 
-
     private void createPieChart() {
 
         setLayout(PatientGraph.PIE_CHART);
@@ -435,8 +566,9 @@ public class PatientGraphicsFragment extends Fragment {
                 pieChartLayout.setVisibility(View.GONE);
                 xyChartLayout.setVisibility(View.VISIBLE);
         }
+        simplePatientXYPlot.clear();
+        pie.clear();
     }
-
 
     private void createLinePlot() {
         setLayout(PatientGraph.LINE_PLOT);

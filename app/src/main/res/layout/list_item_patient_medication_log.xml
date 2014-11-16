@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:divider="#ff392fff"
+    android:divider="@color/sm_blue"
     android:showDividers="beginning|none|middle|end"
     android:baselineAligned="false">
 
@@ -17,7 +15,10 @@
         android:checked="false"
         android:padding="16dp"
         android:gravity="left"
-        style="@style/AppBaseTheme" />
+        android:textColor="#333"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:paddingLeft="24dp"
+        android:paddingStart="36dp" />
 
 
     <LinearLayout
@@ -32,17 +33,17 @@
             android:id="@+id/patient_medication_check_question"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Did you  take OxyContin?"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="#ff9829ff" />
+            android:text="Did you take OxyContin?"
+            android:textColor="#333"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
             android:id="@+id/patient_medication_check_summary"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="Taken at 2:00 PM"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textColor="#ffb714ff" />
+            android:textColor="#333"
+            android:textAppearance="?android:attr/textAppearanceSmall"/>
     </LinearLayout>
 
 

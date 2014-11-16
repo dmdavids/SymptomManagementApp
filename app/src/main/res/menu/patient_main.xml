@@ -1,22 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:id="@+id/action_settings"
+        android:title="Reminders"
+        android:orderInCategory="10"
+        android:showAsAction="ifRoom|withText"
+        android:icon="@drawable/ic_action_reminder"/>
+
     <item
         android:id="@+id/action_patient_history_log"
-        android:orderInCategory="10"
+        android:orderInCategory="20"
         android:showAsAction="ifRoom|withText"
         android:title="History"
         android:icon="@drawable/ic_action_status_log"/>
 
-    <item android:id="@+id/action_refresh"
-        android:title="@string/action_refresh"
-        android:orderInCategory="80"
-        android:showAsAction="never" />
-    <item android:id="@+id/action_settings"
-        android:title="Reminders"
-        android:orderInCategory="90"
-        android:showAsAction="never"/>
-
     <item android:id="@+id/patient_logout"
         android:title="Logout"
-        android:orderInCategory="200"
+        android:orderInCategory="100"
         android:showAsAction="never" />
 </menu>

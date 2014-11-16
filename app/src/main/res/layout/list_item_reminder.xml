@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:showDividers="beginning|none|middle|end"
+    android:divider="@color/sm_blue"
     android:padding="18dp">
 
     <LinearLayout
@@ -16,7 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="6dip"
-            android:checked="false" />
+            android:checked="false"
+            android:textColor="#333"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,8 +30,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Dinner Alarm"
+                android:textColor="#333"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#ff4227ff"
                 android:minWidth="350dp" />
 
             <TextView
@@ -37,8 +39,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="6:00 PM"
+                android:textColor="#333"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="#ff2a3fff"
                 android:minWidth="350dp"/>
         </LinearLayout>
 
@@ -55,14 +57,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_menu_edit"
-            android:layout_weight="1"/>
+            android:background="@null"
+            android:layout_weight="1"
+            android:paddingEnd="4dp" />
 
         <ImageButton
             android:id="@+id/reminder_delete_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_menu_delete"
-            android:layout_weight="1"/>
+            android:background="@null"
+            android:layout_weight="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="4dp" />
     </LinearLayout>
 
 </LinearLayout>

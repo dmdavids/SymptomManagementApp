@@ -137,19 +137,24 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_horizontal"
+
             android:id="@+id/pie_chart_radio_group">
 
             <RadioButton
                 android:id="@+id/pie_chart_severity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pain Severity" />
+                android:text="Pain Severity"
+                android:textSize="24dp"
+                android:textStyle="normal" />
 
             <RadioButton
                 android:id="@+id/pie_chart_eating"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Eating Ability" />
+                android:text="Eating Ability"
+                android:textSize="24dp"
+                android:textStyle="normal" />
 
         </RadioGroup>
 

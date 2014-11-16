@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config
-        fillPaint.color="#00FF00"
+        fillPaint.color="@color/sm_yellow"
         labelPaint.textSize="@dimen/pie_segment_label_font_size"/>

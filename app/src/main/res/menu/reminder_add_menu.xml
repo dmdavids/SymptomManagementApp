@@ -3,6 +3,6 @@
         android:id="@+id/action_add"
         android:orderInCategory="0"
         android:title="Add"
-        android:icon="@android:drawable/ic_menu_add"
+        android:icon="@drawable/ic_action_add_reminder"
         android:showAsAction="ifRoom|withText" />
 </menu>

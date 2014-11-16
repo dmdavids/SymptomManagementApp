@@ -95,9 +95,9 @@ public class PatientMainActivity extends Activity
 //        } else if (id == R.id.action_prefs) {
 //            startActivity(new Intent(this, SetPreferenceActivity.class));
 //            return true;
-        } else if (id == R.id.action_refresh) {
-            SymptomManagementSyncAdapter.syncImmediately(this);
-            return true;
+//        } else if (id == R.id.action_refresh) {
+//            SymptomManagementSyncAdapter.syncImmediately(this);
+//            return true;
         } else if (id == R.id.patient_logout) {
             LoginActivity.restartLoginActivity(this);
         } else if (id == R.id.action_patient_history_log) {

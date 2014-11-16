@@ -9,37 +9,45 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="24dp">
 
     <TextView
         android:id="@+id/severity_heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="How bad is your mouth pain/sore throat?"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_centerHorizontal="true"
+        android:minWidth="400dp"/>
 
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/severity_heading"
-        android:id="@+id/severity_radio_group">
+        android:id="@+id/severity_radio_group"
+        android:layout_centerHorizontal="true"
+        android:minWidth="400dp">
 
             <RadioButton
                 android:id="@+id/well_controlled_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Well-Controlled" />
 
             <RadioButton
                 android:id="@+id/moderate_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Moderate" />
 
             <RadioButton
                 android:id="@+id/severe_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Severe" />
 
     </RadioGroup>
@@ -51,31 +59,38 @@
         android:text="Does your pain stop you from eating or drinking?"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_below="@id/severity_radio_group"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="24dp"
+        android:layout_centerHorizontal="true"
+        android:minWidth="400dp"/>
 
     <RadioGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/eating_heading"
-        android:id="@+id/eating_radio_group">
+        android:id="@+id/eating_radio_group"
+        android:layout_centerHorizontal="true"
+        android:minWidth="400dp">
 
 
             <RadioButton
                 android:id="@+id/eating_ok_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="No" />
 
             <RadioButton
                 android:id="@+id/eating_some_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Some" />
 
             <RadioButton
                 android:id="@+id/not_eating_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="I cannot eat" />
 
     </RadioGroup>
@@ -87,7 +102,8 @@
         android:id="@+id/pain_log_done_button"
         android:layout_below="@+id/eating_radio_group"
         android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:minWidth="400dp"/>
         </RelativeLayout>
 
 </ScrollView>
