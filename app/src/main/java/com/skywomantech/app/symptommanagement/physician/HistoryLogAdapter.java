@@ -62,9 +62,9 @@ public class HistoryLogAdapter extends ArrayAdapter<HistoryLog> {
     }
 
     public static int getImageResourceForLogType(HistoryLog.LogType type) {
-        if (type == HistoryLog.LogType.PAIN_LOG) return R.drawable.ic_action_red_pain_log;
-        if (type == HistoryLog.LogType.MED_LOG) return R.drawable.ic_action_healthcare_pill_icon;
-        if (type == HistoryLog.LogType.STATUS_LOG) return R.drawable.ic_action_status_log;
-        return R.drawable.ic_action_red_border_pain_log;
+        if (type == HistoryLog.LogType.PAIN_LOG) return R.drawable.ic_action_pain_history;
+        if (type == HistoryLog.LogType.MED_LOG) return R.drawable.ic_action_green_pill;
+        if (type == HistoryLog.LogType.STATUS_LOG) return R.drawable.ic_action_brown_log;
+        return R.drawable.ic_action_pain_history;
     }
 }

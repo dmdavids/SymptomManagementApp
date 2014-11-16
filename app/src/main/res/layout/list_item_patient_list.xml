@@ -4,6 +4,8 @@
     android:descendantFocusability="blocksDescendants"
     android:showDividers="beginning|none|middle|end"
     android:divider="@color/sm_blue"
+    android:id="@+id/patient_list_item"
+    style="?android:buttonBarStyle"
     android:orientation="horizontal">
 
     <LinearLayout
@@ -28,15 +30,17 @@
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
 
+
     <ImageButton
         android:id="@+id/patient_list_alert_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="4"
         android:contentDescription="Alert Info"
-        android:src="@drawable/ic_action_red_pain_log"
+        android:src="@drawable/ic_action_pain_sparkle"
         android:background="@null"
         android:visibility="invisible"
+        style="?android:attr/borderlessButtonStyle"
         android:padding="6dp" />
 
 </LinearLayout>

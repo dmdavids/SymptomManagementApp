@@ -3,6 +3,7 @@
     android:layout_height="match_parent"
     android:showDividers="beginning|none|middle|end"
     android:divider="@color/sm_blue"
+    style="?android:buttonBarStyle"
     android:orientation="horizontal">
 
     <TextView
@@ -23,6 +24,7 @@
         android:contentDescription="Delete"
         android:padding="16dp"
         android:background="@null"
+        style="?android:attr/borderlessButtonStyle"
         android:src="@android:drawable/ic_menu_delete" />
 
 </LinearLayout>

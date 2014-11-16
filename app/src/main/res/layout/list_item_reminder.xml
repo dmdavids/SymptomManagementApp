@@ -50,7 +50,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="3"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        style="?android:buttonBarStyle">
 
         <ImageButton
             android:id="@+id/reminder_edit_button"
@@ -59,7 +60,8 @@
             android:src="@android:drawable/ic_menu_edit"
             android:background="@null"
             android:layout_weight="1"
-            android:paddingEnd="4dp" />
+            style="?android:attr/borderlessButtonStyle"
+            android:paddingEnd="16dp" />
 
         <ImageButton
             android:id="@+id/reminder_delete_button"
@@ -69,6 +71,7 @@
             android:background="@null"
             android:layout_weight="1"
             android:paddingStart="8dp"
+            style="?android:attr/borderlessButtonStyle"
             android:paddingEnd="4dp" />
     </LinearLayout>
 

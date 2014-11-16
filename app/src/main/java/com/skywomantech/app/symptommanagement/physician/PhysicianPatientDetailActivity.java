@@ -24,6 +24,7 @@ import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.Physician;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
 import com.skywomantech.app.symptommanagement.patient.PatientMainActivity;
+import com.skywomantech.app.symptommanagement.patient.ReminderFragment;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.HashSet;
@@ -52,8 +53,8 @@ public class PhysicianPatientDetailActivity extends Activity implements
 
         if (savedInstanceState == null) {
             Bundle arguments = new Bundle();
-            mPhysicianId =  getIntent().getStringExtra(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY);
-            mPatientId =  getIntent().getStringExtra(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+            mPhysicianId = getIntent().getStringExtra(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY);
+            mPatientId = getIntent().getStringExtra(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
             arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
             arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
             PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
@@ -80,7 +81,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
     public boolean onPrepareOptionsMenu(Menu menu) {
         Fragment frag =
                 getFragmentManager().findFragmentById(R.id.patient_graphics_container);
-        if(frag instanceof PatientMedicationFragment) {
+        if (frag instanceof PatientMedicationFragment) {
             menu.removeItem(R.id.action_medication_list);
         } else if (frag instanceof HistoryLogFragment) {
             menu.removeItem(R.id.action_history_log);
@@ -108,7 +109,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
         } else if (id == R.id.action_history_log) {
             Bundle arguments = new Bundle();
             arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
-            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY,mPhysicianId);
+            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
             HistoryLogFragment fragment = new HistoryLogFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -125,11 +126,29 @@ public class PhysicianPatientDetailActivity extends Activity implements
     }
 
     @Override
-    public void onPrescriptionDelete(int position, Medication medication) {
-        PatientMedicationFragment frag =
-                (PatientMedicationFragment) getFragmentManager()
-                        .findFragmentById(R.id.patient_graphics_container);
-        frag.deletePrescription(position);
+    public void onPrescriptionDelete(final int position, Medication medication) {
+
+        AlertDialog alert = new AlertDialog.Builder(this)
+                .setTitle("Confirm Delete")
+                .setMessage("Do you want to delete this prescription?")
+                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        PatientMedicationFragment frag =
+                                (PatientMedicationFragment) getFragmentManager()
+                                        .findFragmentById(R.id.patient_graphics_container);
+                        frag.deletePrescription(position);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing
+                        dialog.dismiss();
+                    }
+                }).create();
+        alert.show();
     }
 
     @Override
@@ -172,13 +191,13 @@ public class PhysicianPatientDetailActivity extends Activity implements
         if (medication.getName() == null || medication.getName().isEmpty()) return;
 
         // we have a name so now we can get some work done
-        final SymptomManagementApi svc =  SymptomManagementService.getService();
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Medication>() {
 
                 @Override
                 public Medication call() throws Exception {
-                    if (medication.getId() == null  || medication.getId().isEmpty()) {
+                    if (medication.getId() == null || medication.getId().isEmpty()) {
                         Log.d(LOG_TAG, "adding mMedication :" + medication.toDebugString());
                         return svc.addMedication(medication);
                     } else {
@@ -248,8 +267,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
             Toast.makeText(getApplicationContext(),
                     "Saved Patient Contacted Status.",
                     Toast.LENGTH_LONG).show();
-        }
-        else {
+        } else {
             Toast.makeText(getApplicationContext(),
                     "Unable to Save Patient Contacted Status.",
                     Toast.LENGTH_LONG).show();
@@ -258,40 +276,40 @@ public class PhysicianPatientDetailActivity extends Activity implements
 
     @Override
     public void onPatientFound(Patient patient) {
-        if (patient == null)  return;
+        if (patient == null) return;
         Log.d(LOG_TAG, "Current Selected Patient is : " + patient.toString());
         mPatient = patient;
     }
 
     private void savePhysician(final Physician physician) {
-            if (physician == null) return;
-            Log.d(LOG_TAG, "Saving Physician ID Key is : " + physician.getId());
+        if (physician == null) return;
+        Log.d(LOG_TAG, "Saving Physician ID Key is : " + physician.getId());
 
-            final SymptomManagementApi svc = SymptomManagementService.getService();
-            if (svc != null) {
-                CallableTask.invoke(new Callable<Physician>() {
+        final SymptomManagementApi svc = SymptomManagementService.getService();
+        if (svc != null) {
+            CallableTask.invoke(new Callable<Physician>() {
 
-                    @Override
-                    public Physician call() throws Exception {
-                        Log.d(LOG_TAG, "Saving physician with status notes : " + physician.getId());
-                        return svc.updatePhysician(physician.getId(), physician);
-                    }
-                }, new TaskCallback<Physician>() {
+                @Override
+                public Physician call() throws Exception {
+                    Log.d(LOG_TAG, "Saving physician with status notes : " + physician.getId());
+                    return svc.updatePhysician(physician.getId(), physician);
+                }
+            }, new TaskCallback<Physician>() {
 
-                    @Override
-                    public void success(Physician result) {
-                        Log.d(LOG_TAG, "Updated Physician :" + result.toString());
-                        mPhysician = result;
-                    }
+                @Override
+                public void success(Physician result) {
+                    Log.d(LOG_TAG, "Updated Physician :" + result.toString());
+                    mPhysician = result;
+                }
 
-                    @Override
-                    public void error(Exception e) {
-                        Log.d(LOG_TAG,
-                                "Unable to update status logs for the Physician. " +
-                                        "Please check Internet connection.");
-                    }
-                });
-            }
+                @Override
+                public void error(Exception e) {
+                    Log.d(LOG_TAG,
+                            "Unable to update status logs for the Physician. " +
+                                    "Please check Internet connection.");
+                }
+            });
+        }
     }
 
     private static synchronized void getPhysician(final String id) {

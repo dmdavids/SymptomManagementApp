@@ -4,6 +4,7 @@
     android:orientation="horizontal"
     android:divider="@color/sm_blue"
     android:showDividers="beginning|none|middle|end"
+    style="?android:buttonBarStyle"
     android:baselineAligned="false">
 
     <ImageView
@@ -12,6 +13,7 @@
         android:id="@+id/log_type_icon"
         android:layout_weight="7"
         android:padding="16dp"
+        style="?android:attr/borderlessButtonStyle"
         android:gravity="left" />
 
     <LinearLayout
@@ -36,4 +38,5 @@
             android:text="Logged On 2:00 PM Monday June 26, 2014"
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </LinearLayout>
+
 </LinearLayout>

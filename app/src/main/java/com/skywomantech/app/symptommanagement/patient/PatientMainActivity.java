@@ -2,9 +2,11 @@ package com.skywomantech.app.symptommanagement.patient;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -70,7 +72,7 @@ public class PatientMainActivity extends Activity
     public boolean onPrepareOptionsMenu(Menu menu) {
         Fragment hist_frag = getFragmentManager().findFragmentByTag("history_log_frag");
         Fragment rem_frag = getFragmentManager().findFragmentByTag("reminder_frag");
-        if (hist_frag != null  || rem_frag != null) {
+        if (hist_frag != null || rem_frag != null) {
             menu.removeItem(R.id.action_patient_history_log);
         }
         return super.onPrepareOptionsMenu(menu);
@@ -109,7 +111,7 @@ public class PatientMainActivity extends Activity
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
                     .replace(R.id.patient_main_container, fragment, "history_log_frag")
-                    //.addToBackStack(null)
+                            //.addToBackStack(null)
                     .commit();
             return true;
         }
@@ -238,10 +240,27 @@ public class PatientMainActivity extends Activity
     }
 
     @Override
-    public void onReminderDelete(int position, Reminder reminder) {
-        ReminderFragment frag =
-                (ReminderFragment) getFragmentManager().findFragmentById(R.id.patient_main_container);
-        frag.deleteReminder(position);
+    public void onReminderDelete(final int position, Reminder reminder) {
+        AlertDialog alert = new AlertDialog.Builder(this)
+                .setTitle("Confirm Delete")
+                .setMessage("Do you want to delete this reminder?")
+                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ReminderFragment frag =
+                                (ReminderFragment) getFragmentManager().findFragmentById(R.id.patient_main_container);
+                        frag.deleteReminder(position);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing
+                        dialog.dismiss();
+                    }
+                }).create();
+        alert.show();
     }
 
     @Override

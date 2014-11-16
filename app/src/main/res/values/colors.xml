@@ -12,6 +12,7 @@
     <color name="sm_yellow">#dbd43d</color>
     <color name="sm_red">#e8594a</color>
     <color name="sm_green">#358e43</color>
+    <color name="sm_pale_yellow">#FFF7A5</color>
 
     <color name="sm_dark_blue">#1a42f5</color>
     <color name="old_sm_blue">#64bdff</color>

@@ -21,56 +21,74 @@
 
     <LinearLayout
         android:id="@+id/graphics_button_bar"
-        android:layout_width="wrap_content"
+        android:background="@color/light_grey"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:minWidth="50dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        style="?android:buttonBarStyle"
+        android:padding="12dp">
 
-        <Button
+        <ImageButton
             android:id="@+id/line_plot"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:contentDescription="Line Graph"
+            android:src="@drawable/ic_action_line_chart"
             android:minWidth="60dp"
+            android:background="@null"
             android:text="Line Graph" />
 
-        <Button
+        <ImageButton
             android:id="@+id/bar_plot"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:contentDescription="Bar Chart"
+            android:src="@drawable/ic_action_bar_chart"
             android:minWidth="60dp"
+            android:background="@null"
             android:text="Bar Chart" />
 
-        <Button
+        <ImageButton
             android:id="@+id/fuzzy_plot"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:contentDescription="Fuzzy Chart"
+            android:src="@drawable/ic_action_gradient_chart"
             android:minWidth="60dp"
+            android:background="@null"
             android:text="Fuzzy Chart" />
 
-        <Button
+        <ImageButton
             android:id="@+id/scatter_plot"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:contentDescription="Scatter Chart"
+            android:src="@drawable/ic_action_scatter_plot"
             android:minWidth="60dp"
+            android:background="@null"
             android:text="Scatter Chart" />
 
 
-        <Button
+        <ImageButton
             android:id="@+id/pie_plot"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:contentDescription="Pie"
+            android:src="@drawable/ic_action_pie_chart"
             android:minWidth="60dp"
+            android:background="@null"
             android:text="Pie Chart" />
 
     </LinearLayout>

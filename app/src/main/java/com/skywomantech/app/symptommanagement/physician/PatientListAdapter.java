@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.skywomantech.app.symptommanagement.R;
@@ -23,11 +24,13 @@ public class PatientListAdapter extends ArrayAdapter<Patient> {
         public final ImageView alertIcon;
         public final TextView patientName;
         public final TextView lastLog;
+        public final LinearLayout thisLayout;
 
         public ViewHolder(View view) {
             alertIcon = (ImageView) view.findViewById(R.id.patient_list_alert_icon);
             patientName = (TextView) view.findViewById(R.id.patient_list_name);
             lastLog = (TextView) view.findViewById(R.id.patient_list_last_log);
+            thisLayout = (LinearLayout) view.findViewById(R.id.patient_list_item);
         }
         Patient patient;
     }
@@ -53,6 +56,10 @@ public class PatientListAdapter extends ArrayAdapter<Patient> {
             viewHolder.alertIcon
                     .setVisibility(severity > Alert.PAIN_SEVERITY_LEVEL_0
                             ? ImageView.VISIBLE : ImageView.INVISIBLE);
+            int bgColor = (severity > Alert.PAIN_SEVERITY_LEVEL_0
+                    ? getContext().getResources().getColor(R.color.sm_pale_yellow)
+                    : getContext().getResources().getColor(R.color.white));
+            viewHolder.thisLayout.setBackgroundColor(bgColor);
             rowView.setTag(viewHolder);
             view = rowView;
         } else {
@@ -66,6 +73,10 @@ public class PatientListAdapter extends ArrayAdapter<Patient> {
         int severity = SymptomManagementSyncAdapter.findPatientAlertSeverityLevel(patients[position]);
         holder.alertIcon.setVisibility(severity > Alert.PAIN_SEVERITY_LEVEL_0
                 ? ImageView.VISIBLE : ImageView.INVISIBLE);
+        int bgColor = (severity > Alert.PAIN_SEVERITY_LEVEL_0
+                ? getContext().getResources().getColor(R.color.sm_pale_yellow)
+                : getContext().getResources().getColor(R.color.white));
+        holder.thisLayout.setBackgroundColor(bgColor);
         return view;
     }
 }
