@@ -7,13 +7,36 @@
     <color name="grey_700">#646464</color>
     <color name="black">#000000</color>
 
-    <color name="sm_dark_gold">#ad751f</color>
-    <color name="sm_blue">#2370a8</color>
-    <color name="sm_yellow">#dbd43d</color>
-    <color name="sm_red">#e8594a</color>
-    <color name="sm_green">#358e43</color>
-    <color name="sm_pale_yellow">#FFF7A5</color>
+    <color name="sm_ok">#7FC6FA</color>
+    <color name="sm_moderate">#5F94BB</color>
+    <color name="sm_severe">#19527A</color>
 
+    <color name="sm_bright_red">#c00000</color>
+
+    <color name="sm_cream_white">#FEFEFF</color>
+    <color name="sm_grey_light">#CBCBCC</color>
+    <color name="sm_grey_purple">#B2B3FF</color>
+    <color name="sm_grey_medium_purple">#8587BF</color>
+    <color name="sm_grey_dark_blue">#595A7F</color>
+
+    <color name="sm_grey_dark">#7F7F7F</color>
+    <color name="sm_grey_red">#CBB7B7</color>
+    <color name="sm_grey_green">#A3CBAE</color>
+
+    <color name="sm_dark_gold">#ad751f</color>
+    <color name="sm_green_yellow">#FFF7A5</color>
+    <color name="sm_red">#e8594a</color>
+    <color name="sm_green">#6c9926</color>
+    <color name="sm_light_green">#A8CC70</color>
+    <color name="sm_pale_yellow">#FFF7A5</color>
+    <color name="sm_pale_blue">#708ACC</color>
+
+    <color name="sm_blue">#2370a8</color>
+    <color name="sm_purple_grey">#E5E5FF</color>
+    <color name="sm_blue_2">#7CC2F4</color>
+    <color name="sm_blue_3">#33A3F4</color>
+    <color name="sm_blue_4">#184E75</color>
+    <color name="sm_blue_5">#5D91B6</color>
     <color name="sm_dark_blue">#1a42f5</color>
     <color name="old_sm_blue">#64bdff</color>
     <color name="old_sm_yellow">#f5ed44</color>

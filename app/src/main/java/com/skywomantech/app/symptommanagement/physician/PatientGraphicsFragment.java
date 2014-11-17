@@ -500,29 +500,16 @@ public class PatientGraphicsFragment extends Fragment {
         eatingSome = new Segment("Some", eatingSomeCount);
         eatingOK = new Segment("Eating OK", eatingOkCount);
 
-        EmbossMaskFilter emf = new EmbossMaskFilter(
-                new float[]{1, 1, 1}, 0.4f, 10, 8.2f);
-
         sf1 = new SegmentFormatter();
         sf1.configure(getActivity(), R.xml.pie_segment_formatter1);
-
-        sf1.getFillPaint().setMaskFilter(emf);
-
         sf2 = new SegmentFormatter();
         sf2.configure(getActivity(), R.xml.pie_segment_formatter2);
-
-        sf2.getFillPaint().setMaskFilter(emf);
 
         sf3 = new SegmentFormatter();
         sf3.configure(getActivity(), R.xml.pie_segment_formatter3);
 
-        sf3.getFillPaint().setMaskFilter(emf);
-
         sf4 = new SegmentFormatter();
         sf4.configure(getActivity(), R.xml.pie_segment_formatter4);
-
-        sf4.getFillPaint().setMaskFilter(emf);
-
         // default to severity level pie chart
         onPieChartGroup(getView().findViewById(R.id.pie_chart_severity));
         ((RadioGroup) getView().findViewById(R.id.pie_chart_radio_group))

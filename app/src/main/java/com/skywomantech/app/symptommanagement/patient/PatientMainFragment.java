@@ -49,8 +49,8 @@ public class PatientMainFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_patient_main, container, false);
         ButterKnife.inject(this, rootView);
         mPatient = ((Callbacks) getActivity()).getPatientCallback(); // only checks the CP
-        String displayName = "For " +
-                ((mPatient != null && mPatient.getName() != null) ? mPatient.toString() : "Patient");
+        String displayName = "Welcome " +
+                ((mPatient != null && mPatient.getName() != null) ? mPatient.toString() : "");
         patientName.setText(displayName);
         numCheckIns.setText(getNumCheckIns());
         nextCheckIn.setText(getNextCheckIn());
