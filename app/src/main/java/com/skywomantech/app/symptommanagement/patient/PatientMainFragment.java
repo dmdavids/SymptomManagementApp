@@ -86,7 +86,7 @@ public class PatientMainFragment extends Fragment {
     private String getNextCheckIn() {
         if (mPatient == null) return "";
         reminders = PatientDataManager.loadSortedReminderList(getActivity(), mPatient.getId());
-        if (reminders == null || reminders.size() <= 0) return "No Check-Ins are Scheduled At This Time.";
+        if (reminders == null || reminders.size() <= 0) return "No Check-Ins are Scheduled.";
 
         Calendar rightNow = Calendar.getInstance();
         int checkValue = rightNow.get(Calendar.HOUR_OF_DAY) * 60 + rightNow.get(Calendar.MINUTE);
@@ -102,7 +102,7 @@ public class PatientMainFragment extends Fragment {
             }
         }
 
-        if (hour < 0 ) return "Today's Scheduled Check-Ins are Completed.";
+        if (hour < 0 ) return "Today's Check-Ins Complete.";
 
         String am_pm = (hour < 12) ? " AM" : " PM";
         String hours = (hour <= 12)
@@ -111,7 +111,7 @@ public class PatientMainFragment extends Fragment {
         String minutes = (minute < 10)
                 ? "0" + Integer.toString(minute)
                 : Integer.toString(minute);
-        return "Next Scheduled Check-In Today is at " + hours + ":" + minutes + am_pm;
+        return "Next Check-In Today is at " + hours + ":" + minutes + am_pm;
     }
 
     private String getNumCheckIns() {

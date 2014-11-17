@@ -12,7 +12,7 @@
         android:layout_height="fill_parent"
         android:id="@+id/log_type_icon"
         android:layout_weight="7"
-        android:padding="16dp"
+        android:padding="8dp"
         style="?android:attr/borderlessButtonStyle"
         android:gravity="left" />
 
