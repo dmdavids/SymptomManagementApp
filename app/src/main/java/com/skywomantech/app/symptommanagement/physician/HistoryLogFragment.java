@@ -26,6 +26,7 @@ public class HistoryLogFragment extends ListFragment {
 
     public interface Callbacks {
         public Patient getPatientForHistory(String id);
+        //public String getPatientIdForHistory();
     }
 
     private String  mPatientId = null;
@@ -121,6 +122,10 @@ public class HistoryLogFragment extends ListFragment {
 
     private void refreshAllLogs(Patient patient) {
         // we were given the patient to work with (PATIENT USER)
+        if (mPatientId == null) {
+            // ask the activity to give it to us again.
+
+        }
         if (patient != null) {
             HistoryLog[] logList = PatientDataManager.createLogList(mPatient);
             setListAdapter(new HistoryLogAdapter(getActivity(), logList));

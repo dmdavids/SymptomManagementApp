@@ -2,24 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
     android:baselineAligned="false"
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="com.skywomantech.app.symptommanagement.physician.PhysicianListPatientsActivity">
-
-    <!--
-    This layout is a two-pane layout for the PhysicianPatients
-    master/detail flow. See res/values-large/refs.xml and
-    res/values-sw600dp/refs.xml for an example of layout aliases
-    that replace the single-pane version of the layout with
-    this two-pane version.
-
-    For more on layout aliases, see:
-    http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
-    -->
+    tools:context=".physician.PhysicianListPatientsActivity">
 
     <fragment
         android:id="@+id/physician_patient_list"
@@ -29,28 +16,21 @@
         android:layout_weight="3"
         tools:layout="@android:layout/list_content" />
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        tools:context="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailActivity"
         android:orientation="vertical" >
 
-        <fragment
+        <FrameLayout
             android:id="@+id/physician_patient_detail_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            class="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailFragment"
-            tools:layout="@layout/fragment_physician_patient_detail" />
+            android:layout_height="wrap_content" />
 
-        <fragment
+        <FrameLayout
             android:id="@+id/patient_graphics_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:name="com.skywomantech.app.symptommanagement.physician.PatientGraphicsFragment"
-            tools:layout="@layout/fragment_patient_graphics">
-        </fragment>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 

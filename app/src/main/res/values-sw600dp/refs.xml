@@ -9,5 +9,5 @@
     http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
     -->
     <item name="activity_adminmedication_list" type="layout">@layout/activity_admin_medication_twopane</item>
-
+    <item name="activity_physician_patient_list" type="layout">@layout/activity_physician_patient_twopane</item>
 </resources>
