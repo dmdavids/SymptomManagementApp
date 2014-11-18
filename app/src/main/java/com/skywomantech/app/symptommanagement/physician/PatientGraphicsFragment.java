@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.androidplot.Plot;
@@ -51,6 +52,7 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.ButterKnife;
+import butterknife.InjectView;
 import butterknife.OnClick;
 
 public class PatientGraphicsFragment extends Fragment {
@@ -63,6 +65,7 @@ public class PatientGraphicsFragment extends Fragment {
 
     public static final String PATIENT_ID_KEY = "patient_id";
     public static final String PHYSICIAN_ID_KEY = "physician_id";
+    public static final String GRAPH_TYPE = "graph_type";
 
     static final long MS_IN_A_DAY = 86400000;
 
@@ -129,18 +132,26 @@ public class PatientGraphicsFragment extends Fragment {
     LinearLayout xyChartLayout;
     LinearLayout pieChartLayout;
 
+    @InjectView(R.id.pie_chart_severity) RadioButton pieChartSeverityButton;
+    @InjectView(R.id.pie_chart_eating) RadioButton pieChartEatingButton;
+    @InjectView(R.id.pie_chart_radio_group) RadioGroup pieChartRadioButtons;
+    private boolean showSeverity = true;
+
     public PatientGraphicsFragment() {
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null && getArguments().containsKey(PATIENT_ID_KEY)) {
-            mPatientId = getArguments().getString(PATIENT_ID_KEY);
+        if (getArguments() != null)
+        {
+            if (getArguments().containsKey(PATIENT_ID_KEY)) {
+                mPatientId = getArguments().getString(PATIENT_ID_KEY);
+            }
         }
         setRetainInstance(true);  // save the fragment state with rotations
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -152,13 +163,46 @@ public class PatientGraphicsFragment extends Fragment {
         simplePatientXYPlot = (XYPlotZoomPan) rootView.findViewById(R.id.patientGraphicsPlot);
         pieChartLayout = (LinearLayout) rootView.findViewById(R.id.pie_chart_layout);
         pie = (PieChart) rootView.findViewById(R.id.PatientPieChart);
+        if (graph != PatientGraph.NO_CHART) {
+            restartGraph();
+        }
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        restartGraph();
+    }
+
+    private void restartGraph() {
+        switch(graph) {
+            case LINE_PLOT:
+                onClickLinePlot(null);
+                break;
+            case BAR_CHART:
+                onClickBarPlot(null);
+                break;
+            case FUZZY_CHART:
+                onClickBarPlot(null);
+                break;
+            case SCATTER_CHART:
+                onClickScatterPlot(null);
+                break;
+            case PIE_CHART:
+                onClickPiePlot(null);
+                break;
+            default:
+                Log.e(LOG_TAG, "Invalid chart type on restart.");
+                break;
+        }
     }
 
     @OnClick(R.id.line_plot)
     public void onClickLinePlot(View view) {
         Log.d(LOG_TAG, "Line Plot Clicked");
         if (patientReadyForGraphing()) {
+            graph = PatientGraph.LINE_PLOT;
             createLinePlot();
         }
     }
@@ -168,6 +212,7 @@ public class PatientGraphicsFragment extends Fragment {
     public void onClickBarPlot(View view) {
         Log.d(LOG_TAG, "Bar Chart Clicked");
         if (patientReadyForGraphing()) {
+            graph = PatientGraph.BAR_CHART;
             createBarChart();
         }
     }
@@ -176,6 +221,7 @@ public class PatientGraphicsFragment extends Fragment {
     public void onClickFuzzyPlot(View view) {
         Log.d(LOG_TAG, "Fuzzy Plot Clicked");
         if (patientReadyForGraphing()) {
+            graph = PatientGraph.FUZZY_CHART;
             createLinePlot();
         }
     }
@@ -184,6 +230,7 @@ public class PatientGraphicsFragment extends Fragment {
     public void onClickScatterPlot(View view) {
         Log.d(LOG_TAG, "Scatter Plot Clicked");
         if (patientReadyForGraphing()) {
+            graph = PatientGraph.SCATTER_CHART;
             createScatterPlot();
         }
     }
@@ -192,6 +239,7 @@ public class PatientGraphicsFragment extends Fragment {
     public void onClickPiePlot(View view) {
         Log.d(LOG_TAG, "Pie Plot Clicked");
         if (patientReadyForGraphing()) {
+            graph = PatientGraph.PIE_CHART;
             createPieChart();
         }
     }
@@ -380,10 +428,10 @@ public class PatientGraphicsFragment extends Fragment {
 
         sf4 = new SegmentFormatter();
         sf4.configure(getActivity(), R.xml.pie_segment_formatter4);
-        // default to severity level pie chart
-        onPieChartGroup(getView().findViewById(R.id.pie_chart_severity));
-        ((RadioGroup) getView().findViewById(R.id.pie_chart_radio_group))
-                .check(R.id.pie_chart_severity);
+
+        // default to severity level pie chart or show last selected version
+        onPieChartGroup(showSeverity ? pieChartSeverityButton : pieChartEatingButton);
+        pieChartRadioButtons.check(showSeverity ? R.id.pie_chart_severity : R.id.pie_chart_eating);
 
         pie.getBorderPaint().setColor(Color.TRANSPARENT);
         pie.getBackgroundPaint().setColor(Color.TRANSPARENT);
@@ -393,6 +441,7 @@ public class PatientGraphicsFragment extends Fragment {
     public void onPieChartGroup(View v) {
         switch (v.getId()) {
             case R.id.pie_chart_severity:
+                showSeverity = true;
                 pie.removeSeries(eatingOK);
                 pie.removeSeries(eatingSome);
                 pie.removeSeries(eatingNone);
@@ -402,6 +451,7 @@ public class PatientGraphicsFragment extends Fragment {
                 pie.redraw();
                 break;
             case R.id.pie_chart_eating:
+                showSeverity = false;
                 pie.removeSeries(painSevere);
                 pie.removeSeries(painModerate);
                 pie.removeSeries(painControlled);
@@ -592,7 +642,6 @@ public class PatientGraphicsFragment extends Fragment {
             return x.getName().compareTo(y.getName());
         }
     }
-
 
     private void resetCounts() {
         notEatingCount = 0;
