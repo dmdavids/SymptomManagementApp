@@ -13,6 +13,10 @@
 
     <color name="sm_bright_red">#c00000</color>
 
+    <color name="sm_severity">#e8594a</color>
+
+    <color name="sm_eating">#5F94BB</color>
+
     <color name="sm_cream_white">#FEFEFF</color>
     <color name="sm_grey_light">#CBCBCC</color>
     <color name="sm_grey_purple">#B2B3FF</color>

@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 public class TimePoint {
     long timeValue;
-    long actual_date;
+    long actual_date; // month and day only
     int hour;
     int day_of_week;
     int day_of_month;
