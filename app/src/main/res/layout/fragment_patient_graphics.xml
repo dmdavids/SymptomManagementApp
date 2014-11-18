@@ -142,13 +142,6 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <com.androidplot.pie.PieChart
-            android:id="@+id/PatientPieChart"
-            androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1" />
-
         <RadioGroup
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -174,6 +167,15 @@
                 android:textStyle="normal" />
 
         </RadioGroup>
+
+        <com.androidplot.pie.PieChart
+            android:id="@+id/PatientPieChart"
+            androidPlot.titleWidget.labelPaint.textSize="@dimen/title_font_size"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1" />
+
+
 
     </LinearLayout>
 
