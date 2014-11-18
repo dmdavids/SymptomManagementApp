@@ -76,9 +76,25 @@ public class PhysicianPatientDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_physician_patient_detail, container, false);
         ButterKnife.inject(this, rootView);
-        // ButterKnife doesn't want to inject this one
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY)) {
+                mPatientId =
+                        savedInstanceState.getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+            }
+        }
         mPatient = getPatientFromCloud();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Bundle arguments = getArguments();
+        if (mPatientId == null &&
+                arguments != null
+                && arguments.containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY) ) {
+            mPatientId = arguments.getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+        }
     }
 
     //TODO: move this to the activity... not sure it fits this fragment any more!
@@ -140,6 +156,7 @@ public class PhysicianPatientDetailFragment extends Fragment {
 
     private Patient getPatientFromCloud() {
 
+        if (mPatientId == null) return null;
         final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {

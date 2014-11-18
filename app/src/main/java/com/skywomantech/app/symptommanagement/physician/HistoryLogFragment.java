@@ -46,6 +46,7 @@ public class HistoryLogFragment extends ListFragment {
         if (getArguments().containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY)) {
             mPatientId = getArguments().getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
         }
+        this.setRetainInstance(true);  // save the fragment state with rotations
     }
 
     @Override
@@ -53,10 +54,14 @@ public class HistoryLogFragment extends ListFragment {
         super.onViewCreated(view, savedInstanceState);
         setRetainInstance(true); // save fragment across config changes
         setEmptyText(getString(R.string.empty_list_text));
-        // Restore the previously serialized activated item position.
-        if (savedInstanceState != null
-                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
+                setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
+            }
+            if (savedInstanceState.containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY)) {
+                mPatientId =
+                        savedInstanceState.getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+            }
         }
     }
 
@@ -74,6 +79,12 @@ public class HistoryLogFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
+        Bundle arguments = getArguments();
+        if (mPatientId == null &&
+                arguments != null
+                && arguments.containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY) ) {
+            mPatientId = arguments.getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+        }
         // get your patient information from the calling activity
         mPatient = ((Callbacks) getActivity()).getPatientForHistory(mPatientId);
         // if mPatient is null it will go to cloud to find it
@@ -86,6 +97,9 @@ public class HistoryLogFragment extends ListFragment {
         if (mActivatedPosition != ListView.INVALID_POSITION) {
             // Serialize and persist the activated item position.
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+        }
+        if (mPatientId != null) {
+            outState.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
         }
     }
 

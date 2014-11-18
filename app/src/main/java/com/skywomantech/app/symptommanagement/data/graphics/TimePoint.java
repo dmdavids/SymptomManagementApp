@@ -6,6 +6,7 @@ public class TimePoint {
     long timeValue;
     long actual_date; // month and day only
     int hour;
+    int minutes;
     int day_of_week;
     int day_of_month;
 
@@ -17,6 +18,7 @@ public class TimePoint {
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(timeValue);
         this.hour = cal.get(Calendar.HOUR_OF_DAY);
+        this.minutes = cal.get(Calendar.MINUTE);
         this.day_of_week = cal.get(Calendar.DAY_OF_WEEK);
         this.day_of_month = cal.get(Calendar.DAY_OF_MONTH);
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -59,6 +61,14 @@ public class TimePoint {
         this.actual_date = actual_date;
     }
 
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(int minutes) {
+        this.minutes = minutes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -82,6 +92,7 @@ public class TimePoint {
                 "timeValue=" + timeValue +
                 ", actual_date=" + actual_date +
                 ", hour=" + hour +
+                ", minutes=" + minutes +
                 ", day_of_week=" + day_of_week +
                 ", day_of_month=" + day_of_month +
                 '}';

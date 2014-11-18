@@ -17,6 +17,8 @@ import android.widget.TextView;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Reminder;
 
+import java.util.Calendar;
+
 public class ReminderListAdapter extends ArrayAdapter<Reminder> {
 
     public final static String LOG_TAG = ReminderAddEditDialog.class.getSimpleName();
@@ -112,15 +114,14 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
         String summary = "";
         if (reminders[position].getHour() >= 0 && reminders[position].getMinutes() >= 0) {
             // time is stored in 24 hour format - change to 12 hour with AM/PM
-            //TODO: Time needs to be formatted better than this
-            String am_pm = (reminders[position].getHour() < 12) ? " AM" : " PM";
-            String hours = (reminders[position].getHour() <= 12)
-                    ? Integer.valueOf(reminders[position].getHour()).toString()
-                    : Integer.valueOf(reminders[position].getHour() - 12).toString() ;
-            String minutes =  (reminders[position].getMinutes() < 10)
-                    ? "0" + Integer.toString(reminders[position].getMinutes())
-                    : Integer.toString(reminders[position].getMinutes());
-            summary = hours + ":" + minutes + am_pm;
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.HOUR_OF_DAY, reminders[position].getHour());
+            cal.set(Calendar.MINUTE, reminders[position].getMinutes());
+            int hour = cal.get(Calendar.HOUR);
+            if (hour == 0) hour = 12;
+            int min = cal.get(Calendar.MINUTE);
+            int am_pm = cal.get(Calendar.AM_PM);
+            summary = Integer.toString(hour) + ":" + min + (am_pm == 1 ? "PM" : "AM");
         }
         holder.reminderSummary.setText(summary);
         holder.isActive.setChecked(reminders[position].isOn());

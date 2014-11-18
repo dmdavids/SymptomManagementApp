@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.LoginActivity;
@@ -64,6 +65,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
                     .commit();
             getPhysician(mPhysicianId);  // needed for any physician status log processing
             PatientGraphicsFragment graphicsFragment = new PatientGraphicsFragment();
+            // sending the same arguments to the graphics container
             graphicsFragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
                     .replace(R.id.patient_graphics_container, graphicsFragment)
@@ -75,6 +77,21 @@ public class PhysicianPatientDetailActivity extends Activity implements
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.physician_patient_detail_menu, menu);
         return true;
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mPatientId != null) {
+            Log.v(LOG_TAG, "Saving the patient id  as "
+                    + mPatientId);
+            outState.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
+        }
+        if (mPhysicianId != null) {
+            Log.v(LOG_TAG, "Saving the physician id  as "
+                    + mPatientId);
+            outState.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
+        }
     }
 
     @Override

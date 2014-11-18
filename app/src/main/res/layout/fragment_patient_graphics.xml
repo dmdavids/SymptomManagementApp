@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:contentDescription="Scatter Chart"
-            android:src="@drawable/ic_action_heat_map"
+            android:src="@drawable/ic_action_scatter_plot"
             android:minWidth="60dp"
             android:background="@null"
             android:text="Scatter Chart" />
@@ -99,12 +99,37 @@
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="invisible">
+
+
+        <LinearLayout
+            android:id="@+id/graph_choices_layout"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:layout_margin="5dp">
+            <CheckBox android:id="@+id/graph_choice_1"
+                android:checked="true"
+                android:text="Severity Level"
+                android:textSize="12dp"
+                android:textStyle="normal"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"
+                android:layout_marginRight="5dp"/>
+            <CheckBox android:id="@+id/graph_choice_2"
+                android:text="Eating Ability"
+                android:textSize="12dp"
+                android:textStyle="normal"
+                android:checked="true"
+                android:layout_height="wrap_content"
+                android:layout_width="fill_parent"/>
+        </LinearLayout>
 
         <com.androidplot.xy.XYPlotZoomPan
             android:id="@+id/patientGraphicsPlot"
             androidPlot.graphWidget.marginTop="20dp"
-            androidPlot.graphWidget.marginLeft="40dp"
+            androidPlot.graphWidget.marginLeft="50dp"
             androidPlot.graphWidget.marginBottom="50dp"
             androidPlot.graphWidget.marginRight="20dp"
             androidPlot.domainLabelWidget.labelPaint.textSize="@dimen/domain_label_font_size"
@@ -140,6 +165,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_horizontal"
+            android:layout_margin="5dp"
             android:id="@+id/pie_chart_radio_group">
 
             <RadioButton
@@ -147,7 +173,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Pain Severity"
-                android:textSize="24dp"
+                android:textSize="12dp"
                 android:textStyle="normal" />
 
             <RadioButton
@@ -155,7 +181,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Eating Ability"
-                android:textSize="24dp"
+                android:textSize="12dp"
                 android:textStyle="normal" />
 
         </RadioGroup>

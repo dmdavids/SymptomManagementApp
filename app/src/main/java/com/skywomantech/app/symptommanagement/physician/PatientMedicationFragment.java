@@ -75,10 +75,14 @@ public class PatientMedicationFragment extends ListFragment {
         super.onViewCreated(view, savedInstanceState);
         setRetainInstance(true); // save fragment across config changes
         setEmptyText(getString(R.string.empty_list_text));
-        // Restore the previously serialized activated item position.
-        if (savedInstanceState != null
-                && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-            setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
+                setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
+            }
+            if (savedInstanceState.containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY)) {
+                mPatientId =
+                        savedInstanceState.getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+            }
         }
     }
 
@@ -96,6 +100,12 @@ public class PatientMedicationFragment extends ListFragment {
     @Override
     public void onResume() {
         super.onResume();
+        Bundle arguments = getArguments();
+        if (mPatientId == null &&
+                arguments != null
+                && arguments.containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY) ) {
+            mPatientId = arguments.getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+        }
         refreshPatientMeds();
     }
 
@@ -103,8 +113,10 @@ public class PatientMedicationFragment extends ListFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mActivatedPosition != ListView.INVALID_POSITION) {
-            // Serialize and persist the activated item position.
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+        }
+        if (mPatientId != null) {
+            outState.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
         }
     }
 
@@ -137,6 +149,8 @@ public class PatientMedicationFragment extends ListFragment {
     }
 
     private void refreshPatientMeds() {
+
+        if (mPatientId == null) return;
 
         final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
@@ -185,6 +199,7 @@ public class PatientMedicationFragment extends ListFragment {
     // so the Physician needs to do this immediately here.
     private void sendPatientRecordToCloud(final Patient patientRecord) {
 
+        if (patientRecord == null) return;
         final SymptomManagementApi svc =  SymptomManagementService.getService();
 
         if (svc != null) {

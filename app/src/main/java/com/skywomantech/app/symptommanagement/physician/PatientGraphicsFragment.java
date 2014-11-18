@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -127,7 +128,7 @@ public class PatientGraphicsFragment extends Fragment {
     private Segment eatingSome;
     private Segment eatingNone;
 
-    private PatientGraph graph = PatientGraph.NO_CHART;
+    private PatientGraph graph = PatientGraph.LINE_PLOT;
 
     private List<SeverityPlotPoint> severityPoints = null;
     private List<EatingPlotPoint> eatingPoints = null;
@@ -142,7 +143,10 @@ public class PatientGraphicsFragment extends Fragment {
     RadioButton pieChartEatingButton;
     @InjectView(R.id.pie_chart_radio_group)
     RadioGroup pieChartRadioButtons;
+
+    private boolean showEating = true;
     private boolean showSeverity = true;
+
 
     public PatientGraphicsFragment() {
     }
@@ -166,11 +170,10 @@ public class PatientGraphicsFragment extends Fragment {
         // ButterKnife doesn't want to inject these so we do it manually
         xyChartLayout = (LinearLayout) rootView.findViewById(R.id.xy_chart_layout);
         simplePatientXYPlot = (XYPlotZoomPan) rootView.findViewById(R.id.patientGraphicsPlot);
+        xyChartLayout.setVisibility(View.INVISIBLE);
         pieChartLayout = (LinearLayout) rootView.findViewById(R.id.pie_chart_layout);
         pie = (PieChart) rootView.findViewById(R.id.PatientPieChart);
-        if (graph != PatientGraph.NO_CHART) {
-            restartGraph();
-        }
+        restartGraph();
         return rootView;
     }
 
@@ -181,6 +184,8 @@ public class PatientGraphicsFragment extends Fragment {
     }
 
     private void restartGraph() {
+        Log.d(LOG_TAG, "RESTARTING GRAPH ==> Type: " + graph.toString());
+        xyChartLayout.setVisibility(View.VISIBLE);
         switch (graph) {
             case LINE_PLOT:
                 onClickLinePlot(null);
@@ -198,6 +203,7 @@ public class PatientGraphicsFragment extends Fragment {
                 onClickPiePlot(null);
                 break;
             default:
+                xyChartLayout.setVisibility(View.INVISIBLE);
                 Log.e(LOG_TAG, "Invalid chart type on restart.");
                 break;
         }
@@ -334,9 +340,9 @@ public class PatientGraphicsFragment extends Fragment {
             }
         }
 
-        simplePatientXYPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 50);
+        simplePatientXYPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 100);
         simplePatientXYPlot.setRangeBoundaries(0, 300, BoundaryMode.FIXED);
-        simplePatientXYPlot.getGraphWidget().setTicksPerRangeLabel(2);
+        simplePatientXYPlot.getGraphWidget().setTicksPerRangeLabel(1);
         simplePatientXYPlot.getGraphWidget().getRangeLabelPaint().setColor(Color.BLACK);
         //simplePatientXYPlot.setRangeLabel("Pain Severity");
         simplePatientXYPlot.getGraphWidget().setRangeValueFormat(new Format() {
@@ -345,13 +351,19 @@ public class PatientGraphicsFragment extends Fragment {
                 Number num = (Number) obj;
                 switch (num.intValue()) {
                     case 100:
-                        toAppendTo.append("Well-Controlled/Eating");
+                        if (showSeverity && showEating) toAppendTo.append("Well-Controlled/Eating");
+                        else if (showSeverity) toAppendTo.append("Well-Controlled");
+                        else if (showEating) toAppendTo.append("Eating");
                         break;
                     case 200:
-                        toAppendTo.append("Moderate/Eating Some");
+                        if (showSeverity && showEating) toAppendTo.append("Moderate/Eating Some");
+                        else if (showSeverity) toAppendTo.append("Moderate");
+                        else if (showEating) toAppendTo.append("Eating Some");
                         break;
                     case 300:
-                        toAppendTo.append("Severe/Not Eating");
+                        if (showSeverity && showEating) toAppendTo.append("Severe/Not Eating");
+                        else if (showSeverity) toAppendTo.append("Severe");
+                        else if (showEating) toAppendTo.append("Not Eating");
                         break;
                     default:
                         toAppendTo.append("");
@@ -368,7 +380,7 @@ public class PatientGraphicsFragment extends Fragment {
 
         simplePatientXYPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, MS_IN_A_DAY);
         simplePatientXYPlot.setDomainBoundaries(minDate, maxDate, BoundaryMode.FIXED);
-        simplePatientXYPlot.getGraphWidget().setTicksPerDomainLabel(3);
+        simplePatientXYPlot.getGraphWidget().setTicksPerDomainLabel(2);
         simplePatientXYPlot.setDomainLabel("");
         simplePatientXYPlot.getGraphWidget().setDomainLabelOrientation(-45);
         simplePatientXYPlot.getGraphWidget().getDomainLabelPaint().setColor(Color.BLACK);
@@ -406,7 +418,7 @@ public class PatientGraphicsFragment extends Fragment {
 
         simplePatientXYPlot.getGraphWidget().setGridPadding(30, 10, 30, 0);
 
-        if (severitySeries.size() > 0) {
+        if (severitySeries.size() > 0 && showSeverity) {
             LineAndPointFormatter severityLineFormat = new LineAndPointFormatter(
                     getResources().getColor(R.color.sm_severity),  // line color
                     getResources().getColor(R.color.sm_severity),                 // point color
@@ -415,11 +427,12 @@ public class PatientGraphicsFragment extends Fragment {
                     null);                // pointLabelFormatter
             BarFormatter bf1 = new BarFormatter(getResources().getColor(R.color.sm_severity),
                     Color.TRANSPARENT);
+            bf1.getFillPaint().setAlpha(200);
             simplePatientXYPlot.addSeries(severitySeries, bf1);
         }
 
         Log.d(LOG_TAG, "setting up the drawing information");
-        if (eatingSeries.size() > 0) {
+        if (eatingSeries.size() > 0 && showEating) {
             LineAndPointFormatter eatingLineFormat = new LineAndPointFormatter(
                     getResources().getColor(R.color.sm_eating),  //line color
                     getResources().getColor(R.color.sm_eating),                  // point color
@@ -428,6 +441,7 @@ public class PatientGraphicsFragment extends Fragment {
                     null);                 // pointLabelFormatter
             BarFormatter bf1 = new BarFormatter(getResources().getColor(R.color.sm_eating),
                     Color.TRANSPARENT);
+            bf1.getFillPaint().setAlpha(200);
             simplePatientXYPlot.addSeries(eatingSeries, bf1);
         }
 
@@ -458,23 +472,37 @@ public class PatientGraphicsFragment extends Fragment {
         long maxDate = minDate;
         Log.d(LOG_TAG, "Creating data to plot");
         if (severityPoints != null) {
-            severitySeries = new SimpleXYSeries("Severity Level");
+            severitySeries = new SimpleXYSeries("Severity Level(3-day Avg)");
             Collections.sort(severityPoints, new TimePointSorter());
-            for (SeverityPlotPoint s : severityPoints) {
-                if (minDate < 0) minDate = s.getActual_date();
-                if (maxDate < s.getActual_date()) maxDate = s.getActual_date();
-                severitySeries.addLast(s.getTimeValue(), s.getSeverityValue());
+            // calculate a 3-day moving average
+            SeverityPlotPoint[] sevArray =
+                    severityPoints.toArray(new SeverityPlotPoint[severityPoints.size()]);
+            for (int i = 1; i < (severityPoints.size()-1); i++) {
+                double movingAverage =
+                        (sevArray[i-1].getSeverityValue()
+                        + sevArray[i].getSeverityValue()
+                        + sevArray[i+1].getSeverityValue())/3.0;
+                if (minDate < 0) minDate = sevArray[i].getActual_date();
+                if (maxDate < sevArray[i].getActual_date()) maxDate = sevArray[i].getActual_date();
+                severitySeries.addLast(sevArray[i].getTimeValue(), movingAverage);
             }
         }
         Log.d(LOG_TAG, "Min Date: " + minDate + " Max Date: " + maxDate + " num days is " +
                 Long.toString((maxDate - minDate) / MS_IN_A_DAY) + 1L);
         if (eatingPoints != null) {
-            eatingSeries = new SimpleXYSeries("Eating Ability");
+            eatingSeries = new SimpleXYSeries("Eating Ability(3-day Avg)");
             Collections.sort(eatingPoints, new TimePointSorter());
-            for (EatingPlotPoint eat : eatingPoints) {
-                long value = (eat.getEatingValue() == 100) ? 100 :
-                        (eat.getEatingValue() == 200) ? 150 : 200;
-                eatingSeries.addLast(eat.getTimeValue(), value);
+            EatingPlotPoint[] eatArray =
+                    eatingPoints.toArray(new EatingPlotPoint[eatingPoints.size()]);
+            for (int i=1; i<(eatingPoints.size() - 1); i++) {
+                long value1 = (eatArray[i-1].getEatingValue() == 100) ? 100 :
+                        (eatArray[i-1].getEatingValue() == 200) ? 150 : 200;
+                long value2 = (eatArray[i].getEatingValue() == 100) ? 100 :
+                        (eatArray[i].getEatingValue() == 200) ? 150 : 200;
+                long value3 = (eatArray[i+1].getEatingValue() == 100) ? 100 :
+                        (eatArray[i+1].getEatingValue() == 200) ? 150 : 200;
+                double movingAverage = (value1 + value2 + value3)/3.0;
+                eatingSeries.addLast(eatArray[i].getTimeValue(), movingAverage);
             }
         }
 
@@ -489,16 +517,22 @@ public class PatientGraphicsFragment extends Fragment {
                 Number num = (Number) obj;
                 switch (num.intValue()) {
                     case 100:
-                        toAppendTo.append("Well-Controlled/Eating");
+                        if (showSeverity && showEating) toAppendTo.append("Well-Controlled/Eating");
+                        else if (showSeverity) toAppendTo.append("Well-Controlled");
+                        else if (showEating) toAppendTo.append("Eating");
                         break;
                     case 150:
-                        toAppendTo.append("Eating Some");
+                        if (showEating)  toAppendTo.append("Eating Some");
+                        else toAppendTo.append("");
                         break;
                     case 200:
-                        toAppendTo.append("Moderate/Not Eating");
+                        if (showSeverity && showEating) toAppendTo.append("Moderate/Not Eating");
+                        else if (showSeverity) toAppendTo.append("Moderate");
+                        else if (showEating) toAppendTo.append("Not Eating");
                         break;
                     case 300:
-                        toAppendTo.append("Severe");
+                        if (showSeverity) toAppendTo.append("Severe");
+                        else toAppendTo.append("");
                         break;
                     default:
                         toAppendTo.append("");
@@ -515,7 +549,7 @@ public class PatientGraphicsFragment extends Fragment {
 
         simplePatientXYPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, MS_IN_A_DAY);
         simplePatientXYPlot.setDomainBoundaries(minDate, maxDate, BoundaryMode.FIXED);
-        simplePatientXYPlot.getGraphWidget().setTicksPerDomainLabel(3); // label every third tick
+        simplePatientXYPlot.getGraphWidget().setTicksPerDomainLabel(2); // label every third tick
         simplePatientXYPlot.setDomainLabel("");
         simplePatientXYPlot.getGraphWidget().setDomainLabelOrientation(-45);
         simplePatientXYPlot.getGraphWidget().getDomainLabelPaint().setColor(Color.BLACK);
@@ -552,24 +586,26 @@ public class PatientGraphicsFragment extends Fragment {
         simplePatientXYPlot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.BLACK);
 
 
-        if (severitySeries.size() > 0) {
+        if (severitySeries.size() > 0 && showSeverity) {
             LineAndPointFormatter severityLineFormat = new LineAndPointFormatter(
                     getResources().getColor(R.color.sm_severity),  // line color
-                    getResources().getColor(R.color.sm_severity),                 // point color
-                    //null,
+                    //getResources().getColor(R.color.sm_severity),                 // point color
+                    null,
                     getResources().getColor(R.color.sm_severity),  // fill color Color.rgb(0, 0,150)
                     null);                // pointLabelFormatter
+            severityLineFormat.getFillPaint().setAlpha(200);
             simplePatientXYPlot.addSeries(severitySeries, severityLineFormat);
         }
 
         Log.d(LOG_TAG, "setting up the drawing information");
-        if (eatingSeries.size() > 0) {
+        if (eatingSeries.size() > 0 && showEating) {
             LineAndPointFormatter eatingLineFormat = new LineAndPointFormatter(
                     getResources().getColor(R.color.sm_eating),  //line color
-                    getResources().getColor(R.color.sm_eating),                  // point color
-                    //null,
+                    //getResources().getColor(R.color.sm_eating),                  // point color
+                    null,
                     getResources().getColor(R.color.sm_eating),  // fill color Color.rgb(0, 100, 0)
                     null);                 // pointLabelFormatter
+            eatingLineFormat.getFillPaint().setAlpha(200);
             simplePatientXYPlot.addSeries(eatingSeries, eatingLineFormat);
         }
 
@@ -596,24 +632,26 @@ public class PatientGraphicsFragment extends Fragment {
             severitySeriesByHour = new SimpleXYSeries("Severity By Hour");
             severitySeriesByDay = new SimpleXYSeries("Severity by Day of Week");
             for (SeverityPlotPoint s : severityPoints) {
-                severitySeriesByHour.addLast(s.getHour(), s.getSeverityValue());
-                severitySeriesByDay.addLast(s.getDay_of_week(), s.getSeverityValue());
+                double valueHour = s.getHour() + (s.getMinutes()/60.0);
+                severitySeriesByHour.addLast(valueHour, s.getSeverityValue());
+                double valueDay = s.getDay_of_week() + (s.getHour() / 24.0);
+                severitySeriesByDay.addLast(valueDay, s.getSeverityValue());
             }
         }
         if (eatingPoints != null) {
             eatingSeriesByHour = new SimpleXYSeries("Eating Ability By Hour");
             eatingSeriesByDay = new SimpleXYSeries("Eating Ability By Day of Week");
             for (EatingPlotPoint eat : eatingPoints) {
-                long value = (eat.getEatingValue() == 100) ? 100 :
-                        (eat.getEatingValue() == 200) ? 150 : 200;
-                eatingSeriesByHour.addLast(eat.getHour(), value);
-                eatingSeriesByDay.addLast(eat.getDay_of_week(), value);
+                double valueHour = eat.getHour() + (eat.getMinutes()/60.0);
+                eatingSeriesByHour.addLast(valueHour, eat.getEatingValue());
+                double valueDay = eat.getDay_of_week() + (eat.getHour() / 24.0);
+                eatingSeriesByDay.addLast(valueDay, eat.getEatingValue());
             }
         }
 
         simplePatientXYPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 1);
         simplePatientXYPlot.setDomainBoundaries(0, 23, BoundaryMode.FIXED);
-        simplePatientXYPlot.getGraphWidget().setTicksPerDomainLabel(1);
+        simplePatientXYPlot.getGraphWidget().setTicksPerDomainLabel(2);
         simplePatientXYPlot.setDomainLabel("");
         simplePatientXYPlot.getGraphWidget().setDomainLabelOrientation(-45);
         simplePatientXYPlot.getGraphWidget().getDomainLabelPaint().setColor(Color.BLACK);
@@ -641,7 +679,7 @@ public class PatientGraphicsFragment extends Fragment {
 
         simplePatientXYPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 50);
         simplePatientXYPlot.setRangeBoundaries(50, 350, BoundaryMode.FIXED);
-        simplePatientXYPlot.getGraphWidget().setTicksPerRangeLabel(2);
+        simplePatientXYPlot.getGraphWidget().setTicksPerRangeLabel(1);
         simplePatientXYPlot.getGraphWidget().getRangeLabelPaint().setColor(Color.BLACK);
         simplePatientXYPlot.getGraphWidget().setRangeValueFormat(new Format() {
             @Override
@@ -649,16 +687,19 @@ public class PatientGraphicsFragment extends Fragment {
                 Number num = (Number) obj;
                 switch (num.intValue()) {
                     case 100:
-                        toAppendTo.append("Well-Controlled/Eating");
-                        break;
-                    case 150:
-                        toAppendTo.append("Eating Some");
+                        if (showSeverity && showEating) toAppendTo.append("Well-Controlled/Eating");
+                        else if (showSeverity) toAppendTo.append("Well-Controlled");
+                        else if (showEating) toAppendTo.append("Eating");
                         break;
                     case 200:
-                        toAppendTo.append("Moderate/Not Eating");
+                        if (showSeverity && showEating) toAppendTo.append("Moderate/Eating Some");
+                        else if (showSeverity) toAppendTo.append("Moderate");
+                        else if (showEating) toAppendTo.append("Eating Some");
                         break;
                     case 300:
-                        toAppendTo.append("Severe");
+                        if (showSeverity && showEating) toAppendTo.append("Severe/Not Eating");
+                        else if (showSeverity) toAppendTo.append("Severe");
+                        else if (showEating) toAppendTo.append("Not Eating");
                         break;
                     default:
                         toAppendTo.append("");
@@ -687,22 +728,23 @@ public class PatientGraphicsFragment extends Fragment {
 
 
         Log.d(LOG_TAG, "setting up the drawing information");
-        if (eatingSeriesByHour.size() > 0) {
-            LineAndPointFormatter eatingPointFormat = new LineAndPointFormatter(
-                    null,                   //line color
-                    getResources().getColor(R.color.sm_eating),  // point color
-                    null,                  // fill color Color.rgb(0, 100, 0)
-                    null);                 // pointLabelFormatter
-            simplePatientXYPlot.addSeries(eatingSeriesByHour, eatingPointFormat);
-        }
 
-        if (severitySeriesByHour.size() > 0) {
+        if (severitySeriesByHour.size() > 0 && showSeverity) {
             LineAndPointFormatter severityPointFormat = new LineAndPointFormatter(
                     null,                 // line color
                     getResources().getColor(R.color.sm_severity),  // point color
                     null,                 // fill color Color.rgb(0, 0,150)
                     null);                // pointLabelFormatter
             simplePatientXYPlot.addSeries(severitySeriesByHour, severityPointFormat);
+        }
+
+        if (eatingSeriesByHour.size() > 0 && showEating) {
+            LineAndPointFormatter eatingPointFormat = new LineAndPointFormatter(
+                    null,                   //line color
+                    getResources().getColor(R.color.sm_eating),  // point color
+                    null,                  // fill color Color.rgb(0, 100, 0)
+                    null);                 // pointLabelFormatter
+            simplePatientXYPlot.addSeries(eatingSeriesByHour, eatingPointFormat);
         }
 
         Log.d(LOG_TAG, "Redrawing the Graph");
@@ -722,22 +764,27 @@ public class PatientGraphicsFragment extends Fragment {
         eatingOK = new Segment("Eating OK", eatingOkCount);
 
         sf1 = new SegmentFormatter();
+        sf1.getFillPaint().setAlpha(200);
+        sf1.getLabelPaint().setColor(Color.BLACK);
         sf1.configure(getActivity(), R.xml.pie_segment_formatter1);
+
         sf2 = new SegmentFormatter();
+        sf2.getFillPaint().setAlpha(200);
+        sf2.getLabelPaint().setColor(Color.BLACK);
         sf2.configure(getActivity(), R.xml.pie_segment_formatter2);
 
-        sf3 = new SegmentFormatter();
-        sf3.configure(getActivity(), R.xml.pie_segment_formatter3);
 
-        sf4 = new SegmentFormatter();
-        sf4.configure(getActivity(), R.xml.pie_segment_formatter4);
+        sf3 = new SegmentFormatter();
+        sf3.getFillPaint().setAlpha(200);
+        sf3.getLabelPaint().setColor(Color.BLACK);
+        sf3.configure(getActivity(), R.xml.pie_segment_formatter3);
 
         // default to severity level pie chart or show last selected version
         onPieChartGroup(showSeverity ? pieChartSeverityButton : pieChartEatingButton);
         pieChartRadioButtons.check(showSeverity ? R.id.pie_chart_severity : R.id.pie_chart_eating);
 
-        pie.getBorderPaint().setColor(Color.TRANSPARENT);
-        pie.getBackgroundPaint().setColor(Color.TRANSPARENT);
+        pie.getBorderPaint().setColor(Color.WHITE);
+        pie.getBackgroundPaint().setColor(Color.WHITE);
     }
 
     @OnClick({R.id.pie_chart_severity, R.id.pie_chart_eating,})
@@ -762,6 +809,21 @@ public class PatientGraphicsFragment extends Fragment {
                 pie.addSeries(eatingSome, sf2);
                 pie.addSeries(eatingOK, sf3);
                 pie.redraw();
+                break;
+        }
+    }
+
+    @OnClick({R.id.graph_choice_1, R.id.graph_choice_2,})
+    public void onCheckboxGroup(View v) {
+        CheckBox cb = (CheckBox)v;
+        switch (v.getId()) {
+            case R.id.graph_choice_1:
+                showSeverity = cb.isChecked();
+                restartGraph();
+                break;
+            case R.id.graph_choice_2:
+                showEating = cb.isChecked();
+                restartGraph();
                 break;
         }
     }
