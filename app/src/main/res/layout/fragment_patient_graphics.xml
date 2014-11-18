@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:contentDescription="Scatter Chart"
-            android:src="@drawable/ic_action_scatter_plot"
+            android:src="@drawable/ic_action_heat_map"
             android:minWidth="60dp"
             android:background="@null"
             android:text="Scatter Chart" />
@@ -125,13 +125,6 @@
             android:clickable="true"
             android:padding="8dp" />
 
-
-        <Button
-            android:id="@+id/resetButton"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:contentDescription="Reset Chart"
-            android:text="Reset" />
     </LinearLayout>
 
     <LinearLayout
@@ -147,7 +140,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_horizontal"
-
             android:id="@+id/pie_chart_radio_group">
 
             <RadioButton
