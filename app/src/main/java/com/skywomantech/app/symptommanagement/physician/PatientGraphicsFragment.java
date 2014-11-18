@@ -45,6 +45,7 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -332,28 +333,6 @@ public class PatientGraphicsFragment extends Fragment {
     private void createScatterPlot() {
 
         setLayout(PatientGraph.SCATTER_CHART);
-        simplePatientXYPlot.clear();
-
-        simplePatientXYPlot.getGraphWidget().setTicksPerRangeLabel(2);
-        simplePatientXYPlot.getGraphWidget().setTicksPerDomainLabel(2);
-        simplePatientXYPlot.getGraphWidget().getBackgroundPaint().setColor(Color.TRANSPARENT);
-        simplePatientXYPlot.getGraphWidget().setRangeValueFormat(new DecimalFormat("#####"));
-        simplePatientXYPlot.getGraphWidget().setDomainValueFormat(new DecimalFormat("#####.#"));
-        simplePatientXYPlot.getGraphWidget().setRangeLabelWidth(25);
-        simplePatientXYPlot.setRangeLabel("");
-        simplePatientXYPlot.setDomainLabel("");
-        simplePatientXYPlot.setBorderStyle(Plot.BorderStyle.NONE, null, null);
-
-        simplePatientXYPlot.getGraphWidget().getGridBackgroundPaint().setColor(Color.WHITE);
-        simplePatientXYPlot.getGraphWidget().getDomainGridLinePaint().setColor(Color.BLACK);
-        simplePatientXYPlot.getGraphWidget().getDomainGridLinePaint().
-                setPathEffect(new DashPathEffect(new float[]{1, 1}, 1));
-        simplePatientXYPlot.getGraphWidget().getRangeGridLinePaint().setColor(Color.BLACK);
-        simplePatientXYPlot.getGraphWidget().getRangeGridLinePaint().
-                setPathEffect(new DashPathEffect(new float[]{1, 1}, 1));
-        simplePatientXYPlot.getGraphWidget().getDomainOriginLinePaint().setColor(Color.BLACK);
-        simplePatientXYPlot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.BLACK);
-        simplePatientXYPlot.setRangeBoundaries(0, 400, BoundaryMode.FIXED);
 
         int count = 0;
         if (severityPoints != null) count++;
@@ -365,6 +344,7 @@ public class PatientGraphicsFragment extends Fragment {
         }
 
         Log.d(LOG_TAG, "Creating data to plot");
+
         if (severityPoints != null) {
             severitySeriesByHour = new SimpleXYSeries("Severity By Hour");
             severitySeriesByDay = new SimpleXYSeries("Severity by Day of Week");
@@ -377,15 +357,90 @@ public class PatientGraphicsFragment extends Fragment {
             eatingSeriesByHour = new SimpleXYSeries("Eating Ability By Hour");
             eatingSeriesByDay = new SimpleXYSeries("Eating Ability By Day of Week");
             for (EatingPlotPoint eat : eatingPoints) {
-                eatingSeriesByHour.addLast(eat.getHour(), eat.getEatingValue());
-                eatingSeriesByDay.addLast(eat.getDay_of_week(), eat.getEatingValue());
+                long value = (eat.getEatingValue() == 100) ? 100 :
+                        (eat.getEatingValue() == 200) ? 150 : 200;
+                eatingSeriesByHour.addLast(eat.getHour(), value);
+                eatingSeriesByDay.addLast(eat.getDay_of_week(), value);
             }
         }
+
+        simplePatientXYPlot.setDomainStep(XYStepMode.INCREMENT_BY_VAL, 1);
+        simplePatientXYPlot.setDomainBoundaries(0, 23, BoundaryMode.FIXED);
+        simplePatientXYPlot.getGraphWidget().setTicksPerDomainLabel(1);
+        simplePatientXYPlot.setDomainLabel("");
+        simplePatientXYPlot.getGraphWidget().setDomainLabelOrientation(-45);
+        simplePatientXYPlot.getGraphWidget().getDomainLabelPaint().setColor(Color.BLACK);
+        simplePatientXYPlot.getGraphWidget().setDomainValueFormat(new Format() {
+            private SimpleDateFormat dateFormat = new SimpleDateFormat("hha");
+            @Override
+            public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+                int time = ((Number) obj).intValue();
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.HOUR_OF_DAY, time);
+                cal.set(Calendar.MINUTE, 0);
+                int hour = cal.get(Calendar.HOUR);
+                if (hour == 0) hour=12;
+                int am_pm = cal.get(Calendar.AM_PM);
+                String display = Integer.toString(hour) + ":00" + (am_pm == 1 ? "PM" : "AM");
+                return toAppendTo.append(display);
+            }
+            @Override
+            public Object parseObject(String source, ParsePosition pos) {
+                return null;
+            }
+        });
+
+        simplePatientXYPlot.setRangeStep(XYStepMode.INCREMENT_BY_VAL, 50);
+        simplePatientXYPlot.setRangeBoundaries(50, 350, BoundaryMode.FIXED);
+        simplePatientXYPlot.getGraphWidget().setTicksPerRangeLabel(2);
+        simplePatientXYPlot.getGraphWidget().getRangeLabelPaint().setColor(Color.BLACK);
+        simplePatientXYPlot.getGraphWidget().setRangeValueFormat(new Format() {
+            @Override
+            public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+                Number num = (Number) obj;
+                switch (num.intValue()) {
+                    case 100:
+                        toAppendTo.append("Well-Controlled/Eating");
+                        break;
+                    case 150:
+                        toAppendTo.append("Eating Some");
+                        break;
+                    case 200:
+                        toAppendTo.append("Moderate/Not Eating");
+                        break;
+                    case 300:
+                        toAppendTo.append("Severe");
+                        break;
+                    default:
+                        toAppendTo.append("");
+                        break;
+                }
+                return toAppendTo;
+            }
+            @Override
+            public Object parseObject(String source, ParsePosition pos) {
+                return null;
+            }
+        });
+
+        simplePatientXYPlot.setBorderStyle(Plot.BorderStyle.NONE, null, null);
+        simplePatientXYPlot.getGraphWidget().getBackgroundPaint().setColor(Color.WHITE);
+        simplePatientXYPlot.getGraphWidget().getGridBackgroundPaint().setColor(Color.TRANSPARENT);
+        simplePatientXYPlot.getGraphWidget().getDomainGridLinePaint().setColor(Color.BLACK);
+        simplePatientXYPlot.getGraphWidget().getDomainGridLinePaint().
+                setPathEffect(new DashPathEffect(new float[]{1, 1}, 1));
+        simplePatientXYPlot.getGraphWidget().getRangeGridLinePaint().setColor(Color.BLACK);
+        simplePatientXYPlot.getGraphWidget().getRangeGridLinePaint().
+                setPathEffect(new DashPathEffect(new float[]{1, 1}, 1));
+        simplePatientXYPlot.getGraphWidget().getDomainOriginLinePaint().setColor(Color.BLACK);
+        simplePatientXYPlot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.BLACK);
+
+
         Log.d(LOG_TAG, "setting up the drawing information");
         if (eatingSeriesByHour.size() > 0) {
             LineAndPointFormatter eatingPointFormat = new LineAndPointFormatter(
                     null,                   //line color
-                    Color.rgb(240, 0, 0),  // point color
+                    getResources().getColor(R.color.sm_eating),  // point color
                     null,                  // fill color Color.rgb(0, 100, 0)
                     null);                 // pointLabelFormatter
             simplePatientXYPlot.addSeries(eatingSeriesByHour, eatingPointFormat);
@@ -394,7 +449,7 @@ public class PatientGraphicsFragment extends Fragment {
         if (severitySeriesByHour.size() > 0) {
             LineAndPointFormatter severityPointFormat = new LineAndPointFormatter(
                     null,                 // line color
-                    Color.rgb(0, 50, 0),  // point color
+                    getResources().getColor(R.color.sm_severity),  // point color
                     null,                 // fill color Color.rgb(0, 0,150)
                     null);                // pointLabelFormatter
             simplePatientXYPlot.addSeries(severitySeriesByHour, severityPointFormat);
@@ -402,14 +457,12 @@ public class PatientGraphicsFragment extends Fragment {
 
         Log.d(LOG_TAG, "Redrawing the Graph");
         simplePatientXYPlot.redraw();
-
     }
 
     private void createPieChart() {
 
         setLayout(PatientGraph.PIE_CHART);
-        pie.clear();
-        pie.setTitle("Percentage Pain Severity/Eating Ability");
+
         painSevere = new Segment("Severe", severeCount);
         painModerate = new Segment("Moderate", moderateCount);
         painControlled = new Segment("Well-Controlled", controlledCount);

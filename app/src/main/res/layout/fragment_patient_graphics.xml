@@ -118,7 +118,7 @@
             androidPlot.legendWidget.textPaint.textSize="15dp"
             androidPlot.legendWidget.widthMetric.value="1"
             androidPlot.rangeLabelWidget.labelPaint.textSize="16dp"
-            androidPlot.title="Patient Severity/Eating Ability over Time"
+            androidPlot.title=""
             androidPlot.titleWidget.labelPaint.textSize="16dp"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
