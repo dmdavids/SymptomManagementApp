@@ -64,7 +64,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
                     .add(R.id.physician_patient_detail_container, fragment)
                     .commit();
             getPhysician(mPhysicianId);  // needed for any physician status log processing
-            PatientGraphicsFragment graphicsFragment = new PatientGraphicsFragment();
+            HistoryLogFragment graphicsFragment = new HistoryLogFragment();
             // sending the same arguments to the graphics container
             graphicsFragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -105,6 +105,8 @@ public class PhysicianPatientDetailActivity extends Activity implements
         } else if (frag instanceof MedicationListFragment) {
             menu.removeItem(R.id.action_medication_list);
             menu.removeItem(R.id.action_history_log);
+        } else if (frag instanceof PatientGraphicsFragment) {
+            menu.removeItem(R.id.action_chart);
         }
         return super.onPrepareOptionsMenu(menu);
     }
@@ -137,7 +139,16 @@ public class PhysicianPatientDetailActivity extends Activity implements
         } else if (id == R.id.physician_logout) {
             LoginActivity.restartLoginActivity(this);
         } else if (id == R.id.action_chart) {
-            startActivity(new Intent(this, TestPatientChartsActivity.class));
+            Bundle arguments = new Bundle();
+            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
+            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
+            PatientGraphicsFragment fragment = new PatientGraphicsFragment();
+            fragment.setArguments(arguments);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.patient_graphics_container, fragment)
+                    .addToBackStack(null)
+                    .commit();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }

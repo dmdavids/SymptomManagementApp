@@ -113,13 +113,12 @@ public class PatientGraphicsFragment extends Fragment {
     int severeCount = 0;
     int moderateCount = 0;
     int controlledCount = 0;
-    private SimpleXYSeries medicationSeries = null;
+    private SimpleXYSeries medicationSeries = null; // future enhancements
 
     private PieChart pie;
     SegmentFormatter sf1;
     SegmentFormatter sf2;
     SegmentFormatter sf3;
-    SegmentFormatter sf4;
 
     private Segment painSevere;
     private Segment painModerate;
@@ -173,8 +172,13 @@ public class PatientGraphicsFragment extends Fragment {
         xyChartLayout.setVisibility(View.INVISIBLE);
         pieChartLayout = (LinearLayout) rootView.findViewById(R.id.pie_chart_layout);
         pie = (PieChart) rootView.findViewById(R.id.PatientPieChart);
-        restartGraph();
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        restartGraph();
     }
 
     @Override
