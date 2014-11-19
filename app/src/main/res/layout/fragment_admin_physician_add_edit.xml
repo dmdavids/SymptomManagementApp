@@ -19,8 +19,9 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="PHYSICIAN DETAILS :"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Physician Details :"
+            android:textStyle="bold"
             android:height="@android:dimen/app_icon_size"
             android:id="@+id/physician_details_heading_x" />
 
@@ -32,6 +33,7 @@
             android:hint="Physician First Name"
             android:imeOptions="actionNext"
             android:inputType="textPersonName|textCapWords"
+            android:layout_marginTop="16dp"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <EditText
@@ -42,13 +44,16 @@
             android:hint="Physician Last Name"
             android:imeOptions="actionNext"
             android:inputType="textPersonName|textCapWords"
+            android:layout_marginTop="16dp"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Button
             android:id="@+id/save_physician_button"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:background="@color/sm_blue"
+            android:layout_marginTop="16dp"
             android:text="Save Physician" >
         </Button>
 

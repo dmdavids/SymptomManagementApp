@@ -11,23 +11,22 @@
     android:orientation="vertical"
     tools:context="com.skywomantech.app.symptommanagement.admin.Physician.AdminPhysicianDetailFragment">
 
-
         <TextView
             android:id="@+id/physician_details_heading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:height="@android:dimen/app_icon_size"
-            android:text="PHYSICIAN DETAILS :"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
+            android:text="Physician Details :"
+            android:textStyle="bold"
+            android:padding="8dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
             android:id="@+id/admin_physician_detail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:height="@android:dimen/app_icon_size"
             android:text="Physician Name"
-            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:padding="8dp"
+            android:textAppearance="?android:attr/textAppearanceMedium"
             android:textIsSelectable="true" />
 
         <TextView
@@ -36,7 +35,8 @@
             android:layout_height="wrap_content"
             android:height="@android:dimen/app_icon_size"
             android:text="Patients :"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:padding="8dp"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <ListView
             android:id="@+id/physician_patients_list"

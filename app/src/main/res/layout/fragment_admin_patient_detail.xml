@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:height="@android:dimen/app_icon_size"
         android:text="PATIENT DETAILS :"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/admin_patient_detail"
@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:height="@android:dimen/app_icon_size"
         android:text="Patient Name"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textIsSelectable="true" />
 
     <TextView
@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:height="@android:dimen/app_icon_size"
         android:text="Date of Birth:"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/admin_patient_detail_birthdate"
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:height="@android:dimen/app_icon_size"
         android:text="mm/dd/yy"
-        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textIsSelectable="true" />
 
     <TextView
@@ -48,12 +48,11 @@
         android:layout_height="wrap_content"
         android:height="@android:dimen/app_icon_size"
         android:text="Physicians :"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ListView
         android:id="@+id/patient_physicians_list"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:height="@android:dimen/app_icon_size" />
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

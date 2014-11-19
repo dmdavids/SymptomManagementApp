@@ -44,6 +44,7 @@
             android:hint="Last Name"
             android:imeOptions="actionNext"
             android:inputType="textPersonName|textCapWords"
+            android:layout_marginTop="16dp"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <LinearLayout
@@ -51,13 +52,6 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="8dp">
-
-            <Button
-                android:id="@+id/pick_birthdate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:text="Choose Birthdate" />
 
             <TextView
                 android:id="@+id/display_birthdate"
@@ -67,6 +61,12 @@
                 android:padding="16dp"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
+            <Button
+                android:id="@+id/pick_birthdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="Choose Birthdate" />
 
         </LinearLayout>
 
@@ -104,9 +104,11 @@
 
     <Button
         android:id="@+id/save_patient_button"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:background="@color/sm_blue"
+
         android:text="Save Patient"></Button>
 
     </LinearLayout>

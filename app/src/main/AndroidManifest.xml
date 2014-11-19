@@ -155,14 +155,6 @@
                 android:resource="@xml/syncadapter" />
         </service>
 
-        <activity
-            android:name=".physician.TestPatientChartsActivity"
-            android:label="@string/title_activity_test_patient_charts"
-            android:parentActivityName="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailActivity" />
-        </activity>
     </application>
 
 </manifest>

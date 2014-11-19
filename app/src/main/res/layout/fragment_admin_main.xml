@@ -26,14 +26,14 @@
         android:id="@+id/edit_medications_button"
         android:layout_below="@+id/edit_physicians_button"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="75dp" />
+        android:layout_marginTop="50dp" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Edit Physicians"
         android:id="@+id/edit_physicians_button"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="50dp"
         android:layout_below="@+id/edit_patients_button"
         android:layout_alignLeft="@+id/edit_medications_button"
         android:layout_alignStart="@+id/edit_medications_button" />
@@ -47,7 +47,7 @@
         android:layout_below="@+id/adminTitleView"
         android:layout_alignLeft="@+id/edit_physicians_button"
         android:layout_alignStart="@+id/edit_physicians_button"
-        android:layout_marginTop="127dp" />
+        android:layout_marginTop="50dp" />
 
 
 </RelativeLayout>

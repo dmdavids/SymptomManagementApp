@@ -78,7 +78,7 @@
 
                 <Button
                     android:id="@+id/username_sign_in_button"
-                    style="?android:textAppearanceSmall"
+                    style="?android:textAppearanceMedium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
