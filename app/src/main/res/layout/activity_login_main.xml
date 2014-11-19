@@ -84,7 +84,8 @@
                     android:layout_marginTop="16dp"
                     android:text="Sign In"
                     android:textStyle="bold"
-                    android:minWidth="350dp"/>
+                    android:minWidth="350dp"
+                    android:background="@color/sm_blue"/>
 
             </LinearLayout>
     </ScrollView>

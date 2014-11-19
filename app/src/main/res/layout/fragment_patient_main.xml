@@ -18,7 +18,7 @@
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:weightSum="1"
-            android:background="@color/sm_bright_red"
+            android:background="@color/sm_grey_dark"
             android:paddingBottom="24sp">
 
             <TextView
@@ -104,6 +104,7 @@
             android:layout_below="@id/patient_button_layout"
             android:layout_centerHorizontal="true"
             android:orientation="horizontal"
+            android:background="@color/sm_grey_dark"
             android:weightSum="1">
 
             <TextView
@@ -113,7 +114,8 @@
                 android:layout_weight="0.27"
                 android:gravity="center_horizontal"
                 android:padding="12dp"
-                android:text="Track Medication" />
+                android:text="Track Medication"
+                android:textColor="@color/sm_cream_white"/>
 
             <TextView
                 android:id="@+id/pain_log_text"
@@ -122,7 +124,8 @@
                 android:layout_weight="0.34"
                 android:gravity="center_horizontal"
                 android:padding="12dp"
-                android:text="Track Pain" />
+                android:text="Track Pain"
+                android:textColor="@color/sm_cream_white"/>
 
             <TextView
                 android:id="@+id/notes_text"
@@ -131,7 +134,8 @@
                 android:layout_weight="0.28"
                 android:gravity="center_horizontal"
                 android:padding="12dp"
-                android:text="Add Notes" />
+                android:text="Add Notes"
+                android:textColor="@color/sm_cream_white"/>
 
         </LinearLayout>
 

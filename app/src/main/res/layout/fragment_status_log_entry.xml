@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:background="@color/light_grey"
+                android:background="@color/sm_grey_light"
                 android:ems="10"
                 android:gravity="left|top"
                 android:hint="Enter Notes Here"
@@ -46,13 +46,15 @@
             android:layout_gravity="center_horizontal"
             android:layout_margin="8dp"
             android:padding="24dp"
-            android:src="@android:drawable/ic_menu_camera" />
+            android:src="@android:drawable/ic_menu_camera"
+            android:background="@color/sm_purple_grey"/>
 
         <ImageView
             android:id="@+id/camera_picture_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal" />
+            android:layout_gravity="center_horizontal"
+            />
 
         <TextView
             android:id="@+id/image_status"
@@ -71,7 +73,8 @@
             android:layout_margin="8dp"
             android:minWidth="400dp"
             android:padding="4dp"
-            android:text="Save" />
+            android:text="Save"
+            android:background="@color/sm_blue"/>
 
     </LinearLayout>
 </ScrollView>

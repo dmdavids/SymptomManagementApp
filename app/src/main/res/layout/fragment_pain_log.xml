@@ -103,7 +103,8 @@
         android:layout_below="@+id/eating_radio_group"
         android:layout_marginTop="16dp"
         android:layout_centerHorizontal="true"
-        android:minWidth="400dp"/>
+        android:minWidth="400dp"
+        android:background="@color/sm_blue"/>
         </RelativeLayout>
 
 </ScrollView>
