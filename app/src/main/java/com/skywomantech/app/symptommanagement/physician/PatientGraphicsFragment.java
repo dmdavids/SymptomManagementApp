@@ -231,14 +231,6 @@ public class PatientGraphicsFragment extends Fragment {
         }
     }
 
-    @OnClick(R.id.fuzzy_plot)
-    public void onClickFuzzyPlot(View view) {
-        Log.d(LOG_TAG, "Fuzzy Plot Clicked");
-        if (patientReadyForGraphing()) {
-            graph = PatientGraph.FUZZY_CHART;
-            createLinePlot();
-        }
-    }
 
     @OnClick(R.id.scatter_plot)
     public void onClickScatterPlot(View view) {
