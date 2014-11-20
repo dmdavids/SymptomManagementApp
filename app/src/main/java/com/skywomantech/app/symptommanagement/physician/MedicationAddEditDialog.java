@@ -78,17 +78,22 @@ public class MedicationAddEditDialog extends DialogFragment {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                mMedication.setName(mName.getText().toString());
-                                ((Callbacks) getActivity()).onSaveMedicationResult(mMedication);
+                                if (mName != null && mName.getText() != null) {
+                                    mMedication.setName(mName.getText().toString());
+                                    ((Callbacks) getActivity()).onSaveMedicationResult(mMedication);
+                                } else {
+                                    // assume canceling if no name added
+                                    ((Callbacks) getActivity()).onCancelMedicationResult();
+                                }
                             }
                         })
                 .setNegativeButton(getActivity().getString(R.string.cancel_button_text),
                         new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        ((Callbacks) getActivity()).onCancelMedicationResult();
-                    }
-                });
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ((Callbacks) getActivity()).onCancelMedicationResult();
+                            }
+                        });
         return builder.create();
     }
 }

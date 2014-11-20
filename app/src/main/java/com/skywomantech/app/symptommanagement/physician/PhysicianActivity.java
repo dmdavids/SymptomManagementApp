@@ -94,7 +94,7 @@ public abstract class PhysicianActivity
         PhysicianManager.getPhysician(this, mPhysicianId);
         MedicationManager.getAllMedications(this);
         if (mPatientId != null) {
-            Log.d(LOG_TAG, "onCreate is getting hte patient from the server id :" + mPatientId);
+            Log.d(LOG_TAG, "onCreate is getting the patient from the server id :" + mPatientId);
             PatientManager.getPatient(this, mPatientId);
         } else {
             Log.d(LOG_TAG, "NO patient id so we don't need to go get it from the server.");
@@ -149,22 +149,25 @@ public abstract class PhysicianActivity
         if (id == R.id.action_medication_list) { // dual pane only
             getFragmentManager().beginTransaction()
                     .replace(R.id.patient_graphics_container,
-                            new PatientMedicationFragment(), PatientMedicationFragment.FRAGMENT_TAG)
-                    .addToBackStack(null)
+                            new PatientMedicationFragment(),
+                            PatientMedicationFragment.FRAGMENT_TAG)
+                    //.addToBackStack(null)
                     .commit();
             return true;
         } else if (id == R.id.action_history_log) { //dual pane only
             getFragmentManager().beginTransaction()
                     .replace(R.id.patient_graphics_container,
-                            new HistoryLogFragment(), HistoryLogFragment.FRAGMENT_TAG)
-                    .addToBackStack(null)
+                            new HistoryLogFragment(),
+                            HistoryLogFragment.FRAGMENT_TAG)
+                    //.addToBackStack(null)
                     .commit();
             return true;
         } else if (id == R.id.action_chart) { //dual pane only
             getFragmentManager().beginTransaction()
                     .replace(R.id.patient_graphics_container,
-                            new PatientGraphicsFragment(), HistoryLogFragment.FRAGMENT_TAG)
-                    .addToBackStack(null)
+                            new PatientGraphicsFragment(),
+                            PatientGraphicsFragment.FRAGMENT_TAG)
+                    //.addToBackStack(null)
                     .commit();
             return true;
         } else if (id == R.id.physician_logout) { // both menus no special processing
@@ -185,6 +188,12 @@ public abstract class PhysicianActivity
         }
         Log.d(LOG_TAG, "Current Selected Physician is : " + physician.toString());
         mPhysician = physician;
+        // send the new physician data to the list fragment to redisplay
+        Fragment listFrag;
+        listFrag = getFragmentManager().findFragmentByTag(PhysicianListPatientsFragment.FRAGMENT_TAG);
+        if (listFrag != null && listFrag instanceof PhysicianListPatientsFragment) {
+            ((PhysicianListPatientsFragment) listFrag).updatePhysician(mPhysician);
+        }
     }
 
     /**
@@ -195,7 +204,7 @@ public abstract class PhysicianActivity
      */
     @Override
     public Physician getPhysicianForPatientList() {
-        Log.d(LOG_TAG, "GETTING Selected Physician for Patient list : " + mPhysician);
+        Log.d(LOG_TAG, "I am now GETTING Physician for Patient list.");
         return mPhysician;
     }
 
@@ -224,27 +233,35 @@ public abstract class PhysicianActivity
      * @param patient from server for update to fragments
      */
     private void sendPatientToFragments(Patient patient) {
+        Log.d(LOG_TAG, "Sending Patient to the detail frag+ ....");
         // try the details fragment first
-        Fragment frag;
-        frag = getFragmentManager().findFragmentByTag(PhysicianPatientDetailFragment.FRAGMENT_TAG);
-        if (frag != null) {
-            ((PhysicianPatientDetailFragment) frag).updatePatient(patient);
+        Fragment detailFrag;
+        detailFrag = getFragmentManager().findFragmentByTag(PhysicianPatientDetailFragment.FRAGMENT_TAG);
+        if (detailFrag != null && detailFrag instanceof PhysicianPatientDetailFragment) {
+            ((PhysicianPatientDetailFragment) detailFrag).updatePatient(patient);
         }
+        Log.d(LOG_TAG, "Sending Patient to the history frag+ ....");
         // now the history log fragment
-        frag = getFragmentManager().findFragmentByTag(HistoryLogFragment.FRAGMENT_TAG);
-        if (frag != null) {
-            ((HistoryLogFragment) frag).updatePatient(patient);
+        Fragment historyFrag;
+        historyFrag = getFragmentManager().findFragmentByTag(HistoryLogFragment.FRAGMENT_TAG);
+        if (historyFrag != null && historyFrag instanceof HistoryLogFragment) {
+            ((HistoryLogFragment) historyFrag).updatePatient(patient);
         }
+        Log.d(LOG_TAG, "Sending Patient to the medication frag+ ....");
         // then patient medication fragment
-        frag = getFragmentManager().findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
-        if (frag != null) {
-            ((PatientMedicationFragment) frag).updatePatient(patient);
+        Fragment medicationFrag;
+        medicationFrag = getFragmentManager().findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
+        if (medicationFrag != null && medicationFrag instanceof PatientMedicationFragment) {
+            ((PatientMedicationFragment) medicationFrag).updatePatient(patient);
         }
+        Log.d(LOG_TAG, "Sending Patient to the graphics frag+ ....");
         // finally the patient graphing fragment
-        frag = getFragmentManager().findFragmentByTag(PatientGraphicsFragment.FRAGMENT_TAG);
-        if (frag != null) {
-            ((PatientGraphicsFragment) frag).updatePatient(patient);
+        Fragment graphicsFrag;
+        graphicsFrag = getFragmentManager().findFragmentByTag(PatientGraphicsFragment.FRAGMENT_TAG);
+        if (graphicsFrag != null && graphicsFrag instanceof PatientGraphicsFragment) {
+            ((PatientGraphicsFragment) graphicsFrag).updatePatient(patient);
         }
+        Log.d(LOG_TAG, "Sending Patient to the fragments is DONE.");
     }
 
     /**

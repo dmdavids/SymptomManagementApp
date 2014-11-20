@@ -87,7 +87,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
     public void onResume() {
         super.onResume();
         mPhysician = ((Callbacks) getActivity()).getPhysicianForPatientList();
-        displayPatientList(mPhysician);
+        if (mPhysician != null) displayPatientList(mPhysician);
     }
 
     /**

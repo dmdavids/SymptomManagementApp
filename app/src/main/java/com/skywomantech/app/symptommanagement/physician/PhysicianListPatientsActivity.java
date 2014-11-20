@@ -54,17 +54,18 @@ public class PhysicianListPatientsActivity extends PhysicianActivity  {
                 arguments.putString(PHYSICIAN_ID_KEY, mPhysicianId);
 
                 // this is the patient details window that shows at the top
-                PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
-                fragment.setArguments(arguments);
-                getFragmentManager().beginTransaction()
-                        .add(R.id.physician_patient_detail_container, fragment)
-                        .commit();
-
+                PhysicianPatientDetailFragment detailsFragment = new PhysicianPatientDetailFragment();
+                detailsFragment.setArguments(arguments);
                 // start by showing the history log in the graphics fragment for now
                 HistoryLogFragment graphicsFragment = new HistoryLogFragment();
                 graphicsFragment.setArguments(arguments);
                 getFragmentManager().beginTransaction()
-                        .replace(R.id.patient_graphics_container, graphicsFragment)
+                        .replace(R.id.physician_patient_detail_container,
+                                detailsFragment,
+                                PhysicianPatientDetailFragment.FRAGMENT_TAG)
+                        .replace(R.id.patient_graphics_container,
+                                graphicsFragment,
+                                HistoryLogFragment.FRAGMENT_TAG)
                         .commit();
             }
         }
@@ -108,7 +109,7 @@ public class PhysicianListPatientsActivity extends PhysicianActivity  {
 
     /**
      * This makes the list activity, the top activity so you can't go back to login
-     * TODO: Does this work differently with dual pane?  don't think so but ...
+     * TODO: Make this work with two pane
      */
     @Override
     public void onBackPressed() {
@@ -138,6 +139,26 @@ public class PhysicianListPatientsActivity extends PhysicianActivity  {
             detailIntent.putExtras(arguments);
             startActivity(detailIntent);
         }
+    }
+
+    /**
+     * Callback from the prescription fragment to add a prescription that was chosen
+     * from the whole medication list
+     *
+     * @param medication selected medication to add as a prescription
+     */
+    //@Override
+    public void onMedicationSelected(Medication medication) {
+        // let the detail fragment update the patient's prescription list
+        getFragmentManager().beginTransaction()
+                .replace(R.id.patient_graphics_container,
+                        new PatientMedicationFragment(),
+                        PatientMedicationFragment.FRAGMENT_TAG)
+                .commit();
+        PatientMedicationFragment frag =
+                (PatientMedicationFragment) getFragmentManager()
+                        .findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
+        frag.addPrescription(medication);
     }
 
     /**

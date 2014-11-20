@@ -111,9 +111,12 @@ public class Physician {
     }
 
     public String toDebugString() {
-        return "Physician [id=" + id + ", firstName=" + firstName
-                + ", lastName=" + lastName + ", patients=" + patients + "]";
+        return getName();
     }
+//    public String toDebugString() {
+//        return "Physician [id=" + id + ", firstName=" + firstName
+//                + ", lastName=" + lastName + ", patients=" + patients + "]";
+//    }
 
 	@Override
 	public String toString() {

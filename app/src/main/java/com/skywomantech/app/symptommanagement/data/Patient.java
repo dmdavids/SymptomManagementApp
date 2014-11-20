@@ -218,15 +218,17 @@ public class Patient {
         return result;
     }
 
-    public String toDebugString() {
-        return "Patient [id=" + id + ", " +  ", dbId=" + dbId +
-                "firstName=" + firstName + ", lastName="
-                + lastName + ", birthdate=" + birthdate + ", severityLevel=" + severityLevel
-                + ", lastLogin=" + lastLogin + ", active=" + active + ", prescriptions="
-                + prescriptions + ", physicians=" + physicians + ", painLog="
-                + painLog + ", medLog=" + medLog + ", statusLog=" + statusLog
-                + ", prefs=" + prefs + "]";
-    }
+    public String toDebugString() { return this.toString();}
+
+//    public String toDebugString() {
+//        return "Patient [id=" + id + ", " +  ", dbId=" + dbId +
+//                "firstName=" + firstName + ", lastName="
+//                + lastName + ", birthdate=" + birthdate + ", severityLevel=" + severityLevel
+//                + ", lastLogin=" + lastLogin + ", active=" + active + ", prescriptions="
+//                + prescriptions + ", physicians=" + physicians + ", painLog="
+//                + painLog + ", medLog=" + medLog + ", statusLog=" + statusLog
+//                + ", prefs=" + prefs + "]";
+//    }
 
 	@Override
 	public String toString() {

@@ -49,10 +49,6 @@ public class PhysicianPatientDetailActivity extends PhysicianActivity  {
                     .add(R.id.physician_patient_detail_container,
                             new PhysicianPatientDetailFragment(),
                             PhysicianPatientDetailFragment.FRAGMENT_TAG)
-                    .commit();
-            // put the history log in the graphics fragment for starters
-            // could change this to graphs or history logs or medications if preferred.
-            getFragmentManager().beginTransaction()
                     .add(R.id.patient_graphics_container,
                             new HistoryLogFragment(), HistoryLogFragment.FRAGMENT_TAG)
                     .commit();
