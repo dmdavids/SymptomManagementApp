@@ -1,5 +1,6 @@
 package com.skywomantech.app.symptommanagement.physician;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
@@ -12,20 +13,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
-import com.skywomantech.app.symptommanagement.client.CallableTask;
-import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
-import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
-import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
-import com.skywomantech.app.symptommanagement.data.UserCredential;
-import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
-
-import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -52,14 +43,14 @@ public class PhysicianPatientDetailFragment extends Fragment {
     public final static String FRAGMENT_TAG = "fragment_details";
 
     // Notifies the activity about the following events
-    // getPatient - return the current patient to work with
+    // getPatientForDetails - return the current patient to work with
     // onPatientContacted - physician want to add a status log to the patient
     public interface Callbacks {
-        public Patient getPatient();
+        public Patient getPatientForDetails();
         public void onPatientContacted(String patientId, StatusLog statusLog);
     }
 
-    private Patient mPatient;
+    private static Patient mPatient;
 
     @InjectView(R.id.physician_patient_detail_name)
     TextView mNameView;
@@ -79,30 +70,57 @@ public class PhysicianPatientDetailFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (!(activity instanceof Callbacks)) {
+            throw new IllegalStateException(activity.getString(R.string.callbacks_message));
+        }
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_physician_patient_detail, container, false);
         ButterKnife.inject(this, rootView);
-        // tell patient manager to go to cloud and get patient, give it to the activity
-        mPatient = ((Callbacks) getActivity()).getPatient();
-        displayPatient();
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mPatient = ((Callbacks) getActivity()).getPatient();
+        // check for patient data and display it if we have any
+        mPatient = ((Callbacks) getActivity()).getPatientForDetails();
         displayPatient();
     }
 
-    public void displayPatient() {
+    /**
+     * Called by the hosting activity to update the details display with a new patient
+     *
+     * @param patient
+     */
+    public void updatePatient(Patient patient) {
+        if (patient == null) {
+            Log.e(LOG_TAG, "Trying to set details patient to null.");
+            return;
+        }
+        Log.d(LOG_TAG, "New Patient has arrived!" + patient.toString());
+        mPatient = patient;
+        displayPatient();
+    }
+
+    private void displayPatient() {
         if (mPatient != null) {
             // update the display
             mNameView.setText(mPatient.getName());
             mBDView.setText(mPatient.getBirthdate());
             mRecordId.setText(mPatient.getId());
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+            ButterKnife.reset(this);
     }
 
     /**
@@ -129,6 +147,8 @@ public class PhysicianPatientDetailFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (mPatient == null) return true;  // just don't do anything cause there is no patient
+
         int id = item.getItemId();
         if (id == R.id.action_add_status) {
             if (mPatient != null) {

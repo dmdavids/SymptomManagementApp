@@ -1,45 +1,47 @@
 package com.skywomantech.app.symptommanagement.physician;
 
+import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.R;
-import com.skywomantech.app.symptommanagement.client.CallableTask;
-import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
-import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
-import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.concurrent.Callable;
 
+/**
+ * This fragment displays the patient's prescription list.
+ * <p/>
+ * This fragment expects the hosting activity to give it the patient with the prescriptions.
+ * <p/>
+ * This fragment uses a custom list adapter to process the prescription list.
+ * <p/>
+ * This fragment has an options menu that allow the physician to add a new prescription.
+ * This fragment relies on the calling activity to do the add new prescription dialog processing.
+ * <p/>
+ * The prescription can be deleted by the physician by clicking on the list item delete icon.
+ */
 public class PatientMedicationFragment extends ListFragment {
 
     private static final String LOG_TAG = PatientMedicationFragment.class.getSimpleName();
     public final static String FRAGMENT_TAG = "fragment_patient_medication";
 
+    // Notifies the activity about the following events
+    // onRequestPrescriptionAdd - adds a prescription to the patients med list
+    // getPatientForPrescriptions - gets the patient from the activity
     public interface Callbacks {
-        public boolean onRequestPrescriptionAdd();
+        public void onRequestPrescriptionAdd();
+        public Patient getPatientForPrescriptions(); // pulls the patient
     }
 
-    private static String PHYSICIAN_ID_KEY;
-    private static String PATIENT_ID_KEY;
-
-    private static final String STATE_ACTIVATED_POSITION = "activated_position";
-    private int mActivatedPosition = ListView.INVALID_POSITION;
-
-    private static String  mPatientId;
-    private static Patient mPatient;
-    private static Medication[] meds;
+    private static Patient mPatient;  // current patient
+    private static Medication[] meds; // holds the array list for the list adapter
 
     public PatientMedicationFragment() {
     }
@@ -47,27 +49,38 @@ public class PatientMedicationFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PHYSICIAN_ID_KEY = getString(R.string.physician_id_key);
-        PATIENT_ID_KEY = getString(R.string.patient_id_key);
-        if (getArguments().containsKey(PATIENT_ID_KEY)) {
-            mPatientId = getArguments().getString(PATIENT_ID_KEY);
-        }
         setHasOptionsMenu(true);
-        this.setRetainInstance(true);  // save the fragment state with rotations
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
-    {
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (!(activity instanceof Callbacks)) {
+            throw new IllegalStateException(activity.getString(R.string.callbacks_message));
+        }
+    }
+
+    /**
+     * This fragment has an option menu with add prescription option
+     *
+     * @param menu
+     * @param inflater
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.medication_add_menu, menu);
     }
 
+    /**
+     * The add prescription uses a dialog that is managed by the hosting activity
+     *
+     * @param item
+     * @return
+     */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
-        switch (item.getItemId())
-        {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.action_add:
                 ((Callbacks) getActivity()).onRequestPrescriptionAdd();
                 return true;
@@ -76,166 +89,85 @@ public class PatientMedicationFragment extends ListFragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setRetainInstance(true); // save fragment across config changes
-        setEmptyText(getString(R.string.empty_list_text));
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-                setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
-            }
-            if (savedInstanceState.containsKey(PATIENT_ID_KEY)) {
-                mPatientId =
-                        savedInstanceState.getString(PATIENT_ID_KEY);
-            }
-        }
-    }
-
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setEmptyText(getString(R.string.empty_list_text));
+        setRetainInstance(true); // save fragment across config changes
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
+    /**
+     * Get the patient from the activity and refresh the list
+     */
     @Override
     public void onResume() {
         super.onResume();
-        Bundle arguments = getArguments();
-        if (mPatientId == null &&
-                arguments != null
-                && arguments.containsKey(PATIENT_ID_KEY) ) {
-            mPatientId = arguments.getString(PATIENT_ID_KEY);
-        }
-        refreshPatientMeds();
+        mPatient = ((Callbacks) getActivity()).getPatientForPrescriptions();
+        displayPrescriptions(mPatient);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mActivatedPosition != ListView.INVALID_POSITION) {
-            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+    /**
+     * Called by the hosting activity to update the patient and refresh the list
+     *
+     * @param patient with prescriptions to be displayed
+     */
+    public void updatePatient(Patient patient) {
+        if (patient == null) {
+            Log.e(LOG_TAG, "Trying to set patient medication patient to null.");
+            return;
         }
-        if (mPatientId != null) {
-            outState.putString(PATIENT_ID_KEY, mPatientId);
-        }
+        Log.d(LOG_TAG, "New Patient has arrived!" + patient.toString());
+        mPatient = patient;
+        displayPrescriptions(mPatient);
     }
 
-    public void setActivateOnItemClick(boolean activateOnItemClick) {
-        getListView().setChoiceMode(activateOnItemClick
-                ? ListView.CHOICE_MODE_SINGLE
-                : ListView.CHOICE_MODE_NONE);
-    }
-
-    private void setActivatedPosition(int position) {
-        if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
-        } else {
-            getListView().setItemChecked(position, true);
+    /**
+     * Called to refresh the prescription list for display
+     * @param patient
+     */
+    private void displayPrescriptions(Patient patient) {
+        Log.d(LOG_TAG, "We are updating the display list for Prescriptions.");
+        if (patient.getPrescriptions() == null)
+            patient.setPrescriptions(new HashSet<Medication>());
+        if (patient.getPrescriptions() != null) {
+            meds = patient.getPrescriptions()
+                    .toArray(new Medication[patient.getPrescriptions().size()]);
         }
-        mActivatedPosition = position;
+        setListAdapter(new PrescriptionAdapter(getActivity(), meds));
     }
 
-
+    /**
+     * called by the hosting activity to add the new prescription to the patient list
+     * and then to send the updated patient to the server, don't display here
+     * because we wait for the server to send it back to us via the updatePatient()
+     * and then we display it
+     *
+     * @param medication  this is the new one to add
+     */
     public void addPrescription(Medication medication) {
         if (mPatient == null || medication == null) {
             Log.d(LOG_TAG, "No current patient or medication to process.");
+            return;
         }
-        if (mPatient != null && mPatient.getPrescriptions() == null) {
-            // first prescription
+        if (mPatient.getPrescriptions() == null) {
             mPatient.setPrescriptions(new HashSet<Medication>());
         }
         mPatient.getPrescriptions().add(medication);
-        sendPatientRecordToCloud(mPatient);
+        Log.d(LOG_TAG, "Sending this updated patient to the server" + mPatient.toString());
+        PatientManager.updatePatient(getActivity(), mPatient);
     }
 
-    private void refreshPatientMeds() {
-
-        if (mPatientId == null) return;
-
-        final SymptomManagementApi svc = SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Patient>() {
-
-                @Override
-                public Patient call() throws Exception {
-                    Log.d(LOG_TAG, "getting patient");
-                    return svc.getPatient(mPatientId);
-                }
-            }, new TaskCallback<Patient>() {
-
-                @Override
-                public void success(Patient result) {
-                    Log.d(LOG_TAG, "getting Patient and all prescriptions");
-                    mPatient = result;
-
-                    if (mPatient.getPrescriptions() == null)
-                        mPatient.setPrescriptions(new HashSet<Medication>());
-                    if (mPatient.getPrescriptions() != null) {
-                        meds = mPatient.getPrescriptions()
-                                .toArray(new Medication[mPatient.getPrescriptions().size()]);
-                    }
-                    setListAdapter(new PrescriptionAdapter(getActivity(), meds));
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Toast.makeText(
-                            getActivity(),
-                            "Unable to fetch the Patient Logs. Please check Internet connection.",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-    }
-
+    /**
+     * called by the hosting activity to delete a prescription from the current patient
+     * and then update the patient record on the server, wait to display until the
+     * updated patient returns from the server
+     *
+     * @param position  where in the meds display is the deleted prescription
+     */
     public void deletePrescription(int position) {
         Collection<Medication> p = mPatient.getPrescriptions();
         p.remove(meds[position]);
         mPatient.setPrescriptions(new HashSet<Medication>(p));
-        sendPatientRecordToCloud(mPatient);
-    }
-
-    // The Sync Adapter for updating patients only works for a PATIENT
-    // so the Physician needs to do this immediately here.
-    private void sendPatientRecordToCloud(final Patient patientRecord) {
-
-        if (patientRecord == null) return;
-        final SymptomManagementApi svc =  SymptomManagementService.getService();
-
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Patient>() {
-
-                @Override
-                public Patient call() throws Exception {
-                    Log.d(LOG_TAG, "Updating single Patient id : " + patientRecord.getId());
-                    return svc.updatePatient(patientRecord.getId(), patientRecord);
-                }
-            }, new TaskCallback<Patient>() {
-
-                @Override
-                public void success(Patient result) {
-                    Log.d(LOG_TAG, "Returned Patient from Server:" + result.toDebugString());
-                    mPatient = result;
-                    if (mPatient.getPrescriptions() == null)
-                        mPatient.setPrescriptions(new HashSet<Medication>());
-                    if (mPatient.getPrescriptions() != null) {
-                        meds = mPatient.getPrescriptions()
-                                .toArray(new Medication[mPatient.getPrescriptions().size()]);
-                    }
-                    setListAdapter(new PrescriptionAdapter(getActivity(), meds));
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Log.e(LOG_TAG, "Sync unable to UPDATE Patient record to Internet." +
-                            "Prescription changes did not save. Try again later");
-                }
-            });
-        }
+        Log.d(LOG_TAG, "Sending this updated patient to the server" + mPatient.toString());
+        PatientManager.updatePatient(getActivity(), mPatient);
     }
 }

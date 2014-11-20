@@ -11,6 +11,13 @@ import android.widget.TextView;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.HistoryLog;
 
+/**
+ * This adapter displays a HistoryLog item for viewing only.
+ * Depending on the log type it will display the appropriate icon.
+ *
+ * Pretty straightforward.
+ *
+ */
 
 public class HistoryLogAdapter extends ArrayAdapter<HistoryLog> {
 
@@ -53,7 +60,6 @@ public class HistoryLogAdapter extends ArrayAdapter<HistoryLog> {
         } else {
             view = convertView;
         }
-
         ViewHolder holder = (ViewHolder) view.getTag();
         holder.info.setText(logs[position].getInfo());
         holder.created.setText(logs[position].getFormattedCreatedDate());

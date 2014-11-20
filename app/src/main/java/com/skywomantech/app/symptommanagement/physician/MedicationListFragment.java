@@ -23,15 +23,31 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-
+/**
+ * This fragment displays a list of all the available medications on the server.
+ *
+ * This fragment allows the user to select a medication or add a new medication.
+ * This fragment does not allow deleting any medications from the server.  This is not allowed
+ * in this design.  All medications are expected to remain in the database.
+ *
+ *
+ */
 public class MedicationListFragment extends ListFragment {
 
     private static final String LOG_TAG = MedicationListFragment.class.getSimpleName();
     public final static String FRAGMENT_TAG = "fragment_medication_list";
+
+    private static Collection<Medication> medications;
+
+    // Notifies the activity about the following events
+    // onAddMedication - adds a medication to the server database
+    // onMedicationSelected - lets the activity know which medication was selected
+    // showAddMedicationOptionsMenu - asks activity if the options menu is needed or not
     public interface Callbacks {
         public void onMedicationSelected(Medication medication);
         public void onAddMedication();
         public boolean showAddMedicationOptionsMenu();
+        public Collection<Medication> getMedications();
     }
 
     public MedicationListFragment() {
@@ -41,11 +57,8 @@ public class MedicationListFragment extends ListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setRetainInstance(true); // save fragment across config changes
-
         // see if the activity want the ADD icon to display in the options menu
         setHasOptionsMenu(((Callbacks) getActivity()).showAddMedicationOptionsMenu());
-
-        setEmptyText(getString(R.string.empty_list_text));
     }
 
     @Override
@@ -57,14 +70,17 @@ public class MedicationListFragment extends ListFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-
-        // Activities containing this fragment must implement its callbacks.
         if (!(activity instanceof Callbacks)) {
-            throw new IllegalStateException("Activity must implement fragment's callbacks.");
+            throw new IllegalStateException(activity.getString(R.string.callbacks_message));
         }
     }
 
-    // display this fragment's menu items
+    /**
+     * If the activity allows, the user can have access to an Add medication option
+     *
+     * @param menu
+     * @param inflater
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
@@ -72,7 +88,13 @@ public class MedicationListFragment extends ListFragment {
         inflater.inflate(R.menu.admin_add_menu, menu);
     }
 
-    // handle choice from options menu
+    /**
+     * If the add medication option is chosen, allow the hosting activity to process it
+     * via a dialog
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -85,60 +107,50 @@ public class MedicationListFragment extends ListFragment {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * attempt to display the list of medications
+     */
     @Override
     public void onResume() {
         super.onResume();
-        refreshAllMedications();
+        medications = ((Callbacks) getActivity()).getMedications();
+        displayMedications(medications);
     }
 
+    /**
+     * Called by the hosting activity to update the medication list from the server
+     *
+     * @param meds list of medications
+     */
+    public void updateMedications(Collection<Medication> meds) {
+        medications = meds;
+        displayMedications(medications);
+    }
+
+    /**
+     * When a list item is selected send it to the hosting activity to process
+     *
+     * @param listView
+     * @param view
+     * @param position
+     * @param id
+     */
 
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         Medication med = (Medication) getListAdapter().getItem(position);
-
-        Log.d(LOG_TAG, "Medication name selected is " + med.getName()
-                + " id is : " + med.getId());
-
-        String medId = med.getId();
-        Log.d(LOG_TAG, " String id value is : " + medId);
         ((Callbacks) getActivity()).onMedicationSelected(med);
     }
 
-    public void refreshAllMedications() {
-
-        final SymptomManagementApi svc = SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Collection<Medication>>() {
-
-                @Override
-                public Collection<Medication> call() throws Exception {
-                    Log.d(LOG_TAG,"getting all medications");
-                    return svc.getMedicationList();
-                }
-            }, new TaskCallback<Collection<Medication>>() {
-
-                @Override
-                public void success(Collection<Medication> result) {
-                    Log.d(LOG_TAG,"creating list of all medications");
-                    if(result != null) {
-                        Log.d(LOG_TAG, "REFRESHING MEDICATION LIST!");
-                        setListAdapter(new ArrayAdapter<Medication>(
-                                getActivity(),
-                                android.R.layout.simple_list_item_activated_1,
-                                android.R.id.text1,
-                                new ArrayList(result)));
-                    }
-                }
-                @Override
-                public void error(Exception e) {
-                    Toast.makeText(
-                            getActivity(),
-                            "Unable to fetch the Medications please check Internet connection.",
-                            Toast.LENGTH_LONG).show();
-                    getActivity().onBackPressed();
-                }
-            });
+    public void displayMedications(Collection<Medication> medications) {
+        if(medications == null) {
+            Log.e(LOG_TAG, "Trying to display a null medication list.");
+            return;
         }
+        setListAdapter(new ArrayAdapter<Medication>(
+                getActivity(),
+                android.R.layout.simple_list_item_activated_1,
+                android.R.id.text1,
+                new ArrayList(medications)));
     }
-
 }

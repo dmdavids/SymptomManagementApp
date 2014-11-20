@@ -1,5 +1,6 @@
 package com.skywomantech.app.symptommanagement.physician;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
@@ -160,6 +161,14 @@ public class PatientGraphicsFragment extends Fragment {
             }
         }
         setRetainInstance(true);  // save the fragment state with rotations
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (!(activity instanceof Callbacks)) {
+            throw new IllegalStateException(activity.getString(R.string.callbacks_message));
+        }
     }
 
     @Override

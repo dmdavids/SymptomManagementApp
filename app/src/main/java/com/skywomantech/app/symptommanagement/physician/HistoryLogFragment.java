@@ -1,43 +1,42 @@
 package com.skywomantech.app.symptommanagement.physician;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.R;
-import com.skywomantech.app.symptommanagement.client.CallableTask;
-import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
-import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
-import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.HistoryLog;
-import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 
-import java.util.concurrent.Callable;
-
+/**
+ * This fragment expects a patient to be obtained from the hosting activity.
+ * <p/>
+ * This fragment displays a list of the combined log records for the patient
+ * <p/>
+ * This list is used by both the patient and the physician apps.
+ * <p/>
+ * Clicking on a list item does nothing at the time being. This is a view only list.
+ * <p/>
+ * Future Enhancement is that it could combine the physician and patient logs.
+ * Future Enhancement is that there could be other types of logs.
+ * Future Enhancement is the ability to filter logs for display purposes.
+ */
 public class HistoryLogFragment extends ListFragment {
 
     private static final String LOG_TAG = HistoryLogFragment.class.getSimpleName();
     public final static String FRAGMENT_TAG = "fragment_history_log";
 
+    // Notifies the activity about the following events
+    // getPatientForHistory - return the current patient to work with
     public interface Callbacks {
-        public Patient getPatientForHistory(String id);
-        //public String getPatientIdForHistory();
+        public Patient getPatientForHistory();
     }
 
-    private String  mPatientId = null;
-    private Patient mPatient;
-
-    private static String PHYSICIAN_ID_KEY;
-    private static String PATIENT_ID_KEY;
-
-    private static final String STATE_ACTIVATED_POSITION = "activated_position";
-    private int mActivatedPosition = ListView.INVALID_POSITION;
+    private static Patient mPatient;
 
     public HistoryLogFragment() {
     }
@@ -45,129 +44,53 @@ public class HistoryLogFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PHYSICIAN_ID_KEY = getString(R.string.physician_id_key);
-        PATIENT_ID_KEY = getString(R.string.patient_id_key);
-
-        // enables the back arrow ... may need to configure this one
+        // TODO: enables the back arrow ... may need to configure this one
         ActionBar actionBar = getActivity().getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        if (getArguments().containsKey(PATIENT_ID_KEY)) {
-            mPatientId = getArguments().getString(PATIENT_ID_KEY);
-        }
-        this.setRetainInstance(true);  // save the fragment state with rotations
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        setRetainInstance(true); // save fragment across config changes
-        setEmptyText(getString(R.string.empty_list_text));
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
-                setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
-            }
-            if (savedInstanceState.containsKey(PATIENT_ID_KEY)) {
-                mPatientId =
-                        savedInstanceState.getString(PATIENT_ID_KEY);
-            }
-        }
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setEmptyText(getString(R.string.empty_list_text));
+        this.setRetainInstance(true);
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (!(activity instanceof Callbacks)) {
+            throw new IllegalStateException(activity.getString(R.string.callbacks_message));
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Bundle arguments = getArguments();
-        if (mPatientId == null &&
-                arguments != null
-                && arguments.containsKey(PATIENT_ID_KEY) ) {
-            mPatientId = arguments.getString(PATIENT_ID_KEY);
-        }
-        // get your patient information from the calling activity
-        mPatient = ((Callbacks) getActivity()).getPatientForHistory(mPatientId);
-        // if mPatient is null it will go to cloud to find it
-        refreshAllLogs(mPatient);
+        mPatient = ((Callbacks) getActivity()).getPatientForHistory();
+        displayLogList(mPatient);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mActivatedPosition != ListView.INVALID_POSITION) {
-            // Serialize and persist the activated item position.
-            outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
+    /**
+     * Called by hosting activity to set the patient and redisplay the list
+     *
+     * @param patient object holding the logs to be displayed
+     */
+    public void updatePatient(Patient patient) {
+        if (patient == null) {
+            Log.e(LOG_TAG, "Trying to set history log patient to null.");
+            return;
         }
-        if (mPatientId != null) {
-            outState.putString(PATIENT_ID_KEY, mPatientId);
-        }
+        Log.d(LOG_TAG, "New Patient has arrived!" + patient.toString());
+        mPatient = patient;
+        displayLogList(mPatient);
     }
 
-
-    public void setActivateOnItemClick(boolean activateOnItemClick) {
-        getListView().setChoiceMode(activateOnItemClick
-                ? ListView.CHOICE_MODE_SINGLE
-                : ListView.CHOICE_MODE_NONE);
-    }
-
-    private void setActivatedPosition(int position) {
-        if (position == ListView.INVALID_POSITION) {
-            getListView().setItemChecked(mActivatedPosition, false);
-        } else {
-            getListView().setItemChecked(position, true);
-        }
-        mActivatedPosition = position;
-    }
-
-    private void refreshAllLogs(Patient patient) {
-        // we were given the patient to work with (PATIENT USER)
-        if (mPatientId == null) {
-            // ask the activity to give it to us again.
-
-        }
+    private void displayLogList(Patient patient) {
         if (patient != null) {
-            HistoryLog[] logList = PatientDataManager.createLogList(mPatient);
+            HistoryLog[] logList = PatientManager.createLogList(mPatient);
             setListAdapter(new HistoryLogAdapter(getActivity(), logList));
-        }
-        // we need to go find the patient in the cloud (PHYSICIAN USER)
-        else  if (mPatientId != null) { // try to find the history in the cloud
-            final SymptomManagementApi svc = SymptomManagementService.getService();
-            if (svc != null) {
-                CallableTask.invoke(new Callable<Patient>() {
-
-                    @Override
-                    public Patient call() throws Exception {
-                        Log.d(LOG_TAG, "getting patient");
-                        return svc.getPatient(mPatientId);
-                    }
-                }, new TaskCallback<Patient>() {
-
-                    @Override
-                    public void success(Patient result) {
-                        Log.d(LOG_TAG, "getting Patient and all logs");
-                        mPatient = result;
-                        HistoryLog[] logList = PatientDataManager.createLogList(mPatient);
-                        setListAdapter(new HistoryLogAdapter(getActivity(), logList));
-                    }
-
-                    @Override
-                    public void error(Exception e) {
-                        Toast.makeText(
-                                getActivity(),
-                                "Unable to fetch the Patient Logs. Please check Internet connection.",
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
         }
     }
 }

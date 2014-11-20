@@ -13,9 +13,19 @@ import android.widget.TextView;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Medication;
 
-
+/**
+ * This is a custom list adapter for the patient prescriptions.
+ *
+ * This adapter manages the display of the prescriptions / patient medication list.
+ * The display contains a clickable delete icon that allows the physician to remove prescriptions.
+ * This adapter expects the hosting activity to manage the delete of the prescription via
+ * a callback method and the activity needs to implement the callbacks interface.
+ * The hosting activity is passed to the adapter on creation.
+ */
 public class PrescriptionAdapter extends ArrayAdapter<Medication> {
 
+    // Notifies the activity about the following events
+    // onPrescriptionDelete - deletes the given medication/prescription in the array position
     public interface Callbacks {
         public void onPrescriptionDelete(int position, Medication medication);
     }
@@ -58,7 +68,6 @@ public class PrescriptionAdapter extends ArrayAdapter<Medication> {
                         @Override
                         public void onClick(View view) {
                             Medication med = (Medication) viewHolder.deletePrescription.getTag();
-                            // TODO: are you sure you want to delete?
                             ((Callbacks) activity)
                                     .onPrescriptionDelete(viewHolder.position, viewHolder.prescription);
                         }

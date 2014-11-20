@@ -75,7 +75,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (!(activity instanceof Callbacks)) {
-            throw new IllegalStateException("Activity must implement fragment's callbacks.");
+            throw new IllegalStateException(activity.getString(R.string.callbacks_message));
         }
     }
 

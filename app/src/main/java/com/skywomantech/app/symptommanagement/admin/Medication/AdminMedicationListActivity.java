@@ -101,7 +101,7 @@ public class AdminMedicationListActivity extends Activity
                             .findFragmentById(R.id.adminmedication_list);
                     if (fragment instanceof MedicationListFragment) {
                         // refreshing medications
-                        ((MedicationListFragment) fragment).refreshAllMedications();
+                        ((MedicationListFragment) fragment).displayMedications();
                     }
 
                 }

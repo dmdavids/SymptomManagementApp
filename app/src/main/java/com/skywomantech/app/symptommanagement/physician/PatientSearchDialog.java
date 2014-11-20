@@ -16,8 +16,16 @@ import com.skywomantech.app.symptommanagement.data.Medication;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
+/**
+ * This dialog fragment allow the user to enter a first and last name that will be used
+ * to search the server database.  It gives the result to the calling activity to process.
+ *
+ */
 public class PatientSearchDialog extends DialogFragment {
+    public final static String FRAGMENT_TAG = "fragment_patient_search_dialog";
 
+    // Notifies the activity about the following events
+    // onNameSelected - if the name was entered and not cancelled
     public interface Callbacks {
         public void onNameSelected(String lastName, String firstName);
     }
@@ -36,10 +44,7 @@ public class PatientSearchDialog extends DialogFragment {
     }
 
     public static PatientSearchDialog newInstance() {
-        PatientSearchDialog frag = new PatientSearchDialog();
-        Bundle args = new Bundle();
-        frag.setArguments(args);
-        return frag;
+        return new PatientSearchDialog();
     }
 
     @Override
@@ -53,8 +58,8 @@ public class PatientSearchDialog extends DialogFragment {
         AlertDialog.Builder builder =  new AlertDialog.Builder(getActivity())
                 .setTitle(mTitle)
                 .setView(view)
-
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getActivity().getString(R.string.Ok_button_text),
+                        new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         lastName = mLastName.getText().toString();
@@ -62,14 +67,13 @@ public class PatientSearchDialog extends DialogFragment {
                         ((Callbacks) getActivity()).onNameSelected(lastName, firstName);
                     }
                 })
-
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getActivity().getString(R.string.cancel_button_text),
+                        new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         // do nothing here
                     }
                 });
-
         return builder.create();
     }
 }

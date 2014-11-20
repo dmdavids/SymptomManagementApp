@@ -60,5 +60,11 @@
     <string name="patient_contact_status">Patient Contacted by Physician</string>
     <string name="patient_id_key">patient_id</string>
     <string name="physician_id_key">physician_id</string>
+    <string name="confirm_delete_title">Confirm Delete</string>
+    <string name="confirm_delete_prescription">Do you want to delete this prescription?</string>
+    <string name="callbacks_message">Activity must implement fragment\'s callbacks.</string>
+    <string name="medication_add_edit_dialog_tag">med_add_dialog</string>
+    <string name="Ok_button_text">Ok</string>
+    <string name="cancel_button_text">Cancel</string>
 
 </resources>

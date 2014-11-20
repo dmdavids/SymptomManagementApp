@@ -30,9 +30,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
 
-public class PhysicianListPatientsActivity extends Activity
-        implements PhysicianListPatientsFragment.Callbacks,
-        PatientSearchDialog.Callbacks,
+public class PhysicianListPatientsActivity extends Activity  implements
         PhysicianPatientDetailFragment.Callbacks,
         PrescriptionAdapter.Callbacks,
         PatientMedicationFragment.Callbacks,
@@ -40,7 +38,10 @@ public class PhysicianListPatientsActivity extends Activity
         MedicationAddEditDialog.Callbacks,
         HistoryLogFragment.Callbacks,
         PatientGraphicsFragment.Callbacks,
-        PhysicianManager.Callbacks {
+        PhysicianManager.Callbacks,
+        PatientManager.Callbacks,
+        MedicationManager.Callbacks,
+        PatientSearchDialog.Callbacks {
 
     public final static String LOG_TAG = PhysicianListPatientsActivity.class.getSimpleName();
 
@@ -48,12 +49,12 @@ public class PhysicianListPatientsActivity extends Activity
     private static String PATIENT_ID_KEY;
 
     private static String mPhysicianId;
-    private static Physician mPhysician;
+    private static Physician mPhysician = new Physician();
 
-    private String mPatientId;
-    private static Patient mPatient;
+    private static String mPatientId;
+    private static Patient mPatient = new Patient();
 
-    private PhysicianManager physicianManager = new PhysicianManager(); // to handle physician stuff
+    private static Collection<Medication> mMedications = new HashSet<Medication>();
 
     private boolean mTwoPane;
 
@@ -75,7 +76,7 @@ public class PhysicianListPatientsActivity extends Activity
         // we should have an doctor id from the login process
         mPhysicianId = getIntent().getStringExtra(PHYSICIAN_ID_KEY);
         mPhysician = null;
-        physicianManager.getPhysician(this, mPhysicianId);
+        PhysicianManager.getPhysician(this, mPhysicianId);
 
         // so this is how we figure out if we are using a 2-pane layout or not... if the
         // patient detail container exists in the layout then we are two pane so set flag
@@ -149,9 +150,7 @@ public class PhysicianListPatientsActivity extends Activity
         } else if (id == R.id.action_sync_alerts) {
             SymptomManagementSyncAdapter.syncImmediately(this);
             return true;
-        } else if (id == R.id.physician_logout) {
-            LoginActivity.restartLoginActivity(this);
-        } else if (id == R.id.action_medication_list) {
+        }  else if (id == R.id.action_medication_list) {
             Bundle arguments = new Bundle();
             arguments.putString(PATIENT_ID_KEY, mPatientId);
             arguments.putString(PHYSICIAN_ID_KEY, mPhysicianId);
@@ -184,6 +183,8 @@ public class PhysicianListPatientsActivity extends Activity
                     .addToBackStack(null)
                     .commit();
             return true;
+        } else if (id == R.id.physician_logout) {
+            LoginActivity.restartLoginActivity(this);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -195,7 +196,6 @@ public class PhysicianListPatientsActivity extends Activity
                 .addCategory(Intent.CATEGORY_HOME));
     }
 
-    @Override
     public void onItemSelected(String physicianId, String patientId) {
         mPatientId = patientId;
         if (mTwoPane) {
@@ -215,6 +215,13 @@ public class PhysicianListPatientsActivity extends Activity
         }
     }
 
+    /**
+     * Callback from the Patient Search Dialog.  It uses the entered name to do a
+     * search by name ON the server side.  The name must be an exact match.
+     *
+     * @param lastName
+     * @param firstName
+     */
     @Override
     public void onNameSelected(String lastName, String firstName) {
         Log.e(LOG_TAG, "THE NAME SELECTED IS : " + firstName + " " + lastName);
@@ -277,231 +284,297 @@ public class PhysicianListPatientsActivity extends Activity
         return null;
     }
 
+    /**
+     *  Called by the Physician Manager when it gets a Physician from the server
+     *
+     * @param physician from server
+     */
     @Override
-    public void onPrescriptionDelete(final int position, Medication medication) {
-
-        AlertDialog alert = new AlertDialog.Builder(this)
-                .setTitle("Confirm Delete")
-                .setMessage("Do you want to delete this prescription?")
-                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        PatientMedicationFragment frag =
-                                (PatientMedicationFragment) getFragmentManager()
-                                        .findFragmentById(R.id.patient_graphics_container);
-                        frag.deletePrescription(position);
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing
-                        dialog.dismiss();
-                    }
-                }).create();
-        alert.show();
+    public void setPhysician(Physician physician) {
+        if (physician == null) {
+            Log.e(LOG_TAG, "Trying to set physician to null value");
+            return;
+        }
+        Log.d(LOG_TAG, "Current Selected Physician is : " + physician.toString());
+        mPhysician = physician;
     }
 
+    /**
+     *  Called by the Patient Manager when it gets a patient from the server
+     *
+     * @param patient from server
+     */
     @Override
-    public boolean onRequestPrescriptionAdd() {
-        MedicationListFragment fragment = new MedicationListFragment();
-        getFragmentManager().beginTransaction()
-                .replace(R.id.patient_graphics_container, fragment)
-                .addToBackStack(null)
-                .commit();
-        return true;
+    public void setPatient(Patient patient) {
+        if (patient == null) {
+            Log.e(LOG_TAG, "Trying to set patient to null value");
+            return;
+        }
+        Log.d(LOG_TAG, "Current Selected Patient is : " + patient.toString());
+        mPatient = patient;
+        updatePatientForFragments(mPatient);
     }
 
-    @Override
-    public void onMedicationSelected(Medication medication) {
-        // let the detail fragment update the patient's prescription list
-        onBackPressed();
-        PatientMedicationFragment frag =
-                (PatientMedicationFragment) getFragmentManager()
-                        .findFragmentById(R.id.patient_graphics_container);
-        frag.addPrescription(medication);
-    }
 
-    @Override
-    public boolean showAddMedicationOptionsMenu() {
-        // display the menu to add new items
-        return true;
-    }
+    /**
+     * If the patient object was received from the server then we need to tell all the fragments
+     * about the new patient so they can be updated appropriately
+     *
+     * @param patient from server for update to fragments
+     */
+    private void updatePatientForFragments(Patient patient) {
+        // try the details fragment first
+        Fragment frag;
+        frag = getFragmentManager().findFragmentByTag(PhysicianPatientDetailFragment.FRAGMENT_TAG);
+        if (frag != null) {
+            ((PhysicianPatientDetailFragment) frag).updatePatient(patient);
+        }
 
-    @Override
-    public void onAddMedication() {
-        Log.d(LOG_TAG, "Displaying Medication Add/Edit Dialog");
-        FragmentManager fm = getFragmentManager();
-        MedicationAddEditDialog medicationDialog = MedicationAddEditDialog.newInstance(new Medication());
-        medicationDialog.show(fm, "med_add_dialog");
-    }
+        // now the history log fragment
+        frag = getFragmentManager().findFragmentByTag(HistoryLogFragment.FRAGMENT_TAG);
+        if (frag != null) {
+            ((HistoryLogFragment) frag).updatePatient(patient);
+        }
 
-    @Override
-    public void onSaveMedicationResult(final Medication medication) {
-        // no name to work with so we aren't gonna do anything here
-        if (medication.getName() == null || medication.getName().isEmpty()) return;
-
-        // we have a name so now we can get some work done
-        final SymptomManagementApi svc = SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Medication>() {
-
-                @Override
-                public Medication call() throws Exception {
-                    if (medication.getId() == null || medication.getId().isEmpty()) {
-                        Log.d(LOG_TAG, "adding mMedication :" + medication.toDebugString());
-                        return svc.addMedication(medication);
-                    } else {
-                        Log.d(LOG_TAG, "updating mMedication :" + medication.toDebugString());
-                        return svc.updateMedication(medication.getId(), medication);
-                    }
-                }
-            }, new TaskCallback<Medication>() {
-
-                @Override
-                public void success(Medication result) {
-                    Log.d(LOG_TAG, "Medication change was successful.");
-                    // if we are still in the medication list view then update the list
-                    Fragment fragment = getFragmentManager()
-                            .findFragmentById(R.id.patient_graphics_container);
-                    if (fragment instanceof MedicationListFragment) {
-                        ((MedicationListFragment) fragment).refreshAllMedications();
-                    }
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Toast.makeText(getApplicationContext(),
-                            "Unable to SAVE Medication. " +
-                                    "Please check Internet connection and try again.",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+        frag = getFragmentManager().findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
+        if (frag != null) {
+            ((PatientMedicationFragment) frag).updatePatient(patient);
         }
     }
 
+    /**
+     * Callback for the Details Fragment to request a patient
+     *
+     * @return Patient
+     */
     @Override
-    public void onCancelMedicationResult() {
-        Log.d(LOG_TAG, "Add/Edit Medication was cancelled.");
-    }
-
-    @Override
-    public Patient getPatientForHistory(String id) {
-        // force the history log to go to the cloud
-        return null;
-    }
-
-    @Override
-    public Patient getPatient() {
+    public Patient getPatientForDetails() {
+        Log.d(LOG_TAG, "GETTING Selected Patient for Details : " + mPatient);
         return mPatient;
     }
 
-    @Override
-    public void onPatientContacted(String patientId, StatusLog statusLog) {
-        if (mPhysician == null || mPhysician.getPatients() == null
-                || patientId == null || patientId.isEmpty()) {
-            Log.e(LOG_TAG, "Unable to update the Patient Status Log");
-            return;
-        }
-        // attach the status log to the appropriate patient and then
-        // tag some physician information onto the note
-        String s = statusLog.getNote() + " [" + mPhysician.getName() + "] ";
-        statusLog.setNote(s);
-        boolean added = false;
-        for (Patient p : mPhysician.getPatients()) {
-            if (p.getId().contentEquals(patientId)) {
-                if (p.getStatusLog() == null) {
-                    p.setStatusLog(new HashSet<StatusLog>());
-                }
-                p.getStatusLog().add(statusLog);
-                added = true;
-                break;
-            }
-        }
-        if (added) {
-            savePhysician(mPhysician);
-            Toast.makeText(getApplicationContext(),
-                    "Saved Patient Contacted Status.",
-                    Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(getApplicationContext(),
-                    "Unable to Save Patient Contacted Status.",
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-
-    private void savePhysician(final Physician physician) {
-        if (physician == null) return;
-        Log.d(LOG_TAG, "Saving Physician ID Key is : " + physician.getId());
-
-        final SymptomManagementApi svc = SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Physician>() {
-
-                @Override
-                public Physician call() throws Exception {
-                    Log.d(LOG_TAG, "Saving physician with status notes : " + physician.getId());
-                    return svc.updatePhysician(physician.getId(), physician);
-                }
-            }, new TaskCallback<Physician>() {
-
-                @Override
-                public void success(Physician result) {
-                    Log.d(LOG_TAG, "Updated Physician :" + result.toString());
-                    mPhysician = result;
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Log.d(LOG_TAG,
-                            "Unable to update status logs for the Physician. " +
-                                    "Please check Internet connection.");
-                }
-            });
-        }
-    }
-
-    private static synchronized void getPhysician(final String id) {
-        if (id == null) return;
-        Log.d(LOG_TAG, "Getting Physician ID Key is : " + id);
-
-        final SymptomManagementApi svc = SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Physician>() {
-
-                @Override
-                public Physician call() throws Exception {
-                    Log.d(LOG_TAG, "getting single physician with id : " + id);
-                    return svc.getPhysician(id);
-                }
-            }, new TaskCallback<Physician>() {
-
-                @Override
-                public void success(Physician result) {
-                    Log.d(LOG_TAG, "Found Physician :" + result.toString());
-                    mPhysician = result;
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Log.d(LOG_TAG,
-                            "Unable to fetch Physician to update the status logs. " +
-                                    "Please check Internet connection.");
-                }
-            });
-        }
-    }
-
+    /**
+     * Callback for the Graphing Fragment to request Patient data
+     *
+     * @return Patient
+     */
     @Override
     public Patient getPatientDataForGraphing() {
         Log.d(LOG_TAG, "GETTING Selected Patient for Graphing : " + mPatient);
         return mPatient;
     }
 
+    /**
+     * Callback for the patient history log to obtain a patient to use
+     *
+     * @return Patient
+     */
     @Override
-    public void setPhysician(Physician physician) {
-        mPhysician = physician;
+    public Patient getPatientForHistory() {
+        Log.d(LOG_TAG, "GETTING Selected Patient for History Log : " + mPatient);
+        return mPatient;
     }
+
+    /**
+     * Callback for the Medication List fragment to obtain a patient to use
+     *
+     * @return Patient
+     */
+    @Override
+    public Patient getPatientForPrescriptions() {
+        Log.d(LOG_TAG, "GETTING Selected Patient for Prescriptions : " + mPatient);
+        return mPatient;
+    }
+
+    /**
+     * Find the patient in the doctor's list and add a status log with the doctor's note.
+     *
+     * @param patientId patient that the status is for
+     * @param statusLog note to add to the status log
+     */
+    @Override
+    public void onPatientContacted(String patientId, StatusLog statusLog) {
+        if (mPhysician == null || mPhysician.getPatients() == null
+                || patientId == null || patientId.isEmpty()) {
+            Log.e(LOG_TAG, "INVALID IDS -- Unable to update the Dr.'s Status Log");
+            return;
+        }
+        if (PhysicianManager.attachPhysicianStatusLog(mPhysician, patientId, statusLog)) {
+            PhysicianManager.savePhysician(this, mPhysician);
+        }
+    }
+
+    /**
+     * Called from the prescription adapter when the delete icon for a prescription has been
+     * clicked.  This confirms the delete and then tells the fragment that it needs to update
+     * its patient's list and save the updated patient to the server.
+     *
+     * @param position
+     * @param medication
+     */
+    @Override
+    public void onPrescriptionDelete(final int position, Medication medication) {
+        AlertDialog alert = new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.confirm_delete_title))
+                .setMessage(getString(R.string.confirm_delete_prescription))
+                .setPositiveButton(getString(R.string.answer_yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        PatientMedicationFragment frag =
+                                (PatientMedicationFragment) getFragmentManager()
+                                        .findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
+                        if (frag != null) {
+                            frag.deletePrescription(position);
+                        } else {
+                            Log.e(LOG_TAG, "Bad error .. could not find the medication fragment!");
+                        }
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getString(R.string.answer_no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).create();
+        alert.show();
+    }
+
+    /**
+     * Called from Prescription fragment when choosing the item from the options menu when the patient
+     * prescription fragment is activated.  This brings up the complete list of medications
+     * from the server to allow the physician to choose one.
+     *
+     * @return
+     */
+    @Override
+    public void onRequestPrescriptionAdd() {
+        getFragmentManager().beginTransaction()
+                .replace(R.id.patient_graphics_container,
+                        new MedicationListFragment(), MedicationListFragment.FRAGMENT_TAG)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    /**
+     * Callback from the prescription fragment to add a prescription that was chosen
+     * from the whole medication list
+     *
+     * @param medication selected medication to add as a prescription
+     */
+    @Override
+    public void onMedicationSelected(Medication medication) {
+        // let the detail fragment update the patient's prescription list
+        onBackPressed();
+        PatientMedicationFragment frag =
+                (PatientMedicationFragment) getFragmentManager()
+                        .findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
+        frag.addPrescription(medication);
+    }
+
+    /**
+     * tell the medication list fragment if editing options are activated or not
+     *
+     * @return boolean true is show option menu
+     */
+    @Override
+    public boolean showAddMedicationOptionsMenu() {
+        Log.d(LOG_TAG, "Detail Activity is showing the add medication options menu.");
+        return true;
+    }
+
+    /**
+     * Callback for the Medication List fragment to get the list of medications that it needs to
+     * display
+     *
+     * @return Collection of Medications
+     */
+    @Override
+    public Collection<Medication> getMedications() {
+        return mMedications;
+    }
+
+    /**
+     * Callback for the Medication List fragment if the add medication was chosen from options
+     * Displays a custom dialog fragment for adding a new medication
+     */
+    @Override
+    public void onAddMedication() {
+        FragmentManager fm = getFragmentManager();
+        MedicationAddEditDialog medicationDialog = MedicationAddEditDialog.newInstance(new Medication());
+        medicationDialog.show(fm, MedicationAddEditDialog.FRAGMENT_TAG);
+    }
+
+    /**
+     * Callback for the Medication Add Edit Dialog
+     * The user OK'd the new medication add so we need to add it to the server database
+     * and then get the full list back from the database
+     *
+     * @param medication
+     */
+    @Override
+    public void onSaveMedicationResult(final Medication medication) {
+        // no name to work with so we aren't gonna do anything here
+        if (medication.getName() == null || medication.getName().isEmpty()) {
+            Log.d(LOG_TAG, "The user didn't really put a valid name so we aren't doing anything.");
+            return;
+        }
+        MedicationManager.saveMedication(this, medication);
+    }
+
+    /**
+     * Callback from the Medication Add Edit Dialog .. do nothing if it was cancelled
+     */
+    @Override
+    public void onCancelMedicationResult() {
+        Log.d(LOG_TAG, "Add/Edit Medication was cancelled.");
+    }
+
+    /**
+     *  Callback from the Medication Manager when it obtains a list of all the medications.
+     *  Saves the list.
+     *  Then call the medication list fragment to pass it the updated list
+     *
+     * @param medications Collection<Medication>
+     */
+    @Override
+    public void setMedicationList(Collection<Medication> medications) {
+        mMedications = medications;
+        // call the medication list fragment to update the medication list there
+        Fragment frag;
+        frag = getFragmentManager().findFragmentByTag(MedicationListFragment.FRAGMENT_TAG);
+        if (frag != null) {
+            ((MedicationListFragment) frag).updateMedications(medications);
+        }
+    }
+
+    @Override
+    public void failedSearch(String message) {
+        Toast.makeText(getApplication(),message, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void successfulSearch(Patient patient) {
+        Intent detailIntent = new Intent(getApplication(), PhysicianPatientDetailActivity.class);
+        if (mTwoPane) {
+            Bundle arguments = new Bundle();
+            arguments.putString(PATIENT_ID_KEY, patient.getId());
+            PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
+            fragment.setArguments(arguments);
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.physician_patient_detail_container, fragment,
+                            PhysicianPatientDetailFragment.FRAGMENT_TAG)
+                    .commit();
+
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.physician_patient_detail_container,
+                            new PhysicianPatientDetailFragment(),
+                            PhysicianPatientDetailFragment.FRAGMENT_TAG)
+                    .commit();
+        } else {
+            detailIntent.putExtra(PATIENT_ID_KEY, patient.getId());
+            startActivity(detailIntent);
+        }
+    }
+
 }
