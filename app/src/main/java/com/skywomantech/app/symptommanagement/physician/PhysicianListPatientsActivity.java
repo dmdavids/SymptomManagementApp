@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.LoginActivity;
-import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
@@ -25,15 +24,11 @@ import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.Physician;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
-import com.skywomantech.app.symptommanagement.patient.PatientMainFragment;
-import com.skywomantech.app.symptommanagement.patient.ReminderFragment;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
-
-import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
 
 public class PhysicianListPatientsActivity extends Activity
         implements PhysicianListPatientsFragment.Callbacks,
@@ -44,49 +39,75 @@ public class PhysicianListPatientsActivity extends Activity
         MedicationListFragment.Callbacks,
         MedicationAddEditDialog.Callbacks,
         HistoryLogFragment.Callbacks,
-        PatientGraphicsFragment.Callbacks {
+        PatientGraphicsFragment.Callbacks,
+        PhysicianManager.Callbacks {
 
     public final static String LOG_TAG = PhysicianListPatientsActivity.class.getSimpleName();
 
-    private boolean mTwoPane;
+    private static String PHYSICIAN_ID_KEY;
+    private static String PATIENT_ID_KEY;
 
-    private static Physician mPhysician;
     private static String mPhysicianId;
+    private static Physician mPhysician;
+
     private String mPatientId;
     private static Patient mPatient;
+
+    private PhysicianManager physicianManager = new PhysicianManager(); // to handle physician stuff
+
+    private boolean mTwoPane;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_physician_patient_list);
+
+        PHYSICIAN_ID_KEY = getString(R.string.physician_id_key);
+        PATIENT_ID_KEY = getString(R.string.patient_id_key);
+
+        // once the physician is logged in then this is the top level so
+        // so it is considered home and we need to negate the actionbar arrow
         ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(false);
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(false);
+
+        // check to see if we were handed any of this information to work with from login.
+        mPatientId = null;  // we should not have a patient id yet when starting this activity.
+
+        // we should have an doctor id from the login process
+        mPhysicianId = getIntent().getStringExtra(PHYSICIAN_ID_KEY);
+        mPhysician = null;
+        physicianManager.getPhysician(this, mPhysicianId);
+
+        // so this is how we figure out if we are using a 2-pane layout or not... if the
+        // patient detail container exists in the layout then we are two pane so set flag
         mTwoPane = false;
+        setContentView(R.layout.activity_physician_patient_list);
         if (findViewById(R.id.physician_patient_detail_container) != null) {
             mTwoPane = true;
-            // In two-pane mode, list items should be given the 'activated' state when touched.
+            // setup list item highlight when selected
             ((PhysicianListPatientsFragment) getFragmentManager()
                     .findFragmentById(R.id.physician_patient_list))
                     .setActivateOnItemClick(true);
-        }
-        if (mTwoPane && savedInstanceState == null) {
-            Bundle arguments = new Bundle();
-            mPhysicianId = getIntent().getStringExtra(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY);
-            mPatientId = getIntent().getStringExtra(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
-            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
-            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
-            PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
-            fragment.setArguments(arguments);
-            getFragmentManager().beginTransaction()
-                    .add(R.id.physician_patient_detail_container, fragment)
-                    .commit();
-            getPhysician(mPhysicianId);  // needed for any physician status log processing
-            HistoryLogFragment graphicsFragment = new HistoryLogFragment();
-            // sending the same arguments to the graphics container
-            graphicsFragment.setArguments(arguments);
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.patient_graphics_container, graphicsFragment)
-                    .commit();
+            // if this is a new instance of this activity in 2-pane mode then
+            // we need to activate the details fragment and the graphics fragment
+            if (savedInstanceState == null) {
+                // create a bundle with the information we have and send to both fragments
+                Bundle arguments = new Bundle();
+                arguments.putString(PHYSICIAN_ID_KEY, mPhysicianId);
+
+                // this is the patient details window that shows at the top
+                PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
+                fragment.setArguments(arguments);
+                getFragmentManager().beginTransaction()
+                        .add(R.id.physician_patient_detail_container, fragment)
+                        .commit();
+
+                // start by showing the history log in the graphics fragment for now
+                HistoryLogFragment graphicsFragment = new HistoryLogFragment();
+                graphicsFragment.setArguments(arguments);
+                getFragmentManager().beginTransaction()
+                        .replace(R.id.patient_graphics_container, graphicsFragment)
+                        .commit();
+            }
         }
     }
 
@@ -132,8 +153,8 @@ public class PhysicianListPatientsActivity extends Activity
             LoginActivity.restartLoginActivity(this);
         } else if (id == R.id.action_medication_list) {
             Bundle arguments = new Bundle();
-            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
-            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
+            arguments.putString(PATIENT_ID_KEY, mPatientId);
+            arguments.putString(PHYSICIAN_ID_KEY, mPhysicianId);
             PatientMedicationFragment fragment = new PatientMedicationFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -143,8 +164,8 @@ public class PhysicianListPatientsActivity extends Activity
             return true;
         } else if (id == R.id.action_history_log) {
             Bundle arguments = new Bundle();
-            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
-            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
+            arguments.putString(PATIENT_ID_KEY, mPatientId);
+            arguments.putString(PHYSICIAN_ID_KEY, mPhysicianId);
             HistoryLogFragment fragment = new HistoryLogFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -154,8 +175,8 @@ public class PhysicianListPatientsActivity extends Activity
             return true;
         } else if (id == R.id.action_chart) {
             Bundle arguments = new Bundle();
-            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
-            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
+            arguments.putString(PATIENT_ID_KEY, mPatientId);
+            arguments.putString(PHYSICIAN_ID_KEY, mPhysicianId);
             PatientGraphicsFragment fragment = new PatientGraphicsFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -179,8 +200,8 @@ public class PhysicianListPatientsActivity extends Activity
         mPatientId = patientId;
         if (mTwoPane) {
             Bundle arguments = new Bundle();
-            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, patientId);
-            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, physicianId);
+            arguments.putString(PATIENT_ID_KEY, patientId);
+            arguments.putString(PHYSICIAN_ID_KEY, physicianId);
             PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
             fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
@@ -188,8 +209,8 @@ public class PhysicianListPatientsActivity extends Activity
                     .commit();
         } else {
             Intent detailIntent = new Intent(this, PhysicianPatientDetailActivity.class);
-            detailIntent.putExtra(PhysicianPatientDetailFragment.PATIENT_ID_KEY, patientId);
-            detailIntent.putExtra(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, physicianId);
+            detailIntent.putExtra(PATIENT_ID_KEY, patientId);
+            detailIntent.putExtra(PHYSICIAN_ID_KEY, physicianId);
             startActivity(detailIntent);
         }
     }
@@ -232,14 +253,14 @@ public class PhysicianListPatientsActivity extends Activity
                                 PhysicianPatientDetailActivity.class);
                         if (mTwoPane) {
                             Bundle arguments = new Bundle();
-                            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, patientId);
+                            arguments.putString(PATIENT_ID_KEY, patientId);
                             PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
                             fragment.setArguments(arguments);
                             getFragmentManager().beginTransaction()
                                     .replace(R.id.physician_patient_detail_container, fragment)
                                     .commit();
                         } else {
-                            detailIntent.putExtra(PhysicianPatientDetailFragment.PATIENT_ID_KEY, patientId);
+                            detailIntent.putExtra(PATIENT_ID_KEY, patientId);
                             startActivity(detailIntent);
                         }
                     }
@@ -371,6 +392,10 @@ public class PhysicianListPatientsActivity extends Activity
         return null;
     }
 
+    @Override
+    public Patient getPatient() {
+        return mPatient;
+    }
 
     @Override
     public void onPatientContacted(String patientId, StatusLog statusLog) {
@@ -406,12 +431,6 @@ public class PhysicianListPatientsActivity extends Activity
         }
     }
 
-    @Override
-    public void onPatientFound(Patient patient) {
-        if (patient == null) return;
-        Log.d(LOG_TAG, "Current Selected Patient is : " + patient.toString());
-        mPatient = patient;
-    }
 
     private void savePhysician(final Physician physician) {
         if (physician == null) return;
@@ -479,5 +498,10 @@ public class PhysicianListPatientsActivity extends Activity
     public Patient getPatientDataForGraphing() {
         Log.d(LOG_TAG, "GETTING Selected Patient for Graphing : " + mPatient);
         return mPatient;
+    }
+
+    @Override
+    public void setPhysician(Physician physician) {
+        mPhysician = physician;
     }
 }

@@ -5,13 +5,10 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.LoginActivity;
@@ -22,15 +19,32 @@ import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
+import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 import com.skywomantech.app.symptommanagement.data.Physician;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
-import com.skywomantech.app.symptommanagement.patient.PatientMainActivity;
-import com.skywomantech.app.symptommanagement.patient.ReminderFragment;
-import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
+import com.skywomantech.app.symptommanagement.patient.PatientMainFragment;
 
-import java.util.HashSet;
 import java.util.concurrent.Callable;
 
+/**
+ * This activity is called to handle this information when the device cannot handle two-pane
+ * on the screen size.
+ *
+ * This task is a holder of the physician and patient information that the fragments need to
+ * do their processing.
+ *
+ * This activity runs after physician is logged in and has selected a patient from a patient list
+ * So this activity expects a physician id and patient id are available for its use.
+ *
+ * This activity manages the patient option menu and two fragments including
+ * the patient details fragment which shows patient information
+ * and then the patient graphics fragment which displays graphs, history logs and medication data
+ * Each fragment that it manages expects this activity to give them the patient information
+ *
+ * The details fragment is the one that finds the patient and then gives it to this activity
+ * The graphic fragment switches between 3 possible fragments : history, prescription & graphs
+ *
+ */
 public class PhysicianPatientDetailActivity extends Activity implements
         PhysicianPatientDetailFragment.Callbacks,
         PrescriptionAdapter.Callbacks,
@@ -38,39 +52,59 @@ public class PhysicianPatientDetailActivity extends Activity implements
         MedicationListFragment.Callbacks,
         MedicationAddEditDialog.Callbacks,
         HistoryLogFragment.Callbacks,
-        PatientGraphicsFragment.Callbacks {
+        PatientGraphicsFragment.Callbacks,
+        PhysicianManager.Callbacks,
+        PatientManager.Callbacks {
 
     private static final String LOG_TAG = PhysicianPatientDetailActivity.class.getSimpleName();
 
-    private static Physician mPhysician;
+    private static String PHYSICIAN_ID_KEY;
+    private static String PATIENT_ID_KEY;
+
     private static String mPhysicianId;
-    private String mPatientId;
-    private static Patient mPatient;
+    private static Physician mPhysician = new Physician();
+
+    private static String mPatientId;
+    private static Patient mPatient = new Patient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_physicianpatient_detail);
 
-        if (savedInstanceState == null) {
-            Bundle arguments = new Bundle();
-            mPhysicianId = getIntent().getStringExtra(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY);
-            mPatientId = getIntent().getStringExtra(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
-            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
-            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
-            PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
-            fragment.setArguments(arguments);
+        PHYSICIAN_ID_KEY = getString(R.string.physician_id_key);
+        PATIENT_ID_KEY = getString(R.string.patient_id_key);
+
+        mPhysicianId = getIntent().getStringExtra(PHYSICIAN_ID_KEY);
+        if (mPhysicianId == null)
+            Log.e(LOG_TAG, "This activity should not have been started without the DOCTOR's id!!");
+
+        mPatientId = getIntent().getStringExtra(PATIENT_ID_KEY);
+        if (mPatientId == null)
+            Log.e(LOG_TAG, "This activity should not have been started without the PATIENT id!!");
+
+        if (savedInstanceState != null ) { // restart
+            if (mPhysicianId == null)
+                mPhysicianId = savedInstanceState.getString(PHYSICIAN_ID_KEY);
+            if(mPatientId == null)
+                mPatientId = savedInstanceState.getString(PATIENT_ID_KEY);
+        }
+        else {  // started new by adding the new fragments
+            Log.v(LOG_TAG, "for this case the fragments are working with empty objects.");
             getFragmentManager().beginTransaction()
-                    .add(R.id.physician_patient_detail_container, fragment)
+                    .add(R.id.physician_patient_detail_container,
+                            new PhysicianPatientDetailFragment(),
+                            PhysicianPatientDetailFragment.FRAGMENT_TAG)
                     .commit();
-            getPhysician(mPhysicianId);  // needed for any physician status log processing
-            HistoryLogFragment graphicsFragment = new HistoryLogFragment();
-            // sending the same arguments to the graphics container
-            graphicsFragment.setArguments(arguments);
+            // put the history log in the graphics fragment for starters
             getFragmentManager().beginTransaction()
-                    .replace(R.id.patient_graphics_container, graphicsFragment)
+                    .add(R.id.patient_graphics_container,
+                            new HistoryLogFragment(), HistoryLogFragment.FRAGMENT_TAG)
                     .commit();
         }
+        // get physician and patient objects from server
+        PhysicianManager.getPhysician(this, mPhysicianId );
+        PatientManager.getPatient(this, mPatientId);
     }
 
     @Override
@@ -82,16 +116,8 @@ public class PhysicianPatientDetailActivity extends Activity implements
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if (mPatientId != null) {
-            Log.v(LOG_TAG, "Saving the patient id  as "
-                    + mPatientId);
-            outState.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
-        }
-        if (mPhysicianId != null) {
-            Log.v(LOG_TAG, "Saving the physician id  as "
-                    + mPatientId);
-            outState.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
-        }
+        if (mPatientId != null)   outState.putString(PATIENT_ID_KEY, mPatientId);
+        if (mPhysicianId != null) outState.putString(PHYSICIAN_ID_KEY, mPhysicianId);
     }
 
     @Override
@@ -115,64 +141,106 @@ public class PhysicianPatientDetailActivity extends Activity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_medication_list) {
-            Bundle arguments = new Bundle();
-            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
-            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
-            PatientMedicationFragment fragment = new PatientMedicationFragment();
-            fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
-                    .replace(R.id.patient_graphics_container, fragment)
+                    .replace(R.id.patient_graphics_container,
+                            new PatientMedicationFragment(), PatientMedicationFragment.FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
             return true;
         } else if (id == R.id.action_history_log) {
-            Bundle arguments = new Bundle();
-            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
-            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
-            HistoryLogFragment fragment = new HistoryLogFragment();
-            fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
-                    .replace(R.id.patient_graphics_container, fragment)
+                    .replace(R.id.patient_graphics_container,
+                            new HistoryLogFragment(), HistoryLogFragment.FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
             return true;
-        } else if (id == R.id.physician_logout) {
-            LoginActivity.restartLoginActivity(this);
         } else if (id == R.id.action_chart) {
-            Bundle arguments = new Bundle();
-            arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
-            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, mPhysicianId);
-            PatientGraphicsFragment fragment = new PatientGraphicsFragment();
-            fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
-                    .replace(R.id.patient_graphics_container, fragment)
+                    .replace(R.id.patient_graphics_container,
+                            new PatientGraphicsFragment(), HistoryLogFragment.FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
             return true;
+        }  else if (id == R.id.physician_logout) {
+            LoginActivity.restartLoginActivity(this);
         }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onPrescriptionDelete(final int position, Medication medication) {
+    public void setPhysician(Physician physician) {
+        if (physician == null) {
+            Log.e(LOG_TAG, "Trying to set physician to null value");
+            return;
+        }
+        Log.d(LOG_TAG, "Current Selected Physician is : " + physician.toString());
+        mPhysician = physician;
+    }
 
+    @Override
+    public void setPatient(Patient patient) {
+        if (patient == null) {
+            Log.e(LOG_TAG, "Trying to set patient to null value");
+            return;
+        }
+        Log.d(LOG_TAG, "Current Selected Patient is : " + patient.toString());
+        mPatient = patient;
+    }
+
+    @Override
+    public Patient getPatient() {
+        return mPatient;
+    }
+
+
+    @Override
+    public Patient getPatientDataForGraphing() {
+        Log.d(LOG_TAG, "GETTING Selected Patient for Graphing : " + mPatient);
+        return mPatient;
+    }
+
+    @Override
+    public Patient getPatientForHistory(String id) {
+        // don't do a lookup with the id, just return the current patient
+        return mPatient;
+    }
+
+    /**
+     * Find the patient in the doctor's list and add a status log with the doctor's note.
+     *
+     * @param patientId patient that the status is for
+     * @param statusLog note to add to the status log
+     */
+    @Override
+    public void onPatientContacted(String patientId, StatusLog statusLog) {
+        if (mPhysician == null || mPhysician.getPatients() == null
+                || patientId == null || patientId.isEmpty()) {
+            Log.e(LOG_TAG, "INVALID IDS -- Unable to update the Dr.'s Status Log");
+            return;
+        }
+        if (PhysicianManager.attachPhysicianStatusLog(mPhysician, patientId, statusLog)) {
+            PhysicianManager.savePhysician(this, mPhysician);
+        }
+    }
+
+    @Override
+    public void onPrescriptionDelete(final int position, Medication medication) {
         AlertDialog alert = new AlertDialog.Builder(this)
                 .setTitle("Confirm Delete")
                 .setMessage("Do you want to delete this prescription?")
-                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.answer_yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         PatientMedicationFragment frag =
                                 (PatientMedicationFragment) getFragmentManager()
-                                        .findFragmentById(R.id.patient_graphics_container);
+                                        .findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
                         frag.deletePrescription(position);
                         dialog.dismiss();
                     }
                 })
-                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.answer_no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing
                         dialog.dismiss();
                     }
                 }).create();
@@ -183,7 +251,7 @@ public class PhysicianPatientDetailActivity extends Activity implements
     public boolean onRequestPrescriptionAdd() {
         MedicationListFragment fragment = new MedicationListFragment();
         getFragmentManager().beginTransaction()
-                .replace(R.id.patient_graphics_container, fragment)
+                .replace(R.id.patient_graphics_container, fragment, MedicationListFragment.FRAGMENT_TAG)
                 .addToBackStack(null)
                 .commit();
         return true;
@@ -195,13 +263,12 @@ public class PhysicianPatientDetailActivity extends Activity implements
         onBackPressed();
         PatientMedicationFragment frag =
                 (PatientMedicationFragment) getFragmentManager()
-                        .findFragmentById(R.id.patient_graphics_container);
+                        .findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
         frag.addPrescription(medication);
     }
 
     @Override
     public boolean showAddMedicationOptionsMenu() {
-        // display the menu to add new items
         return true;
     }
 
@@ -234,18 +301,16 @@ public class PhysicianPatientDetailActivity extends Activity implements
                     }
                 }
             }, new TaskCallback<Medication>() {
-
                 @Override
                 public void success(Medication result) {
                     Log.d(LOG_TAG, "Medication change was successful.");
                     // if we are still in the medication list view then update the list
                     Fragment fragment = getFragmentManager()
-                            .findFragmentById(R.id.patient_graphics_container);
-                    if (fragment instanceof MedicationListFragment) {
+                            .findFragmentByTag(MedicationListFragment.FRAGMENT_TAG);
+                    if (fragment != null && fragment instanceof MedicationListFragment) {
                         ((MedicationListFragment) fragment).refreshAllMedications();
                     }
                 }
-
                 @Override
                 public void error(Exception e) {
                     Toast.makeText(getApplicationContext(),
@@ -260,120 +325,5 @@ public class PhysicianPatientDetailActivity extends Activity implements
     @Override
     public void onCancelMedicationResult() {
         Log.d(LOG_TAG, "Add/Edit Medication was cancelled.");
-    }
-
-    @Override
-    public Patient getPatientForHistory(String id) {
-        // force the history log to go to the cloud
-        return null;
-    }
-
-    @Override
-    public void onPatientContacted(String patientId, StatusLog statusLog) {
-        if (mPhysician == null || mPhysician.getPatients() == null
-                || patientId == null || patientId.isEmpty()) {
-            Log.e(LOG_TAG, "Unable to update the Patient Status Log");
-            return;
-        }
-        // attach the status log to the appropriate patient and then
-        // tag some physician information onto the note
-        String s = statusLog.getNote() + " [" + mPhysician.getName() + "] ";
-        statusLog.setNote(s);
-        boolean added = false;
-        for (Patient p : mPhysician.getPatients()) {
-            if (p.getId().contentEquals(patientId)) {
-                if (p.getStatusLog() == null) {
-                    p.setStatusLog(new HashSet<StatusLog>());
-                }
-                p.getStatusLog().add(statusLog);
-                added = true;
-                break;
-            }
-        }
-        if (added) {
-            savePhysician(mPhysician);
-            Toast.makeText(getApplicationContext(),
-                    "Saved Patient Contacted Status.",
-                    Toast.LENGTH_LONG).show();
-        } else {
-            Toast.makeText(getApplicationContext(),
-                    "Unable to Save Patient Contacted Status.",
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    public void onPatientFound(Patient patient) {
-        if (patient == null) return;
-        Log.d(LOG_TAG, "Current Selected Patient is : " + patient.toString());
-        mPatient = patient;
-    }
-
-    private void savePhysician(final Physician physician) {
-        if (physician == null) return;
-        Log.d(LOG_TAG, "Saving Physician ID Key is : " + physician.getId());
-
-        final SymptomManagementApi svc = SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Physician>() {
-
-                @Override
-                public Physician call() throws Exception {
-                    Log.d(LOG_TAG, "Saving physician with status notes : " + physician.getId());
-                    return svc.updatePhysician(physician.getId(), physician);
-                }
-            }, new TaskCallback<Physician>() {
-
-                @Override
-                public void success(Physician result) {
-                    Log.d(LOG_TAG, "Updated Physician :" + result.toString());
-                    mPhysician = result;
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Log.d(LOG_TAG,
-                            "Unable to update status logs for the Physician. " +
-                                    "Please check Internet connection.");
-                }
-            });
-        }
-    }
-
-    private static synchronized void getPhysician(final String id) {
-        if (id == null) return;
-        Log.d(LOG_TAG, "Getting Physician ID Key is : " + id);
-
-        final SymptomManagementApi svc = SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Physician>() {
-
-                @Override
-                public Physician call() throws Exception {
-                    Log.d(LOG_TAG, "getting single physician with id : " + id);
-                    return svc.getPhysician(id);
-                }
-            }, new TaskCallback<Physician>() {
-
-                @Override
-                public void success(Physician result) {
-                    Log.d(LOG_TAG, "Found Physician :" + result.toString());
-                    mPhysician = result;
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Log.d(LOG_TAG,
-                            "Unable to fetch Physician to update the status logs. " +
-                                    "Please check Internet connection.");
-                }
-            });
-        }
-    }
-
-    @Override
-    public Patient getPatientDataForGraphing() {
-        Log.d(LOG_TAG, "GETTING Selected Patient for Graphing : " + mPatient);
-        return mPatient;
     }
 }

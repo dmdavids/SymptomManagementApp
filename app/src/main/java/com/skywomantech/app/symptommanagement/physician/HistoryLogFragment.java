@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 public class HistoryLogFragment extends ListFragment {
 
     private static final String LOG_TAG = HistoryLogFragment.class.getSimpleName();
+    public final static String FRAGMENT_TAG = "fragment_history_log";
 
     public interface Callbacks {
         public Patient getPatientForHistory(String id);
@@ -32,8 +33,10 @@ public class HistoryLogFragment extends ListFragment {
     private String  mPatientId = null;
     private Patient mPatient;
 
-    private static final String STATE_ACTIVATED_POSITION = "activated_position";
+    private static String PHYSICIAN_ID_KEY;
+    private static String PATIENT_ID_KEY;
 
+    private static final String STATE_ACTIVATED_POSITION = "activated_position";
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
     public HistoryLogFragment() {
@@ -42,10 +45,15 @@ public class HistoryLogFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PHYSICIAN_ID_KEY = getString(R.string.physician_id_key);
+        PATIENT_ID_KEY = getString(R.string.patient_id_key);
+
+        // enables the back arrow ... may need to configure this one
         ActionBar actionBar = getActivity().getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        if (getArguments().containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY)) {
-            mPatientId = getArguments().getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+
+        if (getArguments().containsKey(PATIENT_ID_KEY)) {
+            mPatientId = getArguments().getString(PATIENT_ID_KEY);
         }
         this.setRetainInstance(true);  // save the fragment state with rotations
     }
@@ -59,9 +67,9 @@ public class HistoryLogFragment extends ListFragment {
             if (savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
                 setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
             }
-            if (savedInstanceState.containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY)) {
+            if (savedInstanceState.containsKey(PATIENT_ID_KEY)) {
                 mPatientId =
-                        savedInstanceState.getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+                        savedInstanceState.getString(PATIENT_ID_KEY);
             }
         }
     }
@@ -83,8 +91,8 @@ public class HistoryLogFragment extends ListFragment {
         Bundle arguments = getArguments();
         if (mPatientId == null &&
                 arguments != null
-                && arguments.containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY) ) {
-            mPatientId = arguments.getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+                && arguments.containsKey(PATIENT_ID_KEY) ) {
+            mPatientId = arguments.getString(PATIENT_ID_KEY);
         }
         // get your patient information from the calling activity
         mPatient = ((Callbacks) getActivity()).getPatientForHistory(mPatientId);
@@ -100,7 +108,7 @@ public class HistoryLogFragment extends ListFragment {
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
         if (mPatientId != null) {
-            outState.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
+            outState.putString(PATIENT_ID_KEY, mPatientId);
         }
     }
 

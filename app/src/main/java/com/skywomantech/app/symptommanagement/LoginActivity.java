@@ -28,6 +28,7 @@ import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 import com.skywomantech.app.symptommanagement.data.UserCredential;
 import com.skywomantech.app.symptommanagement.patient.PatientMainActivity;
 import com.skywomantech.app.symptommanagement.physician.PhysicianListPatientsActivity;
+import com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailFragment;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.Collection;
@@ -275,14 +276,19 @@ public class LoginActivity extends Activity {
             LoginUtility.setCheckin(getApplicationContext(), false);
             startActivity(new Intent(this, AdminMain.class));
         } else if (role == UserCredential.UserRole.PATIENT) {
-            // check-in flow is handled by PatientMainActivity
             SymptomManagementSyncAdapter.syncImmediately(this);
             startActivity(new Intent(this, PatientMainActivity.class));
         } else if (role == UserCredential.UserRole.PHYSICIAN) {
             Log.d(LOG_TAG, "Starting Doctor screen flow");
             LoginUtility.setCheckin(getApplicationContext(), false);
+            // pass the physician's id to the next activity
+            String id = LoginUtility.getLoginId(this);
+            Bundle arguments = new Bundle();
+            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, id);
+            Intent physicianIntent = new Intent(this, PhysicianListPatientsActivity.class);
+            physicianIntent.putExtras(arguments);
+            startActivity(physicianIntent);
             SymptomManagementSyncAdapter.syncImmediately(this);
-            startActivity(new Intent(this, PhysicianListPatientsActivity.class));
         } else {
             Log.d(LOG_TAG, "INVALID ROLE ASSIGNED!!!");
             Toast.makeText(

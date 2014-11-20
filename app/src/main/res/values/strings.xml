@@ -53,5 +53,12 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_test_patient_charts">Patient Charts</string>
     <string name="hello_world">Hello world!</string>
+    <string name="ask_patient_contacted">Did you contact Patient?</string>
+    <string name="answer_yes">Yes</string>
+    <string name="answer_no">No</string>
+    <string name="confirm_patient_contacted_title">Confirm Patient Contact</string>
+    <string name="patient_contact_status">Patient Contacted by Physician</string>
+    <string name="patient_id_key">patient_id</string>
+    <string name="physician_id_key">physician_id</string>
 
 </resources>

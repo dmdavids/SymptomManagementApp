@@ -17,7 +17,7 @@
         tools:layout="@android:layout/list_content" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
         android:orientation="vertical" >

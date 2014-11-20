@@ -27,7 +27,7 @@ import java.util.concurrent.Callable;
 public class MedicationListFragment extends ListFragment {
 
     private static final String LOG_TAG = MedicationListFragment.class.getSimpleName();
-
+    public final static String FRAGMENT_TAG = "fragment_medication_list";
     public interface Callbacks {
         public void onMedicationSelected(Medication medication);
         public void onAddMedication();

@@ -30,45 +30,52 @@ import java.util.concurrent.Callable;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
+/**
+ *   This fragment displays detail information about the current patient
+ *
+ *   The focus of this fragment is getting the patient and displaying the main details.
+ *   The activity is in charge of passing this fragment the patient to work with.  This happens
+ *   through a method call in the activity.
+ *
+ *   This fragment also has an option menu item attached to it.
+ *   If this fragment is running then the physician can set a status log indicating
+ *   that the patient was contacted.  If the patient was severe then the alert notifications
+ *   are turned off until the next time the patient appears severe. Just a way to turn off the
+ *   notifications.  The patient will still appear severe in the patient list.
+ *
+ *   Future Enhancement: Can add the physician status logs to the history list
+ *
+ */
 public class PhysicianPatientDetailFragment extends Fragment {
 
     public final static String LOG_TAG = PhysicianPatientDetailFragment.class.getSimpleName();
+    public final static String FRAGMENT_TAG = "fragment_details";
 
+    // Notifies the activity about the following events
+    // getPatient - return the current patient to work with
+    // onPatientContacted - physician want to add a status log to the patient
     public interface Callbacks {
+        public Patient getPatient();
         public void onPatientContacted(String patientId, StatusLog statusLog);
-        public void onPatientFound(Patient patient);
     }
 
-    public static final String PATIENT_ID_KEY = "patient_id";
-    public static final String PHYSICIAN_ID_KEY = "physician_id";
-
-    private String mPatientId;
     private Patient mPatient;
 
     @InjectView(R.id.physician_patient_detail_name)
     TextView mNameView;
-
     @InjectView(R.id.physician_patient_detail_birthdate)
     TextView mBDView;
-
     @InjectView(R.id.patient_medical_id)
     TextView mRecordId;
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
+
     public PhysicianPatientDetailFragment() {
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null && getArguments().containsKey(PATIENT_ID_KEY)) {
-            mPatientId = getArguments().getString(PATIENT_ID_KEY);
-        }
         setHasOptionsMenu(true);
-        setRetainInstance(true);  // save the fragment state with rotations
+        setRetainInstance(true);
     }
 
     @Override
@@ -76,30 +83,46 @@ public class PhysicianPatientDetailFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_physician_patient_detail, container, false);
         ButterKnife.inject(this, rootView);
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY)) {
-                mPatientId =
-                        savedInstanceState.getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
-            }
-        }
-        mPatient = getPatientFromCloud();
+        // tell patient manager to go to cloud and get patient, give it to the activity
+        mPatient = ((Callbacks) getActivity()).getPatient();
+        displayPatient();
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Bundle arguments = getArguments();
-        if (mPatientId == null &&
-                arguments != null
-                && arguments.containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY) ) {
-            mPatientId = arguments.getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+        mPatient = ((Callbacks) getActivity()).getPatient();
+        displayPatient();
+    }
+
+    public void displayPatient() {
+        if (mPatient != null) {
+            // update the display
+            mNameView.setText(mPatient.getName());
+            mBDView.setText(mPatient.getBirthdate());
+            mRecordId.setText(mPatient.getId());
         }
     }
 
-    //TODO: move this to the activity... not sure it fits this fragment any more!
+    /**
+     * When a patient is selected then the physician has the option to
+     * put a status long into his record saying that he contacted the patient
+     * this is basically a way to turn-off the alert notifications until the patient is
+     * severe again
+     *
+     * This will only affect the physician logged in. Other physicians who have this patient
+     * will still get a notification.
+     *
+     * Note: this does not change the listview status of severe just turns off notifications
+     * for a little while.
+     *
+     * @param menu
+     * @param inflater
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // add the "Contacted Patient" menu item
         inflater.inflate(R.menu.physician_patient_contact_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -109,87 +132,38 @@ public class PhysicianPatientDetailFragment extends Fragment {
         int id = item.getItemId();
         if (id == R.id.action_add_status) {
             if (mPatient != null) {
-                Log.d(LOG_TAG, "Adding a Physician Status Log");
-                addPhysicianStatusLog(mPatientId);
-                SymptomManagementSyncAdapter.syncImmediately(getActivity());
+                Log.d(LOG_TAG, "Adding a Physician Status Log/Contacted Patient");
+                AlertDialog alert = new AlertDialog.Builder(getActivity())
+                        .setTitle(getActivity().getString(R.string.confirm_patient_contacted_title))
+                        .setMessage(getActivity().getString(R.string.ask_patient_contacted))
+                        .setPositiveButton(getActivity().getString(R.string.answer_yes),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ((Callbacks) getActivity())
+                                                // tell the activity to handle the work of
+                                                // adding a status log to the physician's patient
+                                                .onPatientContacted(mPatient.getId(),
+                                                        new StatusLog(
+                                                                getActivity()
+                                                                        .getString(R.string.patient_contact_status),
+                                                                System.currentTimeMillis()));
+                                        dialog.dismiss();
+                                    }
+                                })
+                        .setNegativeButton(getActivity().getString(R.string.answer_no),
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) { // do nothing
+                                        dialog.dismiss();
+                                    }
+                                }).create();
+                alert.show();
+            } else {
+                Log.e(LOG_TAG, "No patient loaded for physician to contact.");
             }
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void addPhysicianStatusLog(final String patientId) {
-        AlertDialog alert = new AlertDialog.Builder(getActivity())
-                .setTitle("Confirm Patient Contact")
-                .setMessage("Did you contact Patient?")
-                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        addPatientContactStatus(patientId);
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing
-                        dialog.dismiss();
-                    }
-                }).create();
-        alert.show();
-    }
-
-    private void addPatientContactStatus(final String patientId) {
-        if (!LoginUtility.isLoggedIn(getActivity())
-                || LoginUtility.getUserRole(getActivity()) != UserCredential.UserRole.PHYSICIAN) {
-            Log.d(LOG_TAG, "This user isn't a physician why are they here?");
-            return;
-        }
-        String contactNote = "Patient Contacted by Physician";
-        StatusLog statusLog = new StatusLog();
-        statusLog.setNote(contactNote);
-        statusLog.setCreated(System.currentTimeMillis());
-        // have the activity save the physician data
-        ((Callbacks) getActivity()).onPatientContacted(mPatientId, statusLog);
-
-    }
-
-    private Patient getPatientFromCloud() {
-
-        if (mPatientId == null) return null;
-        final SymptomManagementApi svc = SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Patient>() {
-
-                @Override
-                public Patient call() throws Exception {
-                    Log.d(LOG_TAG, "getting Patient ID : " + mPatientId);
-                    return svc.getPatient(mPatientId);
-                }
-            }, new TaskCallback<Patient>() {
-
-                @Override
-                public void success(Patient result) {
-                    mPatient = result;
-                    Log.d(LOG_TAG, "got the Patient!" + mPatient.toDebugString());
-                    if (mPatient != null) {
-                        // set the views with the patient data
-                        mNameView.setText(mPatient.getName());
-                        mBDView.setText(mPatient.getBirthdate());
-                        mRecordId.setText(mPatient.getId());
-                        ((Callbacks) getActivity()).onPatientFound(mPatient);
-                    }
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Toast.makeText(getActivity(),
-                            "Unable to fetch the Patient data. " +
-                                    "Please check Internet connection and try again.",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
-        return null;
     }
 }

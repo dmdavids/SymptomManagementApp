@@ -26,8 +26,15 @@ public class StatusLog {
 		this.note = note;
 		this.image_location = image_location;
 	}
-	
-	public BigInteger getId() {
+
+    public StatusLog(String note, long created) {
+        super();
+        this.created = created;
+        this.note = note;
+    }
+
+
+    public BigInteger getId() {
 		return id;
 	}
 

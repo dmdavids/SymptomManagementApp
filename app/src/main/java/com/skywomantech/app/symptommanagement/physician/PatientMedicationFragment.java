@@ -25,18 +25,21 @@ import java.util.concurrent.Callable;
 public class PatientMedicationFragment extends ListFragment {
 
     private static final String LOG_TAG = PatientMedicationFragment.class.getSimpleName();
+    public final static String FRAGMENT_TAG = "fragment_patient_medication";
 
     public interface Callbacks {
         public boolean onRequestPrescriptionAdd();
     }
 
-    private static String  mPatientId;
-    private static Patient mPatient;
-    private static Medication[] meds;
+    private static String PHYSICIAN_ID_KEY;
+    private static String PATIENT_ID_KEY;
 
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
     private int mActivatedPosition = ListView.INVALID_POSITION;
 
+    private static String  mPatientId;
+    private static Patient mPatient;
+    private static Medication[] meds;
 
     public PatientMedicationFragment() {
     }
@@ -44,8 +47,10 @@ public class PatientMedicationFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments().containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY)) {
-            mPatientId = getArguments().getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+        PHYSICIAN_ID_KEY = getString(R.string.physician_id_key);
+        PATIENT_ID_KEY = getString(R.string.patient_id_key);
+        if (getArguments().containsKey(PATIENT_ID_KEY)) {
+            mPatientId = getArguments().getString(PATIENT_ID_KEY);
         }
         setHasOptionsMenu(true);
         this.setRetainInstance(true);  // save the fragment state with rotations
@@ -79,9 +84,9 @@ public class PatientMedicationFragment extends ListFragment {
             if (savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
                 setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
             }
-            if (savedInstanceState.containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY)) {
+            if (savedInstanceState.containsKey(PATIENT_ID_KEY)) {
                 mPatientId =
-                        savedInstanceState.getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+                        savedInstanceState.getString(PATIENT_ID_KEY);
             }
         }
     }
@@ -103,8 +108,8 @@ public class PatientMedicationFragment extends ListFragment {
         Bundle arguments = getArguments();
         if (mPatientId == null &&
                 arguments != null
-                && arguments.containsKey(PhysicianPatientDetailFragment.PATIENT_ID_KEY) ) {
-            mPatientId = arguments.getString(PhysicianPatientDetailFragment.PATIENT_ID_KEY);
+                && arguments.containsKey(PATIENT_ID_KEY) ) {
+            mPatientId = arguments.getString(PATIENT_ID_KEY);
         }
         refreshPatientMeds();
     }
@@ -116,7 +121,7 @@ public class PatientMedicationFragment extends ListFragment {
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
         if (mPatientId != null) {
-            outState.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
+            outState.putString(PATIENT_ID_KEY, mPatientId);
         }
     }
 

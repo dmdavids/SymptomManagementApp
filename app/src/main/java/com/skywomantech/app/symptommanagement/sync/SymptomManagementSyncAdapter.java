@@ -369,16 +369,21 @@ public class SymptomManagementSyncAdapter extends AbstractThreadedSyncAdapter {
             }
         } else {
             int count = 0;
+            int turnedOff = 0;
             for (Alert a: alerts) {
                 if (a.getPhysicianContacted() <= 0L) count++;
+                else turnedOff++;
             }
             if (count == 0) {
                 Log.d(LOG_TAG, "All the alerts are turned off.");
                 return; // all alerts are turned off don't notify
             }
-            contentText =  Integer.toString(count)
-                    + " severe patients require attention.";
-        }
+            contentText = Integer.toString(count)
+                        + " severe patients require attention. ";
+            if (turnedOff > 0)
+                contentText += Integer.toString(turnedOff)
+                        +  " patients contacted.";
+            }
 
         Log.d(LOG_TAG, "SENDING ALERT message : " + contentText);
         NotificationCompat.Builder mBuilder =

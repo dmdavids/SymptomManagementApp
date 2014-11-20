@@ -63,6 +63,7 @@ import butterknife.OnClick;
 public class PatientGraphicsFragment extends Fragment {
 
     public final static String LOG_TAG = PatientGraphicsFragment.class.getSimpleName();
+    public final static String FRAGMENT_TAG = "fragment_patient_graphics";
 
     public interface Callbacks {
         public Patient getPatientDataForGraphing();

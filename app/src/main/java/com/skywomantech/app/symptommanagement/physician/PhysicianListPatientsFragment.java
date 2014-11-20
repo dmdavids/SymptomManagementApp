@@ -35,6 +35,7 @@ import java.util.concurrent.Callable;
 public class PhysicianListPatientsFragment extends ListFragment {
 
     private static final String LOG_TAG = PhysicianListPatientsFragment.class.getSimpleName();
+    public final static String FRAGMENT_TAG = "fragment_patient_list";
 
     String mPhysicianId;
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
@@ -106,7 +107,6 @@ public class PhysicianListPatientsFragment extends ListFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (mActivatedPosition != ListView.INVALID_POSITION) {
-            // Serialize and persist the activated item position.
             outState.putInt(STATE_ACTIVATED_POSITION, mActivatedPosition);
         }
     }
