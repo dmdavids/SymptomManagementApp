@@ -6,21 +6,112 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.skywomantech.app.symptommanagement.LoginActivity;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
+import com.skywomantech.app.symptommanagement.data.Physician;
+import com.skywomantech.app.symptommanagement.data.StatusLog;
 
 import java.util.Collection;
+import java.util.HashSet;
 
-public abstract class PhysicianActivity extends Activity {
+/**
+ * This abstract class provides many of the methods and fields that are common to the details
+ * activity and the patient list activity when it is in dual pane mode.
+ *
+ * Should never be instantiated though.
+ *
+ * Many of these methods are callbacks for the fragments that are duplicated otherwise.
+ *
+ * This task is a holder of the physician and patient information that the fragments need to
+ * do their processing.
+ *
+ *
+ */
+public abstract class PhysicianActivity
+        extends     Activity
+        implements
+                    PhysicianListPatientsFragment.Callbacks,
+                    PhysicianPatientDetailFragment.Callbacks,
+                    PrescriptionAdapter.Callbacks,
+                    PatientMedicationFragment.Callbacks,
+                    MedicationListFragment.Callbacks,
+                    MedicationAddEditDialog.Callbacks,
+                    HistoryLogFragment.Callbacks,
+                    PatientGraphicsFragment.Callbacks,
+                    PhysicianManager.Callbacks,
+                    PatientManager.Callbacks,
+                    MedicationManager.Callbacks,
+                    PatientSearchDialog.Callbacks {
+
     private static final String LOG_TAG = PhysicianActivity.class.getSimpleName();
 
-    private static Patient mPatient;
-    private static Collection<Medication> mMedications;
+    protected static String PHYSICIAN_ID_KEY;
+    protected static String PATIENT_ID_KEY;
 
+    protected static String mPhysicianId;
+    protected static Physician mPhysician = new Physician();
+
+    protected static String mPatientId;
+    protected static Patient mPatient = new Patient();
+
+    protected static Collection<Medication> mMedications = new HashSet<Medication>();
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        PHYSICIAN_ID_KEY = getString(R.string.physician_id_key);
+        PATIENT_ID_KEY = getString(R.string.patient_id_key);
+
+        // we should have a physician from the login process for both activities
+        mPhysicianId = getIntent().getStringExtra(PHYSICIAN_ID_KEY);
+        if (mPhysicianId == null)
+            Log.e(LOG_TAG, "This activity should not have been started without the DOCTOR's id!!");
+
+        mPatientId = getIntent().getStringExtra(PATIENT_ID_KEY);
+        if (mPatientId == null)
+            Log.e(LOG_TAG, "IN case you are interested the patient id is Null.");
+
+        // now look to see if we are restarting
+        if (savedInstanceState != null &&
+                (mPhysicianId == null || mPatientId == null)) {
+            if (mPhysicianId == null)
+                mPhysicianId = savedInstanceState.getString(PHYSICIAN_ID_KEY);
+            if (mPatientId == null)
+                mPatientId = savedInstanceState.getString(PATIENT_ID_KEY);
+        }
+
+        // start the server requests for the data that we need
+        PhysicianManager.getPhysician(this, mPhysicianId);
+        MedicationManager.getAllMedications(this);
+        if (mPatientId != null) {
+            Log.d(LOG_TAG, "onCreate is getting hte patient from the server id :" + mPatientId);
+            PatientManager.getPatient(this, mPatientId);
+        } else {
+            Log.d(LOG_TAG, "NO patient id so we don't need to go get it from the server.");
+        }
+    }
+
+    /**
+     * Stores the parameters that we need if we restart
+     *
+     * @param outState
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mPatientId != null) outState.putString(PATIENT_ID_KEY, mPatientId);
+        if (mPhysicianId != null) outState.putString(PHYSICIAN_ID_KEY, mPhysicianId);
+    }
 
     /**
      * remove menu items if the related fragment is already displaying ..
@@ -47,7 +138,71 @@ public abstract class PhysicianActivity extends Activity {
     }
 
     /**
+     * process the option menu items that are common between both activities
+     *
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_medication_list) { // dual pane only
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.patient_graphics_container,
+                            new PatientMedicationFragment(), PatientMedicationFragment.FRAGMENT_TAG)
+                    .addToBackStack(null)
+                    .commit();
+            return true;
+        } else if (id == R.id.action_history_log) { //dual pane only
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.patient_graphics_container,
+                            new HistoryLogFragment(), HistoryLogFragment.FRAGMENT_TAG)
+                    .addToBackStack(null)
+                    .commit();
+            return true;
+        } else if (id == R.id.action_chart) { //dual pane only
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.patient_graphics_container,
+                            new PatientGraphicsFragment(), HistoryLogFragment.FRAGMENT_TAG)
+                    .addToBackStack(null)
+                    .commit();
+            return true;
+        } else if (id == R.id.physician_logout) { // both menus no special processing
+            LoginActivity.restartLoginActivity(this);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Called by the Physician Manager when it gets a Physician from the server
+     *
+     * @param physician from server
+     */
+    public void setPhysician(Physician physician) {
+        if (physician == null) {
+            Log.e(LOG_TAG, "Trying to set physician to null value");
+            return;
+        }
+        Log.d(LOG_TAG, "Current Selected Physician is : " + physician.toString());
+        mPhysician = physician;
+    }
+
+    /**
+     * Callback for the List Fragment to request the physician with the patient list
+     * for displaying
+     *
+     * @return Physician to process patient list for
+     */
+    @Override
+    public Physician getPhysicianForPatientList() {
+        Log.d(LOG_TAG, "GETTING Selected Physician for Patient list : " + mPhysician);
+        return mPhysician;
+    }
+
+    /**
      * Called by the Patient Manager when it gets a patient from the server
+     * It sets the current patient and then informs all the fragments that they
+     * need to update their displays with the current patient
      *
      * @param patient from server
      */
@@ -59,7 +214,7 @@ public abstract class PhysicianActivity extends Activity {
         }
         Log.d(LOG_TAG, "Current Selected Patient is : " + patient.toString());
         mPatient = patient;
-        updatePatientForAllFragments(mPatient);
+        sendPatientToFragments(mPatient);
     }
 
     /**
@@ -68,7 +223,7 @@ public abstract class PhysicianActivity extends Activity {
      *
      * @param patient from server for update to fragments
      */
-    private void updatePatientForAllFragments(Patient patient) {
+    private void sendPatientToFragments(Patient patient) {
         // try the details fragment first
         Fragment frag;
         frag = getFragmentManager().findFragmentByTag(PhysicianPatientDetailFragment.FRAGMENT_TAG);
@@ -134,6 +289,55 @@ public abstract class PhysicianActivity extends Activity {
     public Patient getPatientForPrescriptions() {
         Log.d(LOG_TAG, "GETTING Selected Patient for Prescriptions : " + mPatient);
         return mPatient;
+    }
+
+    /**
+     * Callback for the Medication List fragment to get the list of medications that it needs to
+     * display
+     *
+     * @return Collection of Medications
+     */
+    //@Override
+    public Collection<Medication> getMedications() {
+        return mMedications;
+    }
+
+    /**
+     * This is one that is called when the activity selects an item from a patient list
+     * It could be use to reset the patient when there is a new one too
+     *
+     * it may not be a fully-formed patient so we need to go to the server and get
+     * the latest and greatest version of the patient
+     *
+     * @param physicianId
+     * @param patient
+     */
+
+    @Override
+    public void onItemSelected(String physicianId, Patient patient) {
+        if (patient == null || physicianId == null) {
+            Log.d(LOG_TAG, "Invalid item selected.");
+        }
+        mPatientId = patient.getId();
+        PatientManager.getPatient(this, mPatientId);
+    }
+
+    /**
+     * Find the patient in the doctor's list and add a status log with the doctor's note.
+     *
+     * @param patientId patient that the status is for
+     * @param statusLog note to add to the status log
+     */
+    //@Override
+    public void onPatientContacted(String patientId, StatusLog statusLog) {
+        if (mPhysician == null || mPhysician.getPatients() == null
+                || patientId == null || patientId.isEmpty()) {
+            Log.e(LOG_TAG, "INVALID IDS -- Unable to update the Dr.'s Status Log");
+            return;
+        }
+        if (PhysicianManager.attachPhysicianStatusLog(mPhysician, patientId, statusLog)) {
+            PhysicianManager.savePhysician(this, mPhysician);
+        }
     }
 
     /**
@@ -216,17 +420,6 @@ public abstract class PhysicianActivity extends Activity {
     }
 
     /**
-     * Callback for the Medication List fragment to get the list of medications that it needs to
-     * display
-     *
-     * @return Collection of Medications
-     */
-    //@Override
-    public Collection<Medication> getMedications() {
-        return mMedications;
-    }
-
-    /**
      * Callback for the Medication List fragment if the add medication was chosen from options
      * Displays a custom dialog fragment for adding a new medication
      */
@@ -280,16 +473,44 @@ public abstract class PhysicianActivity extends Activity {
         }
     }
 
+
     /**
-     * Don't need these Callbacks for this activity so do nothing
+     * Patient search dialog search results when OK button pressed
+     * normally this should go to the server and get the object
+     * then call successful search or failed search methods
      *
-     * @param message
+     * @param lastName
+     * @param firstName
      */
-    //@Override
-    public void failedSearch(String message) {
+    @Override
+    public void onNameSelected(String lastName, String firstName) {
+        Toast.makeText(getApplication(),
+                "Name selected is " + firstName + " " + lastName,
+                Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Patient Search Dialog results processing if successfully
+     * found on the servers side.
+     *
+     * Default to putting up a message .. this one should be over-ridden
+     *
+     * @param patient Patient found in the server search
+     */
     //@Override
     public void successfulSearch(Patient patient) {
+        Toast.makeText(getApplication(), patient.toString() + " Found.",
+                Toast.LENGTH_LONG).show();
     }
+    /**
+     * Patient Search Dialog processing when server search fails
+     * If the search failed put up a toast message and ignore
+     *
+     * @param message detailed message for failed results
+     */
+    @Override
+    public void failedSearch(String message) {
+        Toast.makeText(getApplication(), message, Toast.LENGTH_LONG).show();
+    }
+
 }

@@ -28,10 +28,13 @@ import java.util.TreeSet;
 import java.util.concurrent.Callable;
 
 /**
- * Manages stuff related to the Patient
+ * Manages data related to the Patient
+ *
  * Retrieves patients from the server
  * Stores patients to the server
  * Searches patients on the server
+ * Generates a list of HistoryLogs from the patient data
+ *
  */
 public class PatientManager {
 
@@ -51,7 +54,7 @@ public class PatientManager {
 
     /**
      * Go to the server and get the patient record with this id then
-     * use the callback to send the information back to the caller
+     * on success uses the callback to send the information back to the activity
      *
      * @param activity
      * @param patientId
@@ -88,6 +91,7 @@ public class PatientManager {
 
     /**
      * updates the patient on the server
+     * on successful results sends the new patient back to the activity
      *
      * @param activity
      * @param patientRecord
