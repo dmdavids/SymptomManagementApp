@@ -66,13 +66,11 @@ public class PatientGraphicsFragment extends Fragment {
     public final static String LOG_TAG = PatientGraphicsFragment.class.getSimpleName();
     public final static String FRAGMENT_TAG = "fragment_patient_graphics";
 
+    // Notifies the activity about the following events
+    // getPatientDataForGraphing - return the current patient to work with
     public interface Callbacks {
         public Patient getPatientDataForGraphing();
     }
-
-    public static final String PATIENT_ID_KEY = "patient_id";
-    public static final String PHYSICIAN_ID_KEY = "physician_id";
-    public static final String GRAPH_TYPE = "graph_type";
 
     static final long MS_IN_A_DAY = 86400000;
 
@@ -155,11 +153,6 @@ public class PatientGraphicsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            if (getArguments().containsKey(PATIENT_ID_KEY)) {
-                mPatientId = getArguments().getString(PATIENT_ID_KEY);
-            }
-        }
         setRetainInstance(true);  // save the fragment state with rotations
     }
 
@@ -189,6 +182,12 @@ public class PatientGraphicsFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         restartGraph();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.reset(this);
     }
 
     @Override
@@ -277,6 +276,18 @@ public class PatientGraphicsFragment extends Fragment {
             Log.d(LOG_TAG, "Current Patient to be Graphed : " + mPatient);
         }
         return true;
+    }
+
+    public void updatePatient(Patient patient) {
+        if (patient == null) {
+            Log.e(LOG_TAG, "Trying to set graphing patient to null.");
+            return;
+        }
+        Log.d(LOG_TAG, "New Patient has arrived!" + patient.toString());
+        mPatient = patient;
+        mPatientId = patient.getId();
+        generatePatientDataLists(mPatient);
+        restartGraph();
     }
 
     private void generatePatientDataLists(Patient patient) {

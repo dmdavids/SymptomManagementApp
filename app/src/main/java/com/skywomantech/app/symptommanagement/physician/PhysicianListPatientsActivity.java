@@ -1,11 +1,8 @@
 package com.skywomantech.app.symptommanagement.physician;
 
 import android.app.ActionBar;
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,10 +18,7 @@ import com.skywomantech.app.symptommanagement.data.Physician;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
-import java.util.Collection;
-import java.util.HashSet;
-
-public class PhysicianListPatientsActivity extends Activity  implements
+public class PhysicianListPatientsActivity extends PhysicianActivity implements
         PhysicianListPatientsFragment.Callbacks,
         PhysicianPatientDetailFragment.Callbacks,
         PrescriptionAdapter.Callbacks,
@@ -44,12 +38,8 @@ public class PhysicianListPatientsActivity extends Activity  implements
     private static String PATIENT_ID_KEY;
 
     private static String mPhysicianId;
-    private static Physician mPhysician = new Physician();
-
+    private static Physician mPhysician;
     private static String mPatientId;
-    private static Patient mPatient = new Patient();
-
-    private static Collection<Medication> mMedications = new HashSet<Medication>();
 
     private boolean mTwoPane;
 
@@ -70,7 +60,6 @@ public class PhysicianListPatientsActivity extends Activity  implements
 
         // we should have an doctor id from the login process
         mPhysicianId = getIntent().getStringExtra(PHYSICIAN_ID_KEY);
-        mPhysician = null;
         PhysicianManager.getPhysician(this, mPhysicianId);
 
         // so this is how we figure out if we are using a 2-pane layout or not... if the
@@ -124,30 +113,6 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
-     * remove menu items if the related fragment is already displaying ..
-     * so it doesn't look weird
-     *
-     * @param menu
-     * @return
-     */
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        Fragment frag =
-                getFragmentManager().findFragmentById(R.id.patient_graphics_container);
-        if (frag instanceof PatientMedicationFragment) {
-            menu.removeItem(R.id.action_medication_list);
-        } else if (frag instanceof HistoryLogFragment) {
-            menu.removeItem(R.id.action_history_log);
-        } else if (frag instanceof MedicationListFragment) {
-            menu.removeItem(R.id.action_medication_list);
-            menu.removeItem(R.id.action_history_log);
-        } else if (frag instanceof PatientGraphicsFragment) {
-            menu.removeItem(R.id.action_chart);
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    /**
      * process the option menu items, some are for both menus and
      * some are only available for dual pane option menu
      *
@@ -164,7 +129,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
         } else if (id == R.id.action_sync_alerts) { // both menus no special processing
             SymptomManagementSyncAdapter.syncImmediately(this);
             return true;
-        }  else if (id == R.id.action_medication_list) { // dual pane only
+        } else if (id == R.id.action_medication_list) { // dual pane only
             getFragmentManager().beginTransaction()
                     .replace(R.id.patient_graphics_container,
                             new PatientMedicationFragment(), PatientMedicationFragment.FRAGMENT_TAG)
@@ -233,7 +198,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     /**
      * Callback from the Patient Search Dialog.  It uses the entered name to do a
      * search by name ON the server side.  The name must be an exact match.
-     *
+     * <p/>
      * Also has a failed and successful search methods for processing the result
      *
      * @param lastName
@@ -278,15 +243,15 @@ public class PhysicianListPatientsActivity extends Activity  implements
     /**
      * If the search failed put up a toast message and ignore
      *
-     * @param message  detailed message for failed results
+     * @param message detailed message for failed results
      */
     @Override
     public void failedSearch(String message) {
-        Toast.makeText(getApplication(),message, Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplication(), message, Toast.LENGTH_LONG).show();
     }
 
     /**
-     *  Called by the Physician Manager when it gets a Physician from the server
+     * Called by the Physician Manager when it gets a Physician from the server
      *
      * @param physician from server
      */
@@ -309,51 +274,6 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
-     * DUAL PANE
-     *  Called by the Patient Manager when it gets a patient from the server
-     *
-     * @param patient from server
-     */
-    @Override
-    public void setPatient(Patient patient) {
-        if (patient == null) {
-            Log.e(LOG_TAG, "Trying to set patient to null value");
-            return;
-        }
-        Log.d(LOG_TAG, "Current Selected Patient is : " + patient.toString());
-        mPatient = patient;
-        updatePatientForFragments(mPatient);
-    }
-
-    /**
-     * DUAL PANE
-     * If the patient object was received from the server then we need to tell all the fragments
-     * about the new patient so they can be updated appropriately
-     *
-     * @param patient from server for update to fragments
-     */
-    private void updatePatientForFragments(Patient patient) {
-        // update the details fragment first
-        Fragment frag;
-        frag = getFragmentManager().findFragmentByTag(PhysicianPatientDetailFragment.FRAGMENT_TAG);
-        if (frag != null) {
-            ((PhysicianPatientDetailFragment) frag).updatePatient(patient);
-        }
-
-        // now the history log fragment
-        frag = getFragmentManager().findFragmentByTag(HistoryLogFragment.FRAGMENT_TAG);
-        if (frag != null) {
-            ((HistoryLogFragment) frag).updatePatient(patient);
-        }
-
-        // finally the medication fragment
-        frag = getFragmentManager().findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
-        if (frag != null) {
-            ((PatientMedicationFragment) frag).updatePatient(patient);
-        }
-    }
-
-    /**
      * Callback for the List Fragment to request the physician with the patient list
      * for displaying
      *
@@ -363,128 +283,6 @@ public class PhysicianListPatientsActivity extends Activity  implements
     public Physician getPhysicianForPatientList() {
         Log.d(LOG_TAG, "GETTING Selected Physician for Patient list : " + mPhysician);
         return mPhysician;
-    }
-
-
-    /**
-     * DUAL PANE
-     * Callback for the Details Fragment to request a patient
-     *
-     * @return Patient
-     */
-    @Override
-    public Patient getPatientForDetails() {
-        Log.d(LOG_TAG, "GETTING Selected Patient for Details : " + mPatient);
-        return mPatient;
-    }
-
-    /**
-     * DUAL PANE
-     * Callback for the Graphing Fragment to request Patient data
-     *
-     * @return Patient
-     */
-    @Override
-    public Patient getPatientDataForGraphing() {
-        Log.d(LOG_TAG, "GETTING Selected Patient for Graphing : " + mPatient);
-        return mPatient;
-    }
-
-    /**
-     * DUAL PANE
-     * Callback for the patient history log to obtain a patient to use
-     *
-     * @return Patient
-     */
-    @Override
-    public Patient getPatientForHistory() {
-        Log.d(LOG_TAG, "GETTING Selected Patient for History Log : " + mPatient);
-        return mPatient;
-    }
-
-    /**
-     * DUAL PANE
-     * Callback for the Medication List fragment to obtain a patient to use
-     *
-     * @return Patient
-     */
-    @Override
-    public Patient getPatientForPrescriptions() {
-        Log.d(LOG_TAG, "GETTING Selected Patient for Prescriptions : " + mPatient);
-        return mPatient;
-    }
-
-    /**
-     * DUAL PANE
-     * Find the patient in the doctor's list and add a status log with the doctor's note.
-     *
-     * @param patientId patient that the status is for
-     * @param statusLog note to add to the status log
-     */
-    @Override
-    public void onPatientContacted(String patientId, StatusLog statusLog) {
-        if (mPhysician == null || mPhysician.getPatients() == null
-                || patientId == null || patientId.isEmpty()) {
-            Log.e(LOG_TAG, "INVALID IDS -- Unable to update the Dr.'s Status Log");
-            return;
-        }
-        if (PhysicianManager.attachPhysicianStatusLog(mPhysician, patientId, statusLog)) {
-            PhysicianManager.savePhysician(this, mPhysician);
-        }
-    }
-
-    /**
-     * DUAL PANE
-     * Called from the prescription adapter when the delete icon for a prescription has been
-     * clicked.  This confirms the delete and then tells the fragment that it needs to update
-     * its patient's list and save the updated patient to the server.
-     *
-     * @param position
-     * @param medication
-     */
-    @Override
-    public void onPrescriptionDelete(final int position, Medication medication) {
-        AlertDialog alert = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.confirm_delete_title))
-                .setMessage(getString(R.string.confirm_delete_prescription))
-                .setPositiveButton(getString(R.string.answer_yes), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        PatientMedicationFragment frag =
-                                (PatientMedicationFragment) getFragmentManager()
-                                        .findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
-                        if (frag != null) {
-                            frag.deletePrescription(position);
-                        } else {
-                            Log.e(LOG_TAG, "Bad error .. could not find the medication fragment!");
-                        }
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton(getString(R.string.answer_no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).create();
-        alert.show();
-    }
-
-    /**
-     * DUAL PANE
-     * Called from Prescription fragment when choosing the item from the options menu when the patient
-     * prescription fragment is activated.  This brings up the complete list of medications
-     * from the server to allow the physician to choose one.
-     *
-     * @return
-     */
-    @Override
-    public void onRequestPrescriptionAdd() {
-        getFragmentManager().beginTransaction()
-                .replace(R.id.patient_graphics_container,
-                        new MedicationListFragment(), MedicationListFragment.FRAGMENT_TAG)
-                .addToBackStack(null)
-                .commit();
     }
 
     /**
@@ -497,7 +295,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     @Override
     public void onMedicationSelected(Medication medication) {
         // let the detail fragment update the patient's prescription list
-        onBackPressed();
+        //onBackPressed();
         PatientMedicationFragment frag =
                 (PatientMedicationFragment) getFragmentManager()
                         .findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
@@ -506,82 +304,20 @@ public class PhysicianListPatientsActivity extends Activity  implements
 
     /**
      * DUAL PANE
-     * tell the medication list fragment if editing options are activated or not
+     * Find the patient in the doctor's list and add a status log with the doctor's note.
      *
-     * @return boolean true is show option menu
+     * @param patientId patient that the status is for
+     * @param statusLog note to add to the status log
      */
-    @Override
-    public boolean showAddMedicationOptionsMenu() {
-        Log.d(LOG_TAG, "Detail Activity is showing the add medication options menu.");
-        return true;
-    }
-
-    /**
-     * DUAL PANE
-     * Callback for the Medication List fragment to get the list of medications that it needs to
-     * display
-     *
-     * @return Collection of Medications
-     */
-    @Override
-    public Collection<Medication> getMedications() {
-        return mMedications;
-    }
-
-    /**
-     * DUAL PANE
-     * Callback for the Medication List fragment if the add medication was chosen from options
-     * Displays a custom dialog fragment for adding a new medication
-     */
-    @Override
-    public void onAddMedication() {
-        FragmentManager fm = getFragmentManager();
-        MedicationAddEditDialog medicationDialog = MedicationAddEditDialog.newInstance(new Medication());
-        medicationDialog.show(fm, MedicationAddEditDialog.FRAGMENT_TAG);
-    }
-
-    /**
-     * DUAL PANE
-     * Callback for the Medication Add Edit Dialog
-     * The user OK'd the new medication add so we need to add it to the server database
-     * and then get the full list back from the database
-     *
-     * @param medication
-     */
-    @Override
-    public void onSaveMedicationResult(final Medication medication) {
-        // no name to work with so we aren't gonna do anything here
-        if (medication.getName() == null || medication.getName().isEmpty()) {
-            Log.d(LOG_TAG, "The user didn't really put a valid name so we aren't doing anything.");
+    //@Override
+    public void onPatientContacted(String patientId, StatusLog statusLog) {
+        if (mPhysician == null || mPhysician.getPatients() == null
+                || patientId == null || patientId.isEmpty()) {
+            Log.e(LOG_TAG, "INVALID IDS -- Unable to update the Dr.'s Status Log");
             return;
         }
-        MedicationManager.saveMedication(this, medication);
-    }
-
-    /**
-     * DUAL PANE
-     * Callback from the Medication Add Edit Dialog .. do nothing if it was cancelled
-     */
-    @Override
-    public void onCancelMedicationResult() {
-        Log.d(LOG_TAG, "Add/Edit Medication was cancelled.");
-    }
-
-    /**
-     *  Callback from the Medication Manager when it obtains a list of all the medications.
-     *  Saves the list.
-     *  Then call the medication list fragment to pass it the updated list
-     *
-     * @param medications Collection<Medication>
-     */
-    @Override
-    public void setMedicationList(Collection<Medication> medications) {
-        mMedications = medications;
-        // call the medication list fragment to update the medication list there
-        Fragment frag;
-        frag = getFragmentManager().findFragmentByTag(MedicationListFragment.FRAGMENT_TAG);
-        if (frag != null) {
-            ((MedicationListFragment) frag).updateMedications(medications);
+        if (PhysicianManager.attachPhysicianStatusLog(mPhysician, patientId, statusLog)) {
+            PhysicianManager.savePhysician(this, mPhysician);
         }
     }
 

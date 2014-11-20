@@ -26,7 +26,6 @@ import java.util.concurrent.Callable;
 
 /**
  * This fragment processes the physician's patient list
- *
  */
 public class PhysicianListPatientsFragment extends ListFragment {
 
@@ -37,6 +36,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
     // onItemSelected - return the current physician and patient information to work with
     public interface Callbacks {
         public void onItemSelected(String physicianId, Patient patient);
+
         public Physician getPhysicianForPatientList();
     }
 
@@ -112,12 +112,12 @@ public class PhysicianListPatientsFragment extends ListFragment {
      * @param physician
      */
     private void displayPatientList(Physician physician) {
-        if(physician == null) {
+        if (physician == null) {
             Log.e(LOG_TAG, "Trying to display a null physician.");
             return;
         }
         Log.d(LOG_TAG, "Creating list of all patients assigned to physician");
-        if (physician.getPatients() != null ) {
+        if (physician.getPatients() != null) {
             mTempList = physician.getPatients();
             mPatientList = mTempList.toArray(new Patient[mTempList.size()]);
         }
@@ -135,7 +135,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
      */
     public void temporaryAddToList(Patient patient) {
         // use the current patient list and add one to it
-        if(mTempList != null && patient != null) {
+        if (mTempList != null && patient != null) {
             mTempList.add(patient);
         }
         mPatientList = mTempList.toArray(new Patient[mTempList.size()]);
@@ -157,7 +157,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
-        Patient patient =  (Patient) getListAdapter().getItem(position);
+        Patient patient = (Patient) getListAdapter().getItem(position);
         Log.d(LOG_TAG, "Patient selected is " + patient.toString());
         mPhysicianId = LoginUtility.getLoginId(getActivity());
         ((Callbacks) getActivity()).onItemSelected(mPhysicianId, patient);

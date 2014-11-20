@@ -19,7 +19,6 @@ import butterknife.InjectView;
 /**
  * This dialog fragment allow the user to enter a first and last name that will be used
  * to search the server database.  It gives the result to the calling activity to process.
- *
  */
 public class PatientSearchDialog extends DialogFragment {
     public final static String FRAGMENT_TAG = "fragment_patient_search_dialog";
@@ -55,25 +54,25 @@ public class PatientSearchDialog extends DialogFragment {
         mLastName.setText(lastName);
         mFirstName.setTag(firstName);
 
-        AlertDialog.Builder builder =  new AlertDialog.Builder(getActivity())
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity())
                 .setTitle(mTitle)
                 .setView(view)
                 .setPositiveButton(getActivity().getString(R.string.Ok_button_text),
                         new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        lastName = mLastName.getText().toString();
-                        firstName = mFirstName.getText().toString();
-                        ((Callbacks) getActivity()).onNameSelected(lastName, firstName);
-                    }
-                })
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                lastName = mLastName.getText().toString();
+                                firstName = mFirstName.getText().toString();
+                                ((Callbacks) getActivity()).onNameSelected(lastName, firstName);
+                            }
+                        })
                 .setNegativeButton(getActivity().getString(R.string.cancel_button_text),
                         new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // do nothing here
-                    }
-                });
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // do nothing here
+                            }
+                        });
         return builder.create();
     }
 }

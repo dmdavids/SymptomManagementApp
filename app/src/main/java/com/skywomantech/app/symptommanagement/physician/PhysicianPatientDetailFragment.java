@@ -22,20 +22,19 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 /**
- *   This fragment displays detail information about the current patient
- *
- *   The focus of this fragment is getting the patient and displaying the main details.
- *   The activity is in charge of passing this fragment the patient to work with.  This happens
- *   through a method call in the activity.
- *
- *   This fragment also has an option menu item attached to it.
- *   If this fragment is running then the physician can set a status log indicating
- *   that the patient was contacted.  If the patient was severe then the alert notifications
- *   are turned off until the next time the patient appears severe. Just a way to turn off the
- *   notifications.  The patient will still appear severe in the patient list.
- *
- *   Future Enhancement: Can add the physician status logs to the history list
- *
+ * This fragment displays detail information about the current patient
+ * <p/>
+ * The focus of this fragment is getting the patient and displaying the main details.
+ * The activity is in charge of passing this fragment the patient to work with.  This happens
+ * through a method call in the activity.
+ * <p/>
+ * This fragment also has an option menu item attached to it.
+ * If this fragment is running then the physician can set a status log indicating
+ * that the patient was contacted.  If the patient was severe then the alert notifications
+ * are turned off until the next time the patient appears severe. Just a way to turn off the
+ * notifications.  The patient will still appear severe in the patient list.
+ * <p/>
+ * Future Enhancement: Can add the physician status logs to the history list
  */
 public class PhysicianPatientDetailFragment extends Fragment {
 
@@ -47,6 +46,7 @@ public class PhysicianPatientDetailFragment extends Fragment {
     // onPatientContacted - physician want to add a status log to the patient
     public interface Callbacks {
         public Patient getPatientForDetails();
+
         public void onPatientContacted(String patientId, StatusLog statusLog);
     }
 
@@ -120,7 +120,7 @@ public class PhysicianPatientDetailFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-            ButterKnife.reset(this);
+        ButterKnife.reset(this);
     }
 
     /**
@@ -128,10 +128,10 @@ public class PhysicianPatientDetailFragment extends Fragment {
      * put a status long into his record saying that he contacted the patient
      * this is basically a way to turn-off the alert notifications until the patient is
      * severe again
-     *
+     * <p/>
      * This will only affect the physician logged in. Other physicians who have this patient
      * will still get a notification.
-     *
+     * <p/>
      * Note: this does not change the listview status of severe just turns off notifications
      * for a little while.
      *

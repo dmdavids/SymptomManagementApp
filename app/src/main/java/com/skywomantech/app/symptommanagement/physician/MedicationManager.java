@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
+/**
+ * This class manages getting and updating the medications from the database
+ *
+ */
 public class MedicationManager {
 
     private static final String LOG_TAG = PhysicianManager.class.getSimpleName();

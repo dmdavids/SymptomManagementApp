@@ -37,6 +37,7 @@ public class PatientMedicationFragment extends ListFragment {
     // getPatientForPrescriptions - gets the patient from the activity
     public interface Callbacks {
         public void onRequestPrescriptionAdd();
+
         public Patient getPatientForPrescriptions(); // pulls the patient
     }
 
@@ -122,6 +123,7 @@ public class PatientMedicationFragment extends ListFragment {
 
     /**
      * Called to refresh the prescription list for display
+     *
      * @param patient
      */
     private void displayPrescriptions(Patient patient) {
@@ -141,7 +143,7 @@ public class PatientMedicationFragment extends ListFragment {
      * because we wait for the server to send it back to us via the updatePatient()
      * and then we display it
      *
-     * @param medication  this is the new one to add
+     * @param medication this is the new one to add
      */
     public void addPrescription(Medication medication) {
         if (mPatient == null || medication == null) {
@@ -161,7 +163,7 @@ public class PatientMedicationFragment extends ListFragment {
      * and then update the patient record on the server, wait to display until the
      * updated patient returns from the server
      *
-     * @param position  where in the meds display is the deleted prescription
+     * @param position where in the meds display is the deleted prescription
      */
     public void deletePrescription(int position) {
         Collection<Medication> p = mPatient.getPrescriptions();

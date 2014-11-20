@@ -43,7 +43,9 @@ public class PatientManager {
     // successfulSearch - if the patient name search was successful
     public interface Callbacks {
         public void setPatient(Patient patient);
+
         public void failedSearch(String message);
+
         public void successfulSearch(Patient patient);
     }
 
@@ -84,9 +86,9 @@ public class PatientManager {
         }
     }
 
-
     /**
      * updates the patient on the server
+     *
      * @param activity
      * @param patientRecord
      */
@@ -97,7 +99,7 @@ public class PatientManager {
             Log.e(LOG_TAG, "Trying to update a patient that is null or has no server id.");
             return;
         }
-        final SymptomManagementApi svc =  SymptomManagementService.getService();
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Patient>() {
                 @Override

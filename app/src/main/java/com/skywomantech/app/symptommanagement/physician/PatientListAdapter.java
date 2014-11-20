@@ -15,6 +15,9 @@ import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 
+/**
+ * This adapter manages the custom view for list of patients for the physician
+ */
 public class PatientListAdapter extends ArrayAdapter<Patient> {
 
     private final Context context;
@@ -71,8 +74,10 @@ public class PatientListAdapter extends ArrayAdapter<Patient> {
         holder.lastLog.setText(patients[position].getFormattedLastLogged());
         holder.patient = patients[position];
         int severity = SymptomManagementSyncAdapter.findPatientAlertSeverityLevel(patients[position]);
+        // if a patient is severe show an icon
         holder.alertIcon.setVisibility(severity > Alert.PAIN_SEVERITY_LEVEL_0
                 ? ImageView.VISIBLE : ImageView.INVISIBLE);
+        // if a patient is severe then use a yellow color indicator
         int bgColor = (severity > Alert.PAIN_SEVERITY_LEVEL_0
                 ? getContext().getResources().getColor(R.color.sm_pale_yellow)
                 : getContext().getResources().getColor(R.color.white));

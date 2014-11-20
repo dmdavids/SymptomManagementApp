@@ -15,7 +15,7 @@ import com.skywomantech.app.symptommanagement.data.Medication;
 
 /**
  * This is a custom list adapter for the patient prescriptions.
- *
+ * <p/>
  * This adapter manages the display of the prescriptions / patient medication list.
  * The display contains a clickable delete icon that allows the physician to remove prescriptions.
  * This adapter expects the hosting activity to manage the delete of the prescription via
@@ -42,7 +42,8 @@ public class PrescriptionAdapter extends ArrayAdapter<Medication> {
             deletePrescription = (ImageView) view.findViewById(R.id.prescription_delete);
             prescriptionName = (TextView) view.findViewById(R.id.prescription_name);
         }
-        Medication  prescription;
+
+        Medication prescription;
         int position;
     }
 

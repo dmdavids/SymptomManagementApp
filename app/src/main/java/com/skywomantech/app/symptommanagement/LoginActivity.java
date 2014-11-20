@@ -85,8 +85,7 @@ public class LoginActivity extends Activity {
         if (LoginUtility.isLoggedIn(this)) {
             Log.d(LOG_TAG, "We are already logged in so we just need to redirect.");
             processLoginRedirect(LoginUtility.getUserRole(this));
-        }
-        else {
+        } else {
             // just make sure that we are completely logged out
             LoginUtility.logout(this);
         }
@@ -101,7 +100,7 @@ public class LoginActivity extends Activity {
     public static void restartLoginActivity(Context context) {
         LoginUtility.logout(context);
         context.startActivity(new Intent(context, LoginActivity.class)
-                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_NEW_TASK));
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     @OnClick(R.id.username_sign_in_button)
@@ -255,12 +254,12 @@ public class LoginActivity extends Activity {
     private UserCredential checkCredentialsOnDevice(String username, String password) {
         Log.d(LOG_TAG, "Looking for username " + username + " password " + password);
         UserCredential credential =
-                PatientDataManager.getUserCredentials(getApplicationContext(), username, password );
+                PatientDataManager.getUserCredentials(getApplicationContext(), username, password);
         return credential;
     }
 
     public void getCredentialsAndRedirect(String username, String password) {
-        if(LoginUtility.isLoggedIn(this)) {
+        if (LoginUtility.isLoggedIn(this)) {
             // already logged in
             processLoginRedirect(LoginUtility.getUserRole(this));
         } else {
@@ -325,19 +324,18 @@ public class LoginActivity extends Activity {
                         cred.setUserType(UserCredential.UserRole.findByValue(cred.getUserRoleValue()));
                         Log.d(LOG_TAG, "Credential Received is : " + cred.toString());
                         // store the information from the credential
-                         if (LoginUtility.setLoggedIn(getApplicationContext(), cred)) {
-                             // now we finally have enough information to redirect
-                             LoginUtility.savePatientCredential(getApplicationContext(), cred);
-                             processLoginRedirect(LoginUtility.getUserRole(getApplicationContext()));
-                         }
-                        else {
-                             Log.d(LOG_TAG, "ERROR saving the user credentials.");
-                             Toast.makeText(
-                                     getApplicationContext(),
-                                     "Invalid Login. Please See Your Administrator.",
-                                     Toast.LENGTH_LONG).show();
-                             restartLoginActivity(getApplicationContext());
-                         }
+                        if (LoginUtility.setLoggedIn(getApplicationContext(), cred)) {
+                            // now we finally have enough information to redirect
+                            LoginUtility.savePatientCredential(getApplicationContext(), cred);
+                            processLoginRedirect(LoginUtility.getUserRole(getApplicationContext()));
+                        } else {
+                            Log.d(LOG_TAG, "ERROR saving the user credentials.");
+                            Toast.makeText(
+                                    getApplicationContext(),
+                                    "Invalid Login. Please See Your Administrator.",
+                                    Toast.LENGTH_LONG).show();
+                            restartLoginActivity(getApplicationContext());
+                        }
                     } else {
                         Log.d(LOG_TAG, "ERROR getting user credentials.");
                         Toast.makeText(

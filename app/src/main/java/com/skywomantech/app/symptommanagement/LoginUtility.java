@@ -21,14 +21,14 @@ public class LoginUtility {
 
     // everything EXCEPT for the service is checked here
     public static synchronized boolean
-        setLoggedIn(Context context, UserCredential credential) {
+    setLoggedIn(Context context, UserCredential credential) {
         Log.d(LOG_TAG, "Setting Logged In Values for credential:" + credential.toString());
         if (credential == null
                 || credential.getUserName() == null || credential.getUserName().isEmpty()
                 || credential.getUserType() == null
                 || credential.getUserType() == UserCredential.UserRole.NOT_ASSIGNED
                 || (credential.getUserType() != UserCredential.UserRole.ADMIN &&
-                        (credential.getUserId() == null || credential.getUserId().isEmpty()))) {
+                (credential.getUserId() == null || credential.getUserId().isEmpty()))) {
             Log.e(LOG_TAG, "Invalid Credentials so they are not getting set!!!");
             return false;
         }
@@ -48,17 +48,17 @@ public class LoginUtility {
 
     // Everything except for the service is checked here
     public static boolean isLoggedIn(Context context) {
-        mUserName   = getUsername(context);
-        mLoginId    = getLoginId(context);
-        mRole       = UserCredential.UserRole.findByValue(LoginUtility.getUserRoleValue(context));
-        if (mCredential == null  || mUserName.isEmpty()
-           || mLoginId.isEmpty() || mRole == UserCredential.UserRole.NOT_ASSIGNED) {
+        mUserName = getUsername(context);
+        mLoginId = getLoginId(context);
+        mRole = UserCredential.UserRole.findByValue(LoginUtility.getUserRoleValue(context));
+        if (mCredential == null || mUserName.isEmpty()
+                || mLoginId.isEmpty() || mRole == UserCredential.UserRole.NOT_ASSIGNED) {
             return false;
         }
         return true;
     }
 
-    public static synchronized void logout(Context context ) {
+    public static synchronized void logout(Context context) {
         // reset all the values that make the app think we are logged in
         if (mRole == UserCredential.UserRole.PATIENT) {
             Log.d(LOG_TAG, "Cancelling Patient Reminders.");
@@ -66,7 +66,7 @@ public class LoginUtility {
         }
         mUserName = "";
         mLoginId = "";
-        mRole =  UserCredential.UserRole.NOT_ASSIGNED;
+        mRole = UserCredential.UserRole.NOT_ASSIGNED;
         mCredential = null;
         setUsername(context, mUserName);
         setLoginId(context, mLoginId);
@@ -79,8 +79,7 @@ public class LoginUtility {
         if (mRole == UserCredential.UserRole.PATIENT) {
             Log.d(LOG_TAG, "Saving the PATIENT credentials to CP.");
             PatientDataManager.addCredentialToCP(context, credential);
-        }
-        else {
+        } else {
             Log.d(LOG_TAG, "Not saving these credentials because its not a PATIENT.");
         }
     }
