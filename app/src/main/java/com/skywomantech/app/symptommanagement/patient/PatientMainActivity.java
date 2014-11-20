@@ -103,15 +103,10 @@ public class PatientMainActivity extends Activity
         } else if (id == R.id.patient_logout) {
             LoginActivity.restartLoginActivity(this);
         } else if (id == R.id.action_patient_history_log) {
-            Bundle arguments = new Bundle();
-            if (mPatientId != null && !mPatientId.isEmpty()) {
-                arguments.putString(PhysicianPatientDetailFragment.PATIENT_ID_KEY, mPatientId);
-            }
-            HistoryLogFragment fragment = new HistoryLogFragment();
-            fragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
-                    .replace(R.id.patient_main_container, fragment, "history_log_frag")
-                            //.addToBackStack(null)
+                    .replace(R.id.patient_main_container,
+                            new HistoryLogFragment(), HistoryLogFragment.FRAGMENT_TAG)
+                    //.addToBackStack(null)
                     .commit();
             return true;
         }
@@ -285,7 +280,7 @@ public class PatientMainActivity extends Activity
     }
 
     @Override
-    public Patient getPatientForHistory(String id) {
+    public Patient getPatientForHistory() {
         // we need a valid patient id
         if (LoginUtility.isLoggedIn(this)
                 && LoginUtility.getUserRole(this) == UserCredential.UserRole.PATIENT) {
@@ -297,7 +292,7 @@ public class PatientMainActivity extends Activity
         }
         // create an new empty patient and just load the logs into it
         Patient p = new Patient();
-        p.setId(id);
+        p.setId(mPatientId);
         PatientDataManager.getLogsFromCP(this, p);
         return p;
     }

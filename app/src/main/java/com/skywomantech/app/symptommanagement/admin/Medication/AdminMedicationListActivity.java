@@ -19,6 +19,7 @@ import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.physician.MedicationAddEditDialog;
 import com.skywomantech.app.symptommanagement.physician.MedicationListFragment;
 
+import java.util.Collection;
 import java.util.concurrent.Callable;
 
 import static android.support.v4.app.NavUtils.navigateUpFromSameTask;
@@ -64,6 +65,11 @@ public class AdminMedicationListActivity extends Activity
     }
 
     @Override
+    public Collection<Medication> getMedications() {
+        return null;
+    }
+
+    @Override
     public void onAddMedication() {
         Log.d(LOG_TAG, "Displaying Medication Add Dialog");
         FragmentManager fm = getFragmentManager();
@@ -77,7 +83,7 @@ public class AdminMedicationListActivity extends Activity
         if (medication.getName() == null || medication.getName().isEmpty()) return;
 
         // we have a name so now we can get some work done
-        final SymptomManagementApi svc =  SymptomManagementService.getService();
+        final SymptomManagementApi svc = SymptomManagementService.getService();
         if (svc != null) {
             CallableTask.invoke(new Callable<Medication>() {
 
@@ -101,9 +107,9 @@ public class AdminMedicationListActivity extends Activity
                             .findFragmentById(R.id.adminmedication_list);
                     if (fragment instanceof MedicationListFragment) {
                         // refreshing medications
-                        ((MedicationListFragment) fragment).displayMedications();
+                        // TODO: broke this probably!
+                        //((MedicationListFragment) fragment).displayMedications();
                     }
-
                 }
 
                 @Override

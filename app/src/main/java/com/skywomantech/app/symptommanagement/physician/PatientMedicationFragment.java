@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
@@ -127,6 +128,9 @@ public class PatientMedicationFragment extends ListFragment {
      * @param patient
      */
     private void displayPrescriptions(Patient patient) {
+        if (patient == null) {
+            Log.e(LOG_TAG, "Trying to display prescriptions for null patient.");
+        }
         Log.d(LOG_TAG, "We are updating the display list for Prescriptions.");
         if (patient.getPrescriptions() == null)
             patient.setPrescriptions(new HashSet<Medication>());
