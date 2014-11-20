@@ -21,29 +21,32 @@ import com.skywomantech.app.symptommanagement.data.UserCredential;
 
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.concurrent.Callable;
 
 /**
- * A list fragment representing a list of PhysicianPatients. This fragment
- * also supports tablet devices by allowing list items to be given an
- * 'activated' state upon selection. This helps indicate which item is
- * currently being viewed in a {@link PhysicianPatientDetailFragment}.
- * <p>
- * Activities containing this fragment MUST implement the {@link Callbacks}
- * interface.
+ * This fragment processes the physician's patient list
+ *
  */
 public class PhysicianListPatientsFragment extends ListFragment {
 
     private static final String LOG_TAG = PhysicianListPatientsFragment.class.getSimpleName();
     public final static String FRAGMENT_TAG = "fragment_patient_list";
 
-    String mPhysicianId;
+    // Notifies the activity about the following events
+    // onItemSelected - return the current physician and patient information to work with
+    public interface Callbacks {
+        public void onItemSelected(String physicianId, Patient patient);
+        public Physician getPhysicianForPatientList();
+    }
+
+    static String mPhysicianId;
+    static Physician mPhysician;
+    static Patient[] mPatientList = new Patient[0];
+    static Collection<Patient> mTempList = new HashSet<Patient>();
+
     private static final String STATE_ACTIVATED_POSITION = "activated_position";
     private int mActivatedPosition = ListView.INVALID_POSITION;
-
-    public interface Callbacks {
-        public void onItemSelected(String physicianId, String patientId);
-    }
 
     public PhysicianListPatientsFragment() {
     }
@@ -56,9 +59,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setRetainInstance(true); // save fragment across config changes
-        setEmptyText(getString(R.string.empty_list_text));
-        // Restore the previously serialized activated item position.
+        setRetainInstance(true);
         if (savedInstanceState != null
                 && savedInstanceState.containsKey(STATE_ACTIVATED_POSITION)) {
             setActivatedPosition(savedInstanceState.getInt(STATE_ACTIVATED_POSITION));
@@ -79,28 +80,87 @@ public class PhysicianListPatientsFragment extends ListFragment {
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
-
+    /**
+     * try to redisplay the physician's patient list
+     */
     @Override
     public void onResume() {
         super.onResume();
-        refreshAllPatients();
+        mPhysician = ((Callbacks) getActivity()).getPhysicianForPatientList();
+        displayPatientList(mPhysician);
     }
 
+    /**
+     * Allows the hosting activity to push a new physician record that was received from
+     * the server to this fragment
+     *
+     * @param physician
+     */
+    public void updatePhysician(Physician physician) {
+        if (physician == null) {
+            Log.e(LOG_TAG, "Trying to set physician to null.");
+            return;
+        }
+        Log.d(LOG_TAG, "New Physician has arrived!" + physician.toString());
+        mPhysician = physician;
+        displayPatientList(mPhysician);
+    }
+
+    /**
+     * Give the list adapter the physician list of patients to display
+     *
+     * @param physician
+     */
+    private void displayPatientList(Physician physician) {
+        if(physician == null) {
+            Log.e(LOG_TAG, "Trying to display a null physician.");
+            return;
+        }
+        Log.d(LOG_TAG, "Creating list of all patients assigned to physician");
+        if (physician.getPatients() != null ) {
+            mTempList = physician.getPatients();
+            mPatientList = mTempList.toArray(new Patient[mTempList.size()]);
+        }
+        setListAdapter(new PatientListAdapter(getActivity(), mPatientList));
+    }
+
+    /**
+     * temporarily add a patient from the patient search to the list of patients for this physician
+     * so that the dual pane stuff doesn't look weird... will be removed if the physician is updated
+     * or if this fragment is resumed .. might need to do some testing on this though
+     * TODO: test how this works when the device is rotated
+     * this patient is not added to the physician's patient list
+     *
+     * @param patient
+     */
+    public void temporaryAddToList(Patient patient) {
+        // use the current patient list and add one to it
+        if(mTempList != null && patient != null) {
+            mTempList.add(patient);
+        }
+        mPatientList = mTempList.toArray(new Patient[mTempList.size()]);
+        setListAdapter(new PatientListAdapter(getActivity(), mPatientList));
+    }
+
+    /**
+     * When the user clicks on a patient from the list then it lets the activity know
+     * which patient was selected
+     * WARNING!! The patients that are stored in the Physician record are not fully formed!
+     * The fully-formed patients are in a different set of records.  So the activity will need
+     * to get the fully-formed patient if they need it.
+     *
+     * @param listView
+     * @param view
+     * @param position
+     * @param id
+     */
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
-        Patient patient =
-                (Patient) getListAdapter().getItem(position);
-        Log.d(LOG_TAG, "Patient name selected is " + patient.getName()
-                + " id is : " + patient.getId());
-        String patientId = patient.getId();
-        Log.d(LOG_TAG, " String id value is : " + patientId);
+        Patient patient =  (Patient) getListAdapter().getItem(position);
+        Log.d(LOG_TAG, "Patient selected is " + patient.toString());
         mPhysicianId = LoginUtility.getLoginId(getActivity());
-        ((Callbacks) getActivity()).onItemSelected(mPhysicianId, patientId);
+        ((Callbacks) getActivity()).onItemSelected(mPhysicianId, patient);
     }
 
     @Override
@@ -124,48 +184,5 @@ public class PhysicianListPatientsFragment extends ListFragment {
             getListView().setItemChecked(position, true);
         }
         mActivatedPosition = position;
-    }
-
-    private void refreshAllPatients() {
-
-        if ( LoginUtility.isLoggedIn(getActivity())
-                && LoginUtility.getUserRole(getActivity()) == UserCredential.UserRole.PHYSICIAN) {
-            mPhysicianId = LoginUtility.getLoginId(getActivity());
-        } else {
-            Log.d(LOG_TAG, "This user isn't a physician why are they here?");
-            return;
-        }
-
-        final SymptomManagementApi svc =  SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Physician>() {
-
-                @Override
-                public Physician call() throws Exception {
-                    Log.d(LOG_TAG, "getting physician");
-                    return svc.getPhysician(mPhysicianId);
-                }
-            }, new TaskCallback<Physician>() {
-
-                @Override
-                public void success(Physician result) {
-                    Log.d(LOG_TAG, "Creating list of all patients assigned to physician");
-                    Patient[] plist = new Patient[0];
-                    if (result != null && result.getPatients() != null ) {
-                        plist = result.getPatients().toArray(new Patient[result.getPatients().size()]);
-                    }
-                    setListAdapter(new PatientListAdapter(getActivity(), plist));
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Toast.makeText(
-                            getActivity(),
-                            "Unable to fetch the Physician data. " +
-                                    "Please check Internet connection and try again.",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
-        }
     }
 }

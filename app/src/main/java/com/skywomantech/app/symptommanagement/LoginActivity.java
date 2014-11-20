@@ -3,11 +3,9 @@ package com.skywomantech.app.symptommanagement;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,7 +16,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidplot.xy.XYPlot;
 import com.skywomantech.app.symptommanagement.admin.AdminMain;
 import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
@@ -28,7 +25,6 @@ import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 import com.skywomantech.app.symptommanagement.data.UserCredential;
 import com.skywomantech.app.symptommanagement.patient.PatientMainActivity;
 import com.skywomantech.app.symptommanagement.physician.PhysicianListPatientsActivity;
-import com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailFragment;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.Collection;
@@ -45,6 +41,8 @@ import butterknife.OnClick;
 public class LoginActivity extends Activity {
 
     private static final String LOG_TAG = LoginActivity.class.getSimpleName();
+    private static String PHYSICIAN_ID_KEY;
+
     private UserLoginTask mAuthTask = null;
 
     @InjectView(R.id.username)
@@ -63,6 +61,9 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        PHYSICIAN_ID_KEY = getString(R.string.physician_id_key);
+
         setContentView(R.layout.activity_login_main);
         ButterKnife.inject(this);
 
@@ -284,7 +285,7 @@ public class LoginActivity extends Activity {
             // pass the physician's id to the next activity
             String id = LoginUtility.getLoginId(this);
             Bundle arguments = new Bundle();
-            arguments.putString(PhysicianPatientDetailFragment.PHYSICIAN_ID_KEY, id);
+            arguments.putString(PHYSICIAN_ID_KEY, id);
             Intent physicianIntent = new Intent(this, PhysicianListPatientsActivity.class);
             physicianIntent.putExtras(arguments);
             startActivity(physicianIntent);

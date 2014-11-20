@@ -1,14 +1,13 @@
 package com.skywomantech.app.symptommanagement.physician;
 
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,10 +15,6 @@ import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.LoginActivity;
 import com.skywomantech.app.symptommanagement.R;
-import com.skywomantech.app.symptommanagement.client.CallableTask;
-import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
-import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
-import com.skywomantech.app.symptommanagement.client.TaskCallback;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
 import com.skywomantech.app.symptommanagement.data.Physician;
@@ -28,9 +23,9 @@ import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.concurrent.Callable;
 
 public class PhysicianListPatientsActivity extends Activity  implements
+        PhysicianListPatientsFragment.Callbacks,
         PhysicianPatientDetailFragment.Callbacks,
         PrescriptionAdapter.Callbacks,
         PatientMedicationFragment.Callbacks,
@@ -112,6 +107,12 @@ public class PhysicianListPatientsActivity extends Activity  implements
         }
     }
 
+    /**
+     * uses different menus for the two pane vs classic display
+     *
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (mTwoPane) {
@@ -122,6 +123,13 @@ public class PhysicianListPatientsActivity extends Activity  implements
         return true;
     }
 
+    /**
+     * remove menu items if the related fragment is already displaying ..
+     * so it doesn't look weird
+     *
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         Fragment frag =
@@ -139,56 +147,54 @@ public class PhysicianListPatientsActivity extends Activity  implements
         return super.onPrepareOptionsMenu(menu);
     }
 
+    /**
+     * process the option menu items, some are for both menus and
+     * some are only available for dual pane option menu
+     *
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_patient_search) {
-            Log.d(LOG_TAG, "Displaying Patient Search Dialog");
+        if (id == R.id.action_patient_search) { // both menus need special processing for both
             FragmentManager fm = getFragmentManager();
             PatientSearchDialog searchDialog = PatientSearchDialog.newInstance();
-            searchDialog.show(fm, "patient_search_dialog");
-        } else if (id == R.id.action_sync_alerts) {
+            searchDialog.show(fm, PatientSearchDialog.FRAGMENT_TAG);
+        } else if (id == R.id.action_sync_alerts) { // both menus no special processing
             SymptomManagementSyncAdapter.syncImmediately(this);
             return true;
-        }  else if (id == R.id.action_medication_list) {
-            Bundle arguments = new Bundle();
-            arguments.putString(PATIENT_ID_KEY, mPatientId);
-            arguments.putString(PHYSICIAN_ID_KEY, mPhysicianId);
-            PatientMedicationFragment fragment = new PatientMedicationFragment();
-            fragment.setArguments(arguments);
+        }  else if (id == R.id.action_medication_list) { // dual pane only
             getFragmentManager().beginTransaction()
-                    .replace(R.id.patient_graphics_container, fragment)
+                    .replace(R.id.patient_graphics_container,
+                            new PatientMedicationFragment(), PatientMedicationFragment.FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
             return true;
-        } else if (id == R.id.action_history_log) {
-            Bundle arguments = new Bundle();
-            arguments.putString(PATIENT_ID_KEY, mPatientId);
-            arguments.putString(PHYSICIAN_ID_KEY, mPhysicianId);
-            HistoryLogFragment fragment = new HistoryLogFragment();
-            fragment.setArguments(arguments);
+        } else if (id == R.id.action_history_log) { //dual pane only
             getFragmentManager().beginTransaction()
-                    .replace(R.id.patient_graphics_container, fragment)
+                    .replace(R.id.patient_graphics_container,
+                            new HistoryLogFragment(), HistoryLogFragment.FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
             return true;
-        } else if (id == R.id.action_chart) {
-            Bundle arguments = new Bundle();
-            arguments.putString(PATIENT_ID_KEY, mPatientId);
-            arguments.putString(PHYSICIAN_ID_KEY, mPhysicianId);
-            PatientGraphicsFragment fragment = new PatientGraphicsFragment();
-            fragment.setArguments(arguments);
+        } else if (id == R.id.action_chart) { //dual pane only
             getFragmentManager().beginTransaction()
-                    .replace(R.id.patient_graphics_container, fragment)
+                    .replace(R.id.patient_graphics_container,
+                            new PatientGraphicsFragment(), HistoryLogFragment.FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
             return true;
-        } else if (id == R.id.physician_logout) {
+        } else if (id == R.id.physician_logout) { // both menus no special processing
             LoginActivity.restartLoginActivity(this);
         }
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * This makes the list activity, the top activity so you can't go back to login
+     * TODO: Does this work differently with dual pane?  don't think so but ...
+     */
     @Override
     public void onBackPressed() {
         startActivity(new Intent()
@@ -196,21 +202,30 @@ public class PhysicianListPatientsActivity extends Activity  implements
                 .addCategory(Intent.CATEGORY_HOME));
     }
 
-    public void onItemSelected(String physicianId, String patientId) {
-        mPatientId = patientId;
+    /**
+     * Callback from the patient list fragment for when an item is selected from the list
+     * need to process according to how the display layout is set up
+     *
+     * @param physicianId
+     * @param patient
+     */
+    @Override
+    public void onItemSelected(String physicianId, Patient patient) {
+        mPatientId = patient.getId();
+        //mPhysicianId = physicianId;
         if (mTwoPane) {
-            Bundle arguments = new Bundle();
-            arguments.putString(PATIENT_ID_KEY, patientId);
-            arguments.putString(PHYSICIAN_ID_KEY, physicianId);
-            PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
-            fragment.setArguments(arguments);
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.physician_patient_detail_container, fragment)
-                    .commit();
+            // Go to the server and get the fully-formed patient object
+            // the patient manager will call the setPatient callback when done
+            // and that will inform all the fragments of the change
+            PatientManager.getPatient(this, mPatientId);
         } else {
+            // we are in the classic path so we just send this patient information to
+            // detail activity and it handles it instead of this activity
+            Bundle arguments = new Bundle();
+            arguments.putString(PHYSICIAN_ID_KEY, physicianId);
+            arguments.putString(PATIENT_ID_KEY, patient.getId());
             Intent detailIntent = new Intent(this, PhysicianPatientDetailActivity.class);
-            detailIntent.putExtra(PATIENT_ID_KEY, patientId);
-            detailIntent.putExtra(PHYSICIAN_ID_KEY, physicianId);
+            detailIntent.putExtras(arguments);
             startActivity(detailIntent);
         }
     }
@@ -219,69 +234,55 @@ public class PhysicianListPatientsActivity extends Activity  implements
      * Callback from the Patient Search Dialog.  It uses the entered name to do a
      * search by name ON the server side.  The name must be an exact match.
      *
+     * Also has a failed and successful search methods for processing the result
+     *
      * @param lastName
      * @param firstName
      */
     @Override
     public void onNameSelected(String lastName, String firstName) {
         Log.e(LOG_TAG, "THE NAME SELECTED IS : " + firstName + " " + lastName);
-        findByNameFromCloud(lastName, firstName);
+        PatientManager.findPatientByName(this, lastName, firstName);
     }
 
-    private Patient findByNameFromCloud(final String last, final String first) {
-        final SymptomManagementApi svc = SymptomManagementService.getService();
-        if (svc != null) {
-            CallableTask.invoke(new Callable<Collection<Patient>>() {
-
-                @Override
-                public Collection<Patient> call() throws Exception {
-                    Log.d(LOG_TAG, "Searching for last name : " + last);
-                    return svc.findByPatientLastName(last);
-                }
-            }, new TaskCallback<Collection<Patient>>() {
-
-                @Override
-                public void success(Collection<Patient> result) {
-                    // check for first name match
-                    String patientId = null;
-                    for (Patient p : result) {
-                        Log.d(LOG_TAG, "Checking patient first name for match : " + p.getFirstName());
-                        if (p.getFirstName().toLowerCase().contentEquals(first.toLowerCase())) {
-                            // found a match on both first and last
-                            patientId = p.getId();
-                        }
-                    }
-                    if (patientId == null) {
-                        Toast.makeText(getApplicationContext(),
-                                "There are no patients with the name " + first + " " + last + ".",
-                                Toast.LENGTH_LONG).show();
-                    } else {
-                        Intent detailIntent = new Intent(getApplicationContext(),
-                                PhysicianPatientDetailActivity.class);
-                        if (mTwoPane) {
-                            Bundle arguments = new Bundle();
-                            arguments.putString(PATIENT_ID_KEY, patientId);
-                            PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
-                            fragment.setArguments(arguments);
-                            getFragmentManager().beginTransaction()
-                                    .replace(R.id.physician_patient_detail_container, fragment)
-                                    .commit();
-                        } else {
-                            detailIntent.putExtra(PATIENT_ID_KEY, patientId);
-                            startActivity(detailIntent);
-                        }
-                    }
-                }
-
-                @Override
-                public void error(Exception e) {
-                    Toast.makeText(getApplicationContext(),
-                            "There are no patients with the last name " + last + ".",
-                            Toast.LENGTH_LONG).show();
-                }
-            });
+    /**
+     * If the patient dialog search was successful then make this patient the
+     * current patient
+     * if dual pane then just set the patient and tell all the fragments to update their
+     * displays
+     * if this is the classic path then start the patient detail activity
+     * and tell it who the physician and patient are to work with.
+     *
+     * @param patient Patient found via the search dialog
+     */
+    @Override
+    public void successfulSearch(Patient patient) {
+        if (mTwoPane) {
+            setPatient(patient);
+            // temporarily put the searched patient in the patient list for display purposes only
+            // the patient will not be in the list permanently and will disappear if the
+            // list is remade such as when the device is rotate probably
+            Fragment frag = getFragmentManager()
+                    .findFragmentByTag(PhysicianListPatientsFragment.FRAGMENT_TAG);
+            if (frag != null) {
+                ((PhysicianListPatientsFragment) frag).temporaryAddToList(patient);
+            }
+        } else {
+            Intent detailIntent = new Intent(getApplication(), PhysicianPatientDetailActivity.class);
+            detailIntent.putExtra(PATIENT_ID_KEY, patient.getId());
+            detailIntent.putExtra(PHYSICIAN_ID_KEY, mPhysicianId);
+            startActivity(detailIntent);
         }
-        return null;
+    }
+
+    /**
+     * If the search failed put up a toast message and ignore
+     *
+     * @param message  detailed message for failed results
+     */
+    @Override
+    public void failedSearch(String message) {
+        Toast.makeText(getApplication(),message, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -291,15 +292,24 @@ public class PhysicianListPatientsActivity extends Activity  implements
      */
     @Override
     public void setPhysician(Physician physician) {
+
         if (physician == null) {
             Log.e(LOG_TAG, "Trying to set physician to null value");
             return;
         }
         Log.d(LOG_TAG, "Current Selected Physician is : " + physician.toString());
         mPhysician = physician;
+
+        // now we notify the list patients fragment so it can update the patient list adapter
+        Fragment frag = getFragmentManager()
+                .findFragmentByTag(PhysicianListPatientsFragment.FRAGMENT_TAG);
+        if (frag != null) {
+            ((PhysicianListPatientsFragment) frag).updatePhysician(mPhysician);
+        }
     }
 
     /**
+     * DUAL PANE
      *  Called by the Patient Manager when it gets a patient from the server
      *
      * @param patient from server
@@ -315,15 +325,15 @@ public class PhysicianListPatientsActivity extends Activity  implements
         updatePatientForFragments(mPatient);
     }
 
-
     /**
+     * DUAL PANE
      * If the patient object was received from the server then we need to tell all the fragments
      * about the new patient so they can be updated appropriately
      *
      * @param patient from server for update to fragments
      */
     private void updatePatientForFragments(Patient patient) {
-        // try the details fragment first
+        // update the details fragment first
         Fragment frag;
         frag = getFragmentManager().findFragmentByTag(PhysicianPatientDetailFragment.FRAGMENT_TAG);
         if (frag != null) {
@@ -336,6 +346,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
             ((HistoryLogFragment) frag).updatePatient(patient);
         }
 
+        // finally the medication fragment
         frag = getFragmentManager().findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
         if (frag != null) {
             ((PatientMedicationFragment) frag).updatePatient(patient);
@@ -343,6 +354,20 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * Callback for the List Fragment to request the physician with the patient list
+     * for displaying
+     *
+     * @return Physician to process patient list for
+     */
+    @Override
+    public Physician getPhysicianForPatientList() {
+        Log.d(LOG_TAG, "GETTING Selected Physician for Patient list : " + mPhysician);
+        return mPhysician;
+    }
+
+
+    /**
+     * DUAL PANE
      * Callback for the Details Fragment to request a patient
      *
      * @return Patient
@@ -354,6 +379,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * DUAL PANE
      * Callback for the Graphing Fragment to request Patient data
      *
      * @return Patient
@@ -365,6 +391,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * DUAL PANE
      * Callback for the patient history log to obtain a patient to use
      *
      * @return Patient
@@ -376,6 +403,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * DUAL PANE
      * Callback for the Medication List fragment to obtain a patient to use
      *
      * @return Patient
@@ -387,6 +415,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * DUAL PANE
      * Find the patient in the doctor's list and add a status log with the doctor's note.
      *
      * @param patientId patient that the status is for
@@ -405,6 +434,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * DUAL PANE
      * Called from the prescription adapter when the delete icon for a prescription has been
      * clicked.  This confirms the delete and then tells the fragment that it needs to update
      * its patient's list and save the updated patient to the server.
@@ -441,6 +471,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * DUAL PANE
      * Called from Prescription fragment when choosing the item from the options menu when the patient
      * prescription fragment is activated.  This brings up the complete list of medications
      * from the server to allow the physician to choose one.
@@ -457,6 +488,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * DUAL PANE
      * Callback from the prescription fragment to add a prescription that was chosen
      * from the whole medication list
      *
@@ -473,6 +505,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * DUAL PANE
      * tell the medication list fragment if editing options are activated or not
      *
      * @return boolean true is show option menu
@@ -484,6 +517,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * DUAL PANE
      * Callback for the Medication List fragment to get the list of medications that it needs to
      * display
      *
@@ -495,6 +529,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * DUAL PANE
      * Callback for the Medication List fragment if the add medication was chosen from options
      * Displays a custom dialog fragment for adding a new medication
      */
@@ -506,6 +541,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * DUAL PANE
      * Callback for the Medication Add Edit Dialog
      * The user OK'd the new medication add so we need to add it to the server database
      * and then get the full list back from the database
@@ -523,6 +559,7 @@ public class PhysicianListPatientsActivity extends Activity  implements
     }
 
     /**
+     * DUAL PANE
      * Callback from the Medication Add Edit Dialog .. do nothing if it was cancelled
      */
     @Override
@@ -545,35 +582,6 @@ public class PhysicianListPatientsActivity extends Activity  implements
         frag = getFragmentManager().findFragmentByTag(MedicationListFragment.FRAGMENT_TAG);
         if (frag != null) {
             ((MedicationListFragment) frag).updateMedications(medications);
-        }
-    }
-
-    @Override
-    public void failedSearch(String message) {
-        Toast.makeText(getApplication(),message, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void successfulSearch(Patient patient) {
-        Intent detailIntent = new Intent(getApplication(), PhysicianPatientDetailActivity.class);
-        if (mTwoPane) {
-            Bundle arguments = new Bundle();
-            arguments.putString(PATIENT_ID_KEY, patient.getId());
-            PhysicianPatientDetailFragment fragment = new PhysicianPatientDetailFragment();
-            fragment.setArguments(arguments);
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.physician_patient_detail_container, fragment,
-                            PhysicianPatientDetailFragment.FRAGMENT_TAG)
-                    .commit();
-
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.physician_patient_detail_container,
-                            new PhysicianPatientDetailFragment(),
-                            PhysicianPatientDetailFragment.FRAGMENT_TAG)
-                    .commit();
-        } else {
-            detailIntent.putExtra(PATIENT_ID_KEY, patient.getId());
-            startActivity(detailIntent);
         }
     }
 
