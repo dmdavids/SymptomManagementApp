@@ -68,6 +68,7 @@ public class MedicationAddEditDialog extends DialogFragment {
         mMedication.setName(getArguments().getString(medNameKey));
         View view = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_medication_add_edit, null);
+        ButterKnife.inject(this, view);
         if (mMedication.getId() != null && !mMedication.getId().isEmpty()) {
             mName.setText(mMedication.getName());
         }
