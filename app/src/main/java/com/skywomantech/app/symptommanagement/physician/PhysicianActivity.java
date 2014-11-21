@@ -1,6 +1,7 @@
 package com.skywomantech.app.symptommanagement.physician;
 
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -68,6 +69,8 @@ public abstract class PhysicianActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(false);
 
         PHYSICIAN_ID_KEY = getString(R.string.physician_id_key);
         PATIENT_ID_KEY = getString(R.string.patient_id_key);
@@ -151,7 +154,7 @@ public abstract class PhysicianActivity
                     .replace(R.id.patient_graphics_container,
                             new PatientMedicationFragment(),
                             PatientMedicationFragment.FRAGMENT_TAG)
-                    //.addToBackStack(null)
+                    .addToBackStack(null)
                     .commit();
             return true;
         } else if (id == R.id.action_history_log) { //dual pane only
@@ -159,7 +162,6 @@ public abstract class PhysicianActivity
                     .replace(R.id.patient_graphics_container,
                             new HistoryLogFragment(),
                             HistoryLogFragment.FRAGMENT_TAG)
-                    //.addToBackStack(null)
                     .commit();
             return true;
         } else if (id == R.id.action_chart) { //dual pane only
@@ -167,7 +169,6 @@ public abstract class PhysicianActivity
                     .replace(R.id.patient_graphics_container,
                             new PatientGraphicsFragment(),
                             PatientGraphicsFragment.FRAGMENT_TAG)
-                    //.addToBackStack(null)
                     .commit();
             return true;
         } else if (id == R.id.physician_logout) { // both menus no special processing

@@ -18,7 +18,7 @@ import com.skywomantech.app.symptommanagement.data.Physician;
 import com.skywomantech.app.symptommanagement.data.StatusLog;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
-public class PhysicianListPatientsActivity extends PhysicianActivity  {
+public class PhysicianListPatientsActivity extends PhysicianActivity {
     public final static String LOG_TAG = PhysicianListPatientsActivity.class.getSimpleName();
 
     private boolean mTwoPane;
@@ -57,7 +57,7 @@ public class PhysicianListPatientsActivity extends PhysicianActivity  {
                 PhysicianPatientDetailFragment detailsFragment = new PhysicianPatientDetailFragment();
                 detailsFragment.setArguments(arguments);
                 // start by showing the history log in the graphics fragment for now
-                HistoryLogFragment graphicsFragment = new HistoryLogFragment();
+                PatientGraphicsFragment graphicsFragment = new PatientGraphicsFragment();
                 graphicsFragment.setArguments(arguments);
                 getFragmentManager().beginTransaction()
                         .replace(R.id.physician_patient_detail_container,
@@ -65,7 +65,7 @@ public class PhysicianListPatientsActivity extends PhysicianActivity  {
                                 PhysicianPatientDetailFragment.FRAGMENT_TAG)
                         .replace(R.id.patient_graphics_container,
                                 graphicsFragment,
-                                HistoryLogFragment.FRAGMENT_TAG)
+                                PatientGraphicsFragment.FRAGMENT_TAG)
                         .commit();
             }
         }
@@ -155,10 +155,15 @@ public class PhysicianListPatientsActivity extends PhysicianActivity  {
                         new PatientMedicationFragment(),
                         PatientMedicationFragment.FRAGMENT_TAG)
                 .commit();
+
         PatientMedicationFragment frag =
                 (PatientMedicationFragment) getFragmentManager()
                         .findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
-        frag.addPrescription(medication);
+        if (frag != null) {
+            frag.addPrescription(medication);
+        } else {
+            Log.e(LOG_TAG, "Unable to add patient prescription.");
+        }
     }
 
     /**
@@ -181,10 +186,10 @@ public class PhysicianListPatientsActivity extends PhysicianActivity  {
      * If the patient dialog search was successful and the onNameSelected() runs
      * then this is called if the patient was found on servers so make this patient the
      * current patient ... it is a fully-formed already
-     *
+     * <p/>
      * if dual pane then just set the patient and tell all the fragments to update their
      * displays
-     *
+     * <p/>
      * if this is the classic path then start the patient detail activity
      * and tell it who the physician and patient are to work with.
      *
@@ -211,9 +216,6 @@ public class PhysicianListPatientsActivity extends PhysicianActivity  {
             startActivity(detailIntent);
         }
     }
-
-
-
 
 
 }

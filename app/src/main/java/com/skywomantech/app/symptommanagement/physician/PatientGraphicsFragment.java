@@ -432,8 +432,8 @@ public class PatientGraphicsFragment extends Fragment {
                 setPathEffect(new DashPathEffect(new float[]{1, 1}, 1));
         simplePatientXYPlot.getGraphWidget().getDomainOriginLinePaint().setColor(Color.BLACK);
         simplePatientXYPlot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.BLACK);
-
         simplePatientXYPlot.getGraphWidget().setGridPadding(30, 10, 30, 0);
+        simplePatientXYPlot.getLegendWidget().getTextPaint().setColor(Color.DKGRAY);
 
         if (severitySeries.size() > 0 && showSeverity) {
             LineAndPointFormatter severityLineFormat = new LineAndPointFormatter(
@@ -601,6 +601,7 @@ public class PatientGraphicsFragment extends Fragment {
                 setPathEffect(new DashPathEffect(new float[]{1, 1}, 1));
         simplePatientXYPlot.getGraphWidget().getDomainOriginLinePaint().setColor(Color.BLACK);
         simplePatientXYPlot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.BLACK);
+        simplePatientXYPlot.getLegendWidget().getTextPaint().setColor(Color.DKGRAY);
 
 
         if (severitySeries.size() > 0 && showSeverity) {
@@ -742,7 +743,7 @@ public class PatientGraphicsFragment extends Fragment {
                 setPathEffect(new DashPathEffect(new float[]{1, 1}, 1));
         simplePatientXYPlot.getGraphWidget().getDomainOriginLinePaint().setColor(Color.BLACK);
         simplePatientXYPlot.getGraphWidget().getRangeOriginLinePaint().setColor(Color.BLACK);
-
+        simplePatientXYPlot.getLegendWidget().getTextPaint().setColor(Color.DKGRAY);
 
         Log.d(LOG_TAG, "setting up the drawing information");
 

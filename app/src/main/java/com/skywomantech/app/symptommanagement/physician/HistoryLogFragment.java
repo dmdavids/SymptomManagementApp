@@ -44,9 +44,9 @@ public class HistoryLogFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: enables the back arrow ... may need to configure this one
+        // TODO: THE BACK ARROW MAY NEED TO BE SET FOR PATIENT TO WORK!
         ActionBar actionBar = getActivity().getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayHomeAsUpEnabled(false);
 
     }
 

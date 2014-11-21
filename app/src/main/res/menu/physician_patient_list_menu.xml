@@ -3,7 +3,7 @@
     <item
         android:id="@+id/action_patient_search"
         android:orderInCategory="10"
-        android:showAsAction="ifRoom|withText"
+        android:showAsAction="always"
         android:title="Search"
         android:icon="@android:drawable/ic_menu_search"/>
 
