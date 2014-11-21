@@ -8,4 +8,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     tools:context="com.skywomantech.app.symptommanagement.physician.PhysicianListPatientsActivity"
+    android:background="@drawable/touch_selector"
     tools:layout="@android:layout/list_content" />

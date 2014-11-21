@@ -6,7 +6,7 @@
     android:divider="@color/sm_blue"
     android:id="@+id/patient_list_item"
     style="?android:buttonBarStyle"
-    android:background="@drawable/touch_selector"
+    android:background="?android:attr/activatedBackgroundIndicator"
     android:orientation="horizontal">
 
     <LinearLayout

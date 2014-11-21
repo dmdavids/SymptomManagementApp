@@ -101,7 +101,8 @@ public class HistoryLogFragment extends ListFragment {
     private void displayLogList(Patient patient) {
         if (patient != null) {
             HistoryLog[] logList = PatientManager.createLogList(mPatient);
-            setListAdapter(new HistoryLogAdapter(getActivity(), logList));
+            if (logList != null)
+                setListAdapter(new HistoryLogAdapter(getActivity(), logList));
         }
     }
 }

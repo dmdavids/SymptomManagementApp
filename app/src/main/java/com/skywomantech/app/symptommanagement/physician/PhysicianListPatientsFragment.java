@@ -70,6 +70,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setEmptyText(getString(R.string.empty_list_text));
+        getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
     }
 
     @Override
@@ -128,7 +129,6 @@ public class PhysicianListPatientsFragment extends ListFragment {
      * temporarily add a patient from the patient search to the list of patients for this physician
      * so that the dual pane stuff doesn't look weird... will be removed if the physician is updated
      * or if this fragment is resumed .. might need to do some testing on this though
-     * TODO: test how this works when the device is rotated
      * this patient is not added to the physician's patient list
      *
      * @param patient

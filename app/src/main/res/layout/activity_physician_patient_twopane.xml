@@ -11,6 +11,7 @@
     <fragment
         android:id="@+id/physician_patient_list"
         android:name="com.skywomantech.app.symptommanagement.physician.PhysicianListPatientsFragment"
+        android:background="@drawable/touch_selector"
         android:tag="fragment_patient_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
