@@ -22,6 +22,7 @@ import com.skywomantech.app.symptommanagement.data.Reminder;
 import com.skywomantech.app.symptommanagement.data.UserCredential;
 import com.skywomantech.app.symptommanagement.patient.Reminder.ReminderManager;
 import com.skywomantech.app.symptommanagement.physician.HistoryLogFragment;
+import com.skywomantech.app.symptommanagement.physician.PatientGraphicsFragment;
 import com.skywomantech.app.symptommanagement.physician.PhysicianPatientDetailFragment;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
@@ -93,20 +94,17 @@ public class PatientMainActivity extends Activity
                     .replace(R.id.patient_main_container, new ReminderFragment(), "reminder_frag")
                     .commit();
             return true;
-            // Not finding a need for preferences at this time
-//        } else if (id == R.id.action_prefs) {
-//            startActivity(new Intent(this, SetPreferenceActivity.class));
-//            return true;
-//        } else if (id == R.id.action_refresh) {
-//            SymptomManagementSyncAdapter.syncImmediately(this);
-//            return true;
         } else if (id == R.id.patient_logout) {
             LoginActivity.restartLoginActivity(this);
         } else if (id == R.id.action_patient_history_log) {
+            Bundle arguments = new Bundle();
+            arguments.putBoolean(HistoryLogFragment.BACKUP_KEY, true); // allow home as up
+            HistoryLogFragment historyLogFragment = new HistoryLogFragment();
+            historyLogFragment.setArguments(arguments);
             getFragmentManager().beginTransaction()
                     .replace(R.id.patient_main_container,
-                            new HistoryLogFragment(), HistoryLogFragment.FRAGMENT_TAG)
-                    //.addToBackStack(null)
+                            historyLogFragment,
+                            HistoryLogFragment.FRAGMENT_TAG)
                     .commit();
             return true;
         }

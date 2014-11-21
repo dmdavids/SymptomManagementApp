@@ -29,6 +29,7 @@ public class HistoryLogFragment extends ListFragment {
 
     private static final String LOG_TAG = HistoryLogFragment.class.getSimpleName();
     public final static String FRAGMENT_TAG = "fragment_history_log";
+    public final static String BACKUP_KEY = "allow_back";
 
     // Notifies the activity about the following events
     // getPatientForHistory - return the current patient to work with
@@ -37,17 +38,27 @@ public class HistoryLogFragment extends ListFragment {
     }
 
     private static Patient mPatient;
+    private static boolean allowBackup = false;
 
     public HistoryLogFragment() {
     }
 
+    /**
+     * History log is used by both doctor and patient apps
+     * but they have different screen flows so have to allow them to change
+     * the home up capability programatically
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: THE BACK ARROW MAY NEED TO BE SET FOR PATIENT TO WORK!
+        if (getArguments() != null) {
+            Boolean found = getArguments().getBoolean(BACKUP_KEY);
+            if (found != null) allowBackup = found;
+        } else allowBackup = false;
         ActionBar actionBar = getActivity().getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(false);
-
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(allowBackup);
     }
 
     @Override
