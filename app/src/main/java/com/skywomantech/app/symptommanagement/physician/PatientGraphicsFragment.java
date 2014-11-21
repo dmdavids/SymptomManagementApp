@@ -322,9 +322,11 @@ public class PatientGraphicsFragment extends Fragment {
                         m.getMed().getId(), m.getMed().getName()));
             }
         }
-        Log.d(LOG_TAG, "Severity Points : " + severityPoints.toString());
-        Log.d(LOG_TAG, "Eating Points : " + eatingPoints.toString());
-        Log.d(LOG_TAG, "Med Log Points : " + medicationPoints.toString());
+        if( severityPoints != null && eatingPoints != null && medicationPoints != null) {
+            Log.d(LOG_TAG, "Severity Points : " + severityPoints.toString());
+            Log.d(LOG_TAG, "Eating Points : " + eatingPoints.toString());
+            Log.d(LOG_TAG, "Med Log Points : " + medicationPoints.toString());
+        }
     }
 
     private void createBarChart() {
