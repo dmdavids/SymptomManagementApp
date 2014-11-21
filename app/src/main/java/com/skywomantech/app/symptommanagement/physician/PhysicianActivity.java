@@ -241,19 +241,14 @@ public abstract class PhysicianActivity
         if (detailFrag != null && detailFrag instanceof PhysicianPatientDetailFragment) {
             ((PhysicianPatientDetailFragment) detailFrag).updatePatient(patient);
         }
-        Log.d(LOG_TAG, "Sending Patient to the history frag+ ....");
-        // now the history log fragment
-        Fragment historyFrag;
-        historyFrag = getFragmentManager().findFragmentByTag(HistoryLogFragment.FRAGMENT_TAG);
-        if (historyFrag != null && historyFrag instanceof HistoryLogFragment) {
-            ((HistoryLogFragment) historyFrag).updatePatient(patient);
-        }
+        boolean sentPatient = false;
         Log.d(LOG_TAG, "Sending Patient to the medication frag+ ....");
         // then patient medication fragment
         Fragment medicationFrag;
         medicationFrag = getFragmentManager().findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
         if (medicationFrag != null && medicationFrag instanceof PatientMedicationFragment) {
             ((PatientMedicationFragment) medicationFrag).updatePatient(patient);
+            sentPatient = true;
         }
         Log.d(LOG_TAG, "Sending Patient to the graphics frag+ ....");
         // finally the patient graphing fragment
@@ -261,6 +256,19 @@ public abstract class PhysicianActivity
         graphicsFrag = getFragmentManager().findFragmentByTag(PatientGraphicsFragment.FRAGMENT_TAG);
         if (graphicsFrag != null && graphicsFrag instanceof PatientGraphicsFragment) {
             ((PatientGraphicsFragment) graphicsFrag).updatePatient(patient);
+            sentPatient = true;
+        }
+        Log.d(LOG_TAG, "Sending Patient to the history frag+ ....");
+
+        // now the history log fragment
+        // if the history log fragment is not the only fragment this causes a problem
+        // this is a hack but I'm running out of time
+        if ( sentPatient == false ) {
+            Fragment historyFrag;
+            historyFrag = getFragmentManager().findFragmentByTag(HistoryLogFragment.FRAGMENT_TAG);
+            if (historyFrag != null && historyFrag instanceof HistoryLogFragment) {
+                ((HistoryLogFragment) historyFrag).updatePatient(patient);
+            }
         }
         Log.d(LOG_TAG, "Sending Patient to the fragments is DONE.");
     }

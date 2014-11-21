@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -41,6 +42,8 @@ public class PhysicianListPatientsActivity extends PhysicianActivity {
         setContentView(R.layout.activity_physician_patient_list);
         if (findViewById(R.id.physician_patient_detail_container) != null) { // dual pane!
             mTwoPane = true;
+            //force a landscape view ... hack because of bugs with rotation of fragments
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             // setup list item highlight when selected for this situation
             ((PhysicianListPatientsFragment) getFragmentManager()
                     .findFragmentById(R.id.physician_patient_list))

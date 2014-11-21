@@ -46,10 +46,10 @@ public class PhysicianPatientDetailActivity extends PhysicianActivity  {
         if (savedInstanceState == null) {   // started new by adding the new fragments
             Log.v(LOG_TAG, "Are the fragments are working with empty objects?");
             getFragmentManager().beginTransaction()
-                    .add(R.id.physician_patient_detail_container,
+                    .replace(R.id.physician_patient_detail_container,
                             new PhysicianPatientDetailFragment(),
                             PhysicianPatientDetailFragment.FRAGMENT_TAG)
-                    .add(R.id.patient_graphics_container,
+                    .replace(R.id.patient_graphics_container,
                             new HistoryLogFragment(), HistoryLogFragment.FRAGMENT_TAG)
                     .commit();
         }

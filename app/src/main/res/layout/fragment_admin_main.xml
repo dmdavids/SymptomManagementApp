@@ -23,19 +23,17 @@
             android:layout_margin="8dp"/>
     </FrameLayout>
 
-
     <Button
         android:id="@+id/edit_physicians_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/edit_medications_button"
-        android:layout_alignStart="@+id/edit_medications_button"
-        android:layout_below="@+id/edit_patients_button"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="29dp"
         android:background="@color/sm_blue"
         android:textColor="@color/sm_cream_white"
         android:minWidth="350dp"
-        android:text="Edit Physicians" />
+        android:text="Edit Physicians"
+        android:layout_below="@+id/edit_patients_button"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/edit_patients_button"
@@ -51,6 +49,7 @@
         android:minWidth="350dp"
         android:text="Edit Patients" />
 
+<!--
     <Button
         android:id="@+id/edit_medications_button"
         android:layout_width="wrap_content"
@@ -62,6 +61,7 @@
         android:textColor="@color/sm_cream_white"
         android:minWidth="350dp"
         android:text="Edit Medications" />
+-->
 
 
 

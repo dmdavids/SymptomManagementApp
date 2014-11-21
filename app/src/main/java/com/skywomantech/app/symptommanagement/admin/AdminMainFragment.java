@@ -42,9 +42,9 @@ public class AdminMainFragment extends Fragment {
         startActivity(new Intent(getActivity(), AdminPhysicianListActivity.class));
     }
 
-    @OnClick(R.id.edit_medications_button)
+/*    @OnClick(R.id.edit_medications_button)
     public void addEditMedications() {
         startActivity(new Intent(getActivity(), AdminMedicationListActivity.class));
-    }
+    }*/
 
 }
