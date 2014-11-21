@@ -65,6 +65,7 @@ public class MedicationListFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setEmptyText(getString(R.string.empty_list_text));
+        setRetainInstance(true); // save fragment across config changes
     }
 
     @Override
@@ -142,7 +143,7 @@ public class MedicationListFragment extends ListFragment {
         ((Callbacks) getActivity()).onMedicationSelected(med);
     }
 
-    public void displayMedications(Collection<Medication> medications) {
+    public void displayMedications(final Collection<Medication> medications) {
         if(medications == null) {
             Log.e(LOG_TAG, "Trying to display a null medication list.");
             return;

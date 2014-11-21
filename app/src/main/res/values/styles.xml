@@ -13,7 +13,6 @@
     <style name="SMDefaultTextAppearance" parent="@android:style/TextAppearance">
         <item name="android:textSize">12sp</item>
         <item name="android:textColor">#333</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="sample_activity">

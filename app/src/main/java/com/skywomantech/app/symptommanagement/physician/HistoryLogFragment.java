@@ -39,6 +39,7 @@ public class HistoryLogFragment extends ListFragment {
 
     private static Patient mPatient;
     private static boolean allowBackup = false;
+    private static HistoryLog[] logList;
 
     public HistoryLogFragment() {
     }
@@ -59,6 +60,7 @@ public class HistoryLogFragment extends ListFragment {
         } else allowBackup = false;
         ActionBar actionBar = getActivity().getActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(allowBackup);
+        this.setRetainInstance(true);
     }
 
     @Override
@@ -100,9 +102,17 @@ public class HistoryLogFragment extends ListFragment {
 
     private void displayLogList(Patient patient) {
         if (patient != null) {
-            HistoryLog[] logList = PatientManager.createLogList(mPatient);
+            logList = PatientManager.createLogList(mPatient);
             if (logList != null)
-                setListAdapter(new HistoryLogAdapter(getActivity(), logList));
+                try {
+                    setListAdapter(new HistoryLogAdapter(getActivity(), logList));
+                } catch (Exception e) {
+                    // has something to do with sending patient data to this fragment when it
+                    // is in the backstack? this doesn't fix it.. out of time for now
+                    Log.e(LOG_TAG, "This gets a null pointer on rotation sometimes. sigh!");
+                    logList = new HistoryLog[0];
+                    setListAdapter(new HistoryLogAdapter(getActivity(), logList));
+                }
         }
     }
 }

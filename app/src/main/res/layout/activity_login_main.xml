@@ -11,16 +11,34 @@
     tools:context="com.skywomantech.app.symptommanagement.LoginActivity">
 
     <!-- Login progress -->
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Symptom Management"
-        android:id="@+id/login_header"
-        android:padding="18dp"
-        android:paddingBottom="32dp"
-        android:textStyle="bold"
-        android:singleLine="false" />
+        android:background="@color/sm_grey_dark"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        android:minWidth="350dp"
+        android:weightSum="1">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="62dp"
+            android:layout_gravity="left"
+            android:layout_weight="0.40"
+            android:src="@drawable/ic_launcher" />
+
+        <TextView
+            android:id="@+id/login_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/sm_grey_dark"
+            android:padding="18dp"
+            android:singleLine="false"
+            android:text="Symptom Management"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/sm_cream_white"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/login_progress"
@@ -28,66 +46,69 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <ScrollView
         android:id="@+id/login_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_horizontal"  >
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal">
 
-            <LinearLayout
-                android:id="@+id/username_login_form"
-                android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/username_login_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center_horizontal">
+                android:drawableLeft="@drawable/ic_action_user"
+                android:hint="@string/prompt_username"
+                android:maxLines="1"
+                android:minWidth="350dp"
+                android:singleLine="true" />
 
-                <EditText
-                    android:id="@+id/username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_username"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:drawableLeft="@drawable/ic_action_user"
-                    android:minWidth="350dp"  />
+            <EditText
+                android:id="@+id/sm_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_action_lock"
+                android:hint="Password"
+                android:imeActionId="@+id/goto_login"
+                android:imeActionLabel="@string/action_sign_in_short"
+                android:imeOptions="actionUnspecified"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:minWidth="350dp"
+                android:singleLine="true" />
 
-                <EditText
-                    android:id="@+id/sm_password"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:hint="Password"
-                    android:imeActionId="@+id/goto_login"
-                    android:imeActionLabel="@string/action_sign_in_short"
-                    android:imeOptions="actionUnspecified"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:drawableLeft="@drawable/ic_action_lock"
-                    android:minWidth="350dp" />
+            <CheckBox
+                android:id="@+id/remember_me_checkbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:checked="true"
+                android:text="Remember My Information"
+                android:visibility="gone" />
 
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Remember My Information"
-                    android:id="@+id/remember_me_checkbox"
-                    android:checked="true"
-                    android:visibility="invisible"
-                    android:layout_gravity="center_horizontal" />
+            <Button
+                android:id="@+id/username_sign_in_button"
+                style="?android:textAppearanceMedium"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:padding="8dp"
+                android:background="@color/sm_blue"
+                android:minWidth="350dp"
+                android:text="Sign In"
+                android:textColor="@color/sm_cream_white"
+                android:textStyle="bold" />
 
-                <Button
-                    android:id="@+id/username_sign_in_button"
-                    style="?android:textAppearanceMedium"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Sign In"
-                    android:textStyle="bold"
-                    android:minWidth="350dp"
-                    android:background="@color/sm_blue"/>
-
-            </LinearLayout>
+        </LinearLayout>
     </ScrollView>
 
 </LinearLayout>

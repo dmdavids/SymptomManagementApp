@@ -2,52 +2,67 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.skywomantech.app.symptommanagement.admin.AdminMain$PlaceholderFragment">
 
 
-    <TextView
-        android:text="@string/admin_main_title"
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:id="@+id/main_admin_title_layout"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/adminTitleView"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:textStyle="bold"
-        android:textSize="32sp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Edit Medications"
-        android:id="@+id/edit_medications_button"
-        android:layout_below="@+id/edit_physicians_button"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Edit Physicians"
-        android:id="@+id/edit_physicians_button"
-        android:layout_marginTop="50dp"
-        android:layout_below="@+id/edit_patients_button"
-        android:layout_alignLeft="@+id/edit_medications_button"
-        android:layout_alignStart="@+id/edit_medications_button" />
-
-    <Button
-            android:layout_width="wrap_content"
+        android:background="@color/sm_grey_dark">
+        <TextView
+            android:id="@+id/adminTitleView"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Edit Patients"
-            android:id="@+id/edit_patients_button"
-            android:layout_toEndOf="@+id/adminTitleView"
-        android:layout_below="@+id/adminTitleView"
+            android:text="@string/admin_main_title"
+            android:gravity="center_horizontal"
+            android:textColor="@color/sm_cream_white"
+            android:textSize="24sp"
+            android:layout_margin="8dp"/>
+    </FrameLayout>
+
+
+    <Button
+        android:id="@+id/edit_physicians_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/edit_medications_button"
+        android:layout_alignStart="@+id/edit_medications_button"
+        android:layout_below="@+id/edit_patients_button"
+        android:layout_marginTop="25dp"
+        android:background="@color/sm_blue"
+        android:textColor="@color/sm_cream_white"
+        android:minWidth="350dp"
+        android:text="Edit Physicians" />
+
+    <Button
+        android:id="@+id/edit_patients_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/edit_physicians_button"
         android:layout_alignStart="@+id/edit_physicians_button"
-        android:layout_marginTop="50dp" />
+        android:layout_below="@+id/main_admin_title_layout"
+        android:layout_marginTop="20dp"
+        android:layout_toEndOf="@+id/main_admin_title_layout"
+        android:background="@color/sm_blue"
+        android:textColor="@color/sm_cream_white"
+        android:minWidth="350dp"
+        android:text="Edit Patients" />
+
+    <Button
+        android:id="@+id/edit_medications_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/edit_physicians_button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="@color/sm_blue"
+        android:textColor="@color/sm_cream_white"
+        android:minWidth="350dp"
+        android:text="Edit Medications" />
+
 
 
 </RelativeLayout>

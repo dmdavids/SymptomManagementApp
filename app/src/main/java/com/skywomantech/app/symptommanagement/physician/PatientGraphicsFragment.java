@@ -157,6 +157,12 @@ public class PatientGraphicsFragment extends Fragment {
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        this.setRetainInstance(true);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (!(activity instanceof Callbacks)) {
@@ -465,7 +471,7 @@ public class PatientGraphicsFragment extends Fragment {
         Log.d(LOG_TAG, "Redrawing the bar chart");
 
         BarRenderer renderer = (BarRenderer) simplePatientXYPlot.getRenderer(BarRenderer.class);
-        if ( renderer !=  null  ) {
+        if (renderer != null) {
             renderer.setBarRenderStyle(BarRenderer.BarRenderStyle.SIDE_BY_SIDE);
             renderer.setBarWidthStyle(BarRenderer.BarWidthStyle.FIXED_WIDTH);
             renderer.setBarWidth(30);
@@ -494,11 +500,11 @@ public class PatientGraphicsFragment extends Fragment {
             // calculate a 3-day moving average
             SeverityPlotPoint[] sevArray =
                     severityPoints.toArray(new SeverityPlotPoint[severityPoints.size()]);
-            for (int i = 1; i < (severityPoints.size()-1); i++) {
+            for (int i = 1; i < (severityPoints.size() - 1); i++) {
                 double movingAverage =
-                        (sevArray[i-1].getSeverityValue()
-                        + sevArray[i].getSeverityValue()
-                        + sevArray[i+1].getSeverityValue())/3.0;
+                        (sevArray[i - 1].getSeverityValue()
+                                + sevArray[i].getSeverityValue()
+                                + sevArray[i + 1].getSeverityValue()) / 3.0;
                 if (minDate < 0) minDate = sevArray[i].getActual_date();
                 if (maxDate < sevArray[i].getActual_date()) maxDate = sevArray[i].getActual_date();
                 severitySeries.addLast(sevArray[i].getTimeValue(), movingAverage);
@@ -511,14 +517,14 @@ public class PatientGraphicsFragment extends Fragment {
             Collections.sort(eatingPoints, new TimePointSorter());
             EatingPlotPoint[] eatArray =
                     eatingPoints.toArray(new EatingPlotPoint[eatingPoints.size()]);
-            for (int i=1; i<(eatingPoints.size() - 1); i++) {
-                long value1 = (eatArray[i-1].getEatingValue() == 100) ? 100 :
-                        (eatArray[i-1].getEatingValue() == 200) ? 150 : 200;
+            for (int i = 1; i < (eatingPoints.size() - 1); i++) {
+                long value1 = (eatArray[i - 1].getEatingValue() == 100) ? 100 :
+                        (eatArray[i - 1].getEatingValue() == 200) ? 150 : 200;
                 long value2 = (eatArray[i].getEatingValue() == 100) ? 100 :
                         (eatArray[i].getEatingValue() == 200) ? 150 : 200;
-                long value3 = (eatArray[i+1].getEatingValue() == 100) ? 100 :
-                        (eatArray[i+1].getEatingValue() == 200) ? 150 : 200;
-                double movingAverage = (value1 + value2 + value3)/3.0;
+                long value3 = (eatArray[i + 1].getEatingValue() == 100) ? 100 :
+                        (eatArray[i + 1].getEatingValue() == 200) ? 150 : 200;
+                double movingAverage = (value1 + value2 + value3) / 3.0;
                 eatingSeries.addLast(eatArray[i].getTimeValue(), movingAverage);
             }
         }
@@ -539,7 +545,7 @@ public class PatientGraphicsFragment extends Fragment {
                         else if (showEating) toAppendTo.append("Eating");
                         break;
                     case 150:
-                        if (showEating)  toAppendTo.append("Eating Some");
+                        if (showEating) toAppendTo.append("Eating Some");
                         else toAppendTo.append("");
                         break;
                     case 200:
@@ -650,7 +656,7 @@ public class PatientGraphicsFragment extends Fragment {
             severitySeriesByHour = new SimpleXYSeries("Severity By Hour");
             severitySeriesByDay = new SimpleXYSeries("Severity by Day of Week");
             for (SeverityPlotPoint s : severityPoints) {
-                double valueHour = s.getHour() + (s.getMinutes()/60.0);
+                double valueHour = s.getHour() + (s.getMinutes() / 60.0);
                 severitySeriesByHour.addLast(valueHour, s.getSeverityValue());
                 double valueDay = s.getDay_of_week() + (s.getHour() / 24.0);
                 severitySeriesByDay.addLast(valueDay, s.getSeverityValue());
@@ -660,7 +666,7 @@ public class PatientGraphicsFragment extends Fragment {
             eatingSeriesByHour = new SimpleXYSeries("Eating Ability By Hour");
             eatingSeriesByDay = new SimpleXYSeries("Eating Ability By Day of Week");
             for (EatingPlotPoint eat : eatingPoints) {
-                double valueHour = eat.getHour() + (eat.getMinutes()/60.0);
+                double valueHour = eat.getHour() + (eat.getMinutes() / 60.0);
                 eatingSeriesByHour.addLast(valueHour, eat.getEatingValue());
                 double valueDay = eat.getDay_of_week() + (eat.getHour() / 24.0);
                 eatingSeriesByDay.addLast(valueDay, eat.getEatingValue());
@@ -833,7 +839,7 @@ public class PatientGraphicsFragment extends Fragment {
 
     @OnClick({R.id.graph_choice_1, R.id.graph_choice_2,})
     public void onCheckboxGroup(View v) {
-        CheckBox cb = (CheckBox)v;
+        CheckBox cb = (CheckBox) v;
         switch (v.getId()) {
             case R.id.graph_choice_1:
                 showSeverity = cb.isChecked();
