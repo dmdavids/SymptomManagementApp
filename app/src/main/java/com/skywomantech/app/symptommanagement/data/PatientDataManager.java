@@ -92,9 +92,25 @@ public class PatientDataManager {
     }
 
     public static synchronized void getLogsFromCP(Context context, Patient patient) {
+        patient.setCheckinLog(getUpdatedCheckInLogs(context, patient.getId()));
         patient.setPainLog(getUpdatedPainLogs(context, patient.getId()));
         patient.setMedLog(getUpdatedMedLogs(context, patient.getId()));
         patient.setStatusLog(getUpdatedStatusLogs(context, patient.getId()));
+    }
+
+    private static synchronized Set<CheckInLog> getUpdatedCheckInLogs(Context context, String id) {
+        Set<CheckInLog> logs = new HashSet<CheckInLog>();
+        String selection = PatientCPContract.CheckInLogEntry.COLUMN_PATIENT_ID + "=" + "\'" + id + "\'";
+        Cursor cursor = context.getContentResolver().query(
+                PatientCPContract.CheckInLogEntry.CONTENT_URI, null, selection, null, null);
+        while (cursor.moveToNext()) {
+            CheckInLog log = new CheckInLog();
+            log.setCheckinId(cursor.getLong(cursor.getColumnIndex(PatientCPContract.CheckInLogEntry.COLUMN_CHECKIN_ID)));
+            log.setCreated(cursor.getLong(cursor.getColumnIndex(PatientCPContract.CheckInLogEntry.COLUMN_CREATED)));
+            logs.add(log);
+        }
+        cursor.close();
+        return logs;
     }
 
     private static synchronized Set<PainLog> getUpdatedPainLogs(Context context, String id) {
@@ -106,6 +122,7 @@ public class PatientDataManager {
             PainLog log = new PainLog();
             log.setEating(PainLog.Eating.findByValue(cursor.getInt(cursor.getColumnIndex(PatientCPContract.PainLogEntry.COLUMN_EATING))));
             log.setSeverity(PainLog.Severity.findByValue(cursor.getInt(cursor.getColumnIndex(PatientCPContract.PainLogEntry.COLUMN_SEVERITY))));
+            log.setCheckinId(cursor.getLong(cursor.getColumnIndex(PatientCPContract.PainLogEntry.COLUMN_CHECKIN_ID)));
             log.setCreated(cursor.getLong(cursor.getColumnIndex(PatientCPContract.PainLogEntry.COLUMN_CREATED)));
             logs.add(log);
         }
@@ -124,6 +141,7 @@ public class PatientDataManager {
             log.getMed().setId(cursor.getString(cursor.getColumnIndex(PatientCPContract.MedLogEntry.COLUMN_MED_ID)));
             log.getMed().setName(cursor.getString(cursor.getColumnIndex(PatientCPContract.MedLogEntry.COLUMN_MED_NAME)));
             log.setTaken(cursor.getLong(cursor.getColumnIndex(PatientCPContract.MedLogEntry.COLUMN_TAKEN)));
+            log.setCheckinId(cursor.getLong(cursor.getColumnIndex(PatientCPContract.MedLogEntry.COLUMN_CHECKIN_ID)));
             log.setCreated(cursor.getLong(cursor.getColumnIndex(PatientCPContract.MedLogEntry.COLUMN_CREATED)));
             logs.add(log);
         }
@@ -216,9 +234,23 @@ public class PatientDataManager {
 
     private synchronized static void updateLogsToCP(Context context, Patient patient) {
         Log.d(LOG_TAG, "Updating patient LOGs to CP ...id is : " + patient.getId());
+        updateCheckInLogToCP(context, patient);
         updatePainLogToCP(context, patient);
         updateMedLogToCP(context, patient);
         updateStatusLogToCP(context, patient);
+    }
+
+    private synchronized static void updateCheckInLogToCP(Context context, Patient patient) {
+        if (patient.getCheckinLog() == null) return;
+        String id = patient.getId();
+        Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getCheckinLog().size());
+        for (CheckInLog p: patient.getCheckinLog()) {
+            ContentValues cv = PatientCPcvHelper.createValuesObject(id, p);
+            cVVector.add(cv);
+        }
+        ContentValues[] cvArray = new ContentValues[cVVector.size()];
+        cVVector.toArray(cvArray);
+        context.getContentResolver().bulkInsert(PatientCPContract.CheckInLogEntry.CONTENT_URI, cvArray);
     }
 
     private synchronized static void updatePainLogToCP(Context context, Patient patient) {

@@ -11,6 +11,7 @@ import android.net.Uri;
 
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.CredentialEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.MedLogEntry;
+import static com.skywomantech.app.symptommanagement.data.PatientCPContract.CheckInLogEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PainLogEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PatientEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PhysicianEntry;
@@ -41,6 +42,8 @@ public class PatientContentProvider extends ContentProvider {
     private static final int STATUS_LOG_ID = 810;
     private static final int CREDENTIAL = 900;
     private static final int CREDENTIAL_ID = 910;
+    private static final int CHECK_IN_LOG = 1100;
+    private static final int CHECK_IN_LOG_ID = 1111;
 
 
     @Override
@@ -166,6 +169,29 @@ public class PatientContentProvider extends ContentProvider {
                 break;
             }
 
+            case CHECK_IN_LOG: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        CheckInLogEntry.TABLE_NAME,
+                        projection,
+                        selection,     // selection
+                        selectionArgs, // selection args
+                        null,     // group by
+                        null,     // having
+                        sortOrder);
+                break;
+            }
+            case CHECK_IN_LOG_ID: {
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        CheckInLogEntry.TABLE_NAME,
+                        projection,
+                        CheckInLogEntry._ID + "=" + ContentUris.parseId(uri),// selection
+                        null,     // selection args
+                        null,     // group by
+                        null,     // having
+                        sortOrder);
+                break;
+            }
+
             case PAIN_LOG: {
                 retCursor = mOpenHelper.getReadableDatabase().query(
                         PainLogEntry.TABLE_NAME,
@@ -273,6 +299,12 @@ public class PatientContentProvider extends ContentProvider {
             case REMINDER_ID: {
                 return ReminderEntry.CONTENT_ITEM_TYPE;
             }
+            case CHECK_IN_LOG: {
+                return CheckInLogEntry.CONTENT_TYPE;
+            }
+            case CHECK_IN_LOG_ID: {
+                return CheckInLogEntry.CONTENT_ITEM_TYPE;
+            }
             case PAIN_LOG: {
                 return PainLogEntry.CONTENT_TYPE;
             }
@@ -365,6 +397,15 @@ public class PatientContentProvider extends ContentProvider {
                 }
                 break;
             }
+            case CHECK_IN_LOG: {
+                long _id = db.insert(CheckInLogEntry.TABLE_NAME, null, contentValues);
+                if (_id > 0) {
+                    returnUri = CheckInLogEntry.buildCheckinLogEntryUriWithLogId(_id);
+                } else {
+                    throw new SQLException("Failed to insert row into " + uri);
+                }
+                break;
+            }
             case MED_LOG: {
                 long _id = db.insert(MedLogEntry.TABLE_NAME, null, contentValues);
                 if (_id > 0) {
@@ -418,6 +459,10 @@ public class PatientContentProvider extends ContentProvider {
             }
             case REMINDER: {
                 rowsDeleted = db.delete(ReminderEntry.TABLE_NAME, selection, selectionArgs);
+                break;
+            }
+            case CHECK_IN_LOG: {
+                rowsDeleted = db.delete(CheckInLogEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             }
             case PAIN_LOG: {
@@ -527,6 +572,22 @@ public class PatientContentProvider extends ContentProvider {
 
                 break;
             }
+            case CHECK_IN_LOG: {
+                db.beginTransaction();
+                try {
+                    for (ContentValues value : values) {
+                        long _id = db.insert(CheckInLogEntry.TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            returnCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+
+                break;
+            }
             case PAIN_LOG: {
                 db.beginTransaction();
                 try {
@@ -606,6 +667,8 @@ public class PatientContentProvider extends ContentProvider {
         matcher.addURI(authority, PatientCPContract.PHYSICIAN_PATH + "/#", PHYSICIAN_ID);
         matcher.addURI(authority, PatientCPContract.REMINDER_PATH, REMINDER);
         matcher.addURI(authority, PatientCPContract.REMINDER_PATH + "/#", REMINDER_ID);
+        matcher.addURI(authority, PatientCPContract.CHECK_IN_LOG_PATH, CHECK_IN_LOG);
+        matcher.addURI(authority, PatientCPContract.CHECK_IN_LOG_PATH + "/#", CHECK_IN_LOG_ID);
         matcher.addURI(authority, PatientCPContract.PAIN_LOG_PATH, PAIN_LOG);
         matcher.addURI(authority, PatientCPContract.PAIN_LOG_PATH + "/#", PAIN_LOG_ID);
         matcher.addURI(authority, PatientCPContract.MED_LOG_PATH, MED_LOG);

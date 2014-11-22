@@ -19,6 +19,7 @@ public class PatientCPContract {
     public final static String REMINDER_PATH = "reminder";
     public final static String PREFS_PATH = "pref";
     public final static String CREDENTIAL_PATH = "credential";
+    public final static String CHECK_IN_LOG_PATH = "checkinlog";
 
 
     public static final class PatientEntry implements BaseColumns {
@@ -66,7 +67,6 @@ public class PatientCPContract {
         }
     }
 
-
     public static final class PrescriptionEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
@@ -87,7 +87,6 @@ public class PatientCPContract {
         }
     }
 
-    // all records are for this device which has only one patient at a time
     public static final class PhysicianEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
@@ -108,7 +107,26 @@ public class PatientCPContract {
         }
     }
 
-    // all records are for this device which has only one patient at a time
+    public static final class CheckInLogEntry implements BaseColumns {
+
+        public static final Uri CONTENT_URI =
+                BASE_CONTENT_URI.buildUpon().appendPath(CHECK_IN_LOG_PATH).build();
+
+        public static final String CONTENT_TYPE =
+                "vnd.android.cursor.dir/" + CONTENT_AUTHORITY + "/" + CHECK_IN_LOG_PATH;
+        public static final String CONTENT_ITEM_TYPE =
+                "vnd.android.cursor.item/" + CONTENT_AUTHORITY + "/" + CHECK_IN_LOG_PATH;
+
+        public static final String TABLE_NAME = "checkinlogs";
+        public static final String COLUMN_PATIENT_ID = "patient_id"; // server id
+        public static final String COLUMN_CHECKIN_ID = "checkinId"; // connects to pain & med logs
+        public static final String COLUMN_CREATED = "created";
+
+        public static Uri buildCheckinLogEntryUriWithLogId(long id) {
+            return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+    }
+
     public static final class PainLogEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
@@ -124,6 +142,7 @@ public class PatientCPContract {
         public static final String COLUMN_PAIN_LOG_ID = "log_id"; // server id
         public static final String COLUMN_SEVERITY = "severity";
         public static final String COLUMN_EATING = "eating";
+        public static final String COLUMN_CHECKIN_ID = "checkinId"; // connects to checkin & med logs
         public static final String COLUMN_CREATED = "created";
 
         public static Uri buildPainLogEntryUriWithLogId(long id) {
@@ -131,7 +150,6 @@ public class PatientCPContract {
         }
     }
 
-    // all records are for this device which has only one patient at a time
         public static final class MedLogEntry implements BaseColumns {
 
             public static final Uri CONTENT_URI =
@@ -147,6 +165,7 @@ public class PatientCPContract {
             public static final String COLUMN_MED_ID = "med_id"; // server id
             public static final String COLUMN_MED_NAME = "med_name";
             public static final String COLUMN_TAKEN = "taken";
+            public static final String COLUMN_CHECKIN_ID = "checkinId"; // connects to pain & checkin logs
             public static final String COLUMN_CREATED = "created";
 
             public static Uri buildMedLogEntryUriWithLogId(long id) {
@@ -154,7 +173,6 @@ public class PatientCPContract {
             }
         }
 
-    // all records are for this device which has only one patient at a time
     public static final class StatusLogEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
@@ -176,7 +194,7 @@ public class PatientCPContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
     }
-    // all records are for this device which has only one patient at a time
+
     public static final class ReminderEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =
@@ -204,7 +222,6 @@ public class PatientCPContract {
         }
     }
 
-    // should only ever be one of these per device
     public static final class PrefsEntry implements BaseColumns {
 
         public static final Uri CONTENT_URI =

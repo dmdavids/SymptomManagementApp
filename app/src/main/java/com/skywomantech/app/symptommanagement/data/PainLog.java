@@ -55,6 +55,7 @@ public class PainLog {
     private long created;
     private Severity severity = Severity.NOT_DEFINED;
     private Eating eating = Eating.NOT_DEFINED;
+    private long checkinId;
 
     public PainLog() {
         super();
@@ -105,6 +106,14 @@ public class PainLog {
         this.eating = eating;
     }
 
+    public long getCheckinId() {
+        return checkinId;
+    }
+
+    public void setCheckinId(long checkinId) {
+        this.checkinId = checkinId;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -142,7 +151,12 @@ public class PainLog {
 
     @Override
     public String toString() {
-        return "PainLog [id=" + id + ", created=" + created + ", severity="
-                + severity + ", eating=" + eating + "]";
+        return "PainLog{" +
+                "id=" + id +
+                ", created=" + created +
+                ", severity=" + severity +
+                ", eating=" + eating +
+                ", checkinId=" + checkinId +
+                '}';
     }
 }

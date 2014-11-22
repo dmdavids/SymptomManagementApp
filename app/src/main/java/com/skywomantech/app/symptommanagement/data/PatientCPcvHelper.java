@@ -5,7 +5,7 @@ import android.content.ContentValues;
 public class PatientCPcvHelper {
 
 
-    public  static ContentValues createValuesObject(String id, Patient patient) {
+    public static ContentValues createValuesObject(String id, Patient patient) {
         ContentValues cv = new ContentValues();
         cv.put(PatientCPContract.PatientEntry._ID, patient.getDbId()); // update needs this
         cv.put(PatientCPContract.PatientEntry.COLUMN_PATIENT_ID, id);
@@ -17,7 +17,7 @@ public class PatientCPcvHelper {
     }
 
     // used for updating
-    public  static ContentValues createInsertValuesObject(String id, Patient patient) {
+    public static ContentValues createInsertValuesObject(String id, Patient patient) {
         ContentValues cv = new ContentValues();
         cv.put(PatientCPContract.PatientEntry.COLUMN_PATIENT_ID, id);
         cv.put(PatientCPContract.PatientEntry.COLUMN_LAST_LOGIN, patient.getLastLogin());
@@ -55,6 +55,7 @@ public class PatientCPcvHelper {
         cv.put(PatientCPContract.MedLogEntry.COLUMN_MED_ID, log.getMed().getId());
         cv.put(PatientCPContract.MedLogEntry.COLUMN_PATIENT_ID, id);
         cv.put(PatientCPContract.MedLogEntry.COLUMN_TAKEN, log.getTaken());
+        cv.put(PatientCPContract.MedLogEntry.COLUMN_CHECKIN_ID, log.getCheckinId());
         long thisTime = log.getCreated();
         if (thisTime <= 0L) thisTime = System.currentTimeMillis();
         cv.put(PatientCPContract.MedLogEntry.COLUMN_CREATED, thisTime);
@@ -66,9 +67,20 @@ public class PatientCPcvHelper {
         cv.put(PatientCPContract.PainLogEntry.COLUMN_EATING, log.getEating().getValue());
         cv.put(PatientCPContract.PainLogEntry.COLUMN_SEVERITY, log.getSeverity().getValue());
         cv.put(PatientCPContract.PainLogEntry.COLUMN_PATIENT_ID, id);
+        cv.put(PatientCPContract.PainLogEntry.COLUMN_CHECKIN_ID, log.getCheckinId());
         long thisTime = log.getCreated();
         if (thisTime <= 0L) thisTime = System.currentTimeMillis();
         cv.put(PatientCPContract.PainLogEntry.COLUMN_CREATED, thisTime);
+        return cv;
+    }
+
+    public static ContentValues createValuesObject(String id, CheckInLog log) {
+        ContentValues cv = new ContentValues();
+        long checkinId = log.getCheckinId();
+        if (checkinId <= 0L) checkinId = System.currentTimeMillis(); // use time as id
+        cv.put(PatientCPContract.CheckInLogEntry.COLUMN_CHECKIN_ID, checkinId);
+        cv.put(PatientCPContract.CheckInLogEntry.COLUMN_PATIENT_ID, id);
+        cv.put(PatientCPContract.CheckInLogEntry.COLUMN_CREATED, checkinId);
         return cv;
     }
 

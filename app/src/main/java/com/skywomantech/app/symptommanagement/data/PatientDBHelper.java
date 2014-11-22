@@ -13,7 +13,7 @@ import static com.skywomantech.app.symptommanagement.data.PatientCPContract.Pref
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.PrescriptionEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.ReminderEntry;
 import static com.skywomantech.app.symptommanagement.data.PatientCPContract.StatusLogEntry;
-
+import static com.skywomantech.app.symptommanagement.data.PatientCPContract.CheckInLogEntry;
 
 /**
  * This is a helper for the SQLite database used to store local information
@@ -93,6 +93,18 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         " );";
         sqLiteDatabase.execSQL(SQL_CREATE_PHYSICIAN_TABLE);
 
+        final String SQL_CREATE_CHECK_IN_LOG_TABLE =
+                "CREATE TABLE " + CheckInLogEntry.TABLE_NAME + " (" +
+                        CheckInLogEntry._ID + " INTEGER PRIMARY KEY," +
+                        CheckInLogEntry.COLUMN_PATIENT_ID + " TEXT NOT NULL, " +
+                        CheckInLogEntry.COLUMN_CHECKIN_ID + " REAL, " +
+                        CheckInLogEntry.COLUMN_CREATED + " REAL NOT NULL, " +
+                        " UNIQUE (" + CheckInLogEntry.COLUMN_PATIENT_ID + ", "
+                        + CheckInLogEntry.COLUMN_CREATED
+                        + ") ON CONFLICT IGNORE " +
+                        " );";
+        sqLiteDatabase.execSQL(SQL_CREATE_CHECK_IN_LOG_TABLE);
+
         final String SQL_CREATE_PAIN_LOG_TABLE =
                 "CREATE TABLE " + PainLogEntry.TABLE_NAME + " (" +
                         PainLogEntry._ID + " INTEGER PRIMARY KEY," +
@@ -100,6 +112,7 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         PainLogEntry.COLUMN_PAIN_LOG_ID + " BIGINT, " +
                         PainLogEntry.COLUMN_SEVERITY + " INTEGER, " +
                         PainLogEntry.COLUMN_EATING + " INTEGER, " +
+                        PainLogEntry.COLUMN_CHECKIN_ID + " REAL, " +
                         PainLogEntry.COLUMN_CREATED + " REAL NOT NULL, " +
                         " UNIQUE (" + PainLogEntry.COLUMN_PATIENT_ID + ", "
                         + PainLogEntry.COLUMN_CREATED
@@ -114,6 +127,7 @@ public class PatientDBHelper extends SQLiteOpenHelper {
                         MedLogEntry.COLUMN_MED_ID + " BIGINT, " +
                         MedLogEntry.COLUMN_MED_NAME + " TEXT NOT NULL, " +
                         MedLogEntry.COLUMN_TAKEN + " REAL NOT NULL, " +
+                        MedLogEntry.COLUMN_CHECKIN_ID + " REAL, " +
                         MedLogEntry.COLUMN_CREATED + " REAL NOT NULL, " +
                         " UNIQUE (" + MedLogEntry.COLUMN_PATIENT_ID + ", "
                         + MedLogEntry.COLUMN_CREATED
@@ -182,13 +196,11 @@ public class PatientDBHelper extends SQLiteOpenHelper {
         // to simply to discard the data and start over
         // We are assuming here that all patient data was stored previous to this update
         // We are only storing data locally if the user is Patient
-        // TODO:  Check to see if the patient processing is completed before doing this
-        // TODO: if not then try to sync the data first  ... if this was real I would want
-        // TODO: some more failsafes here
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PatientEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + CredentialEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PrescriptionEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PhysicianEntry.TABLE_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + CheckInLogEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PainLogEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MedLogEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + StatusLogEntry.TABLE_NAME);

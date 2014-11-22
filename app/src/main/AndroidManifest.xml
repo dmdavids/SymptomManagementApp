@@ -28,14 +28,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.skywomantech.app.symptommanagement.patient.SetPreferenceActivity"
-            android:label="@string/action_settings"
-            android:parentActivityName="com.skywomantech.app.symptommanagement.LoginActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.skywomantech.app.symptommanagement.LoginActivity" />
-        </activity>
-        <activity
             android:name="com.skywomantech.app.symptommanagement.admin.AdminMain"
             android:label="@string/title_activity_admin_main"
             android:parentActivityName="com.skywomantech.app.symptommanagement.LoginActivity" >

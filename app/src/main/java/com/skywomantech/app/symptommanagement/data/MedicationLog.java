@@ -11,6 +11,7 @@ public class MedicationLog  {
 	private long created;
 	private Medication med;
 	private long taken;
+    private long checkinId;
 
 	public MedicationLog() {
 		super();
@@ -61,7 +62,15 @@ public class MedicationLog  {
 		this.taken = taken;
 	}
 
-	@Override
+    public long getCheckinId() {
+        return checkinId;
+    }
+
+    public void setCheckinId(long checkinId) {
+        this.checkinId = checkinId;
+    }
+
+    @Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -98,11 +107,16 @@ public class MedicationLog  {
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return "MedicationLog [id=" + id + ", created=" + created + ", med="
-				+ med + ", taken=" + taken + "]";
-	}
+    @Override
+    public String toString() {
+        return "MedicationLog{" +
+                "id=" + id +
+                ", created=" + created +
+                ", med=" + med +
+                ", taken=" + taken +
+                ", checkinId=" + checkinId +
+                '}';
+    }
 
     public String getTakenDateFormattedString(String dateFormat) {
             Date date = new Date(taken);

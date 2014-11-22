@@ -226,7 +226,7 @@ public class PatientManager {
                 h.setCreated(s.getCreated());
                 h.setType(HistoryLog.LogType.STATUS_LOG);
                 String image = (s.getImage_location() != null && !s.getImage_location().isEmpty())
-                        ? "Image Taken" : "";
+                        ? " - Image Taken" : "";
                 String info = "Note: " + s.getNote() + " " + image;
                 h.setInfo(info);
                 sortedLogs.add(h);
