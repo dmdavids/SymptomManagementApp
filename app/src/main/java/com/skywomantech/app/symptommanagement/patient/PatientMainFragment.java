@@ -124,7 +124,7 @@ public class PatientMainFragment extends Fragment {
         PatientDataManager.getLogsFromCP(getActivity(), tempPatient);
         // Create a sorted history list from the logs
         HistoryLog[] logList = PatientManager.createLogList(tempPatient);
-        long start_of_day = ReminderManager.getStartOfToday();
+        long start_of_day = new ReminderManager().getStartOfToday();
         int count = 0;
         // consider pain logs as the indicator of a check-in occurring
         for (HistoryLog h : logList) {

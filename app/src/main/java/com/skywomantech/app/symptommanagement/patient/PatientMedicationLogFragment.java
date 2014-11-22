@@ -36,10 +36,12 @@ import butterknife.InjectView;
 public class PatientMedicationLogFragment extends Fragment {
 
     public final static String LOG_TAG = PatientMedicationLogFragment.class.getSimpleName();
+    public final static String CHECK_IN_ID_KEY = "checkin_id_key";
 
     MedicationLogListAdapter mAdapter;
     private Collection<MedicationLog> medicationLogs;
     MedicationLog[] mLogList;
+    private long mCheckInId = 0L;
 
     @InjectView(R.id.patient_medication_check_list)  ListView mLogListView;
 
@@ -56,6 +58,9 @@ public class PatientMedicationLogFragment extends Fragment {
         this.setRetainInstance(true);  // save the fragment state with rotations
         ActionBar actionBar = getActivity().getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
+        if (getArguments() != null) {
+            mCheckInId = getArguments().getLong(CHECK_IN_ID_KEY, 0L);
+        }
     }
 
     @Override
@@ -86,10 +91,13 @@ public class PatientMedicationLogFragment extends Fragment {
     }
 
     private void createEmptyLogsList(Collection<Medication> medications) {
+        Log.d(LOG_TAG,"Setting all medication logs with a Check-in id of : "
+                + Long.toString(mCheckInId));
         medicationLogs = new HashSet<MedicationLog>();
         for(Medication m: medications) {
             MedicationLog ml = new MedicationLog();
             ml.setMed(m);
+            ml.setCheckinId(mCheckInId);
             medicationLogs.add(ml);
         }
         mLogList =  medicationLogs.toArray(new MedicationLog[medicationLogs.size()]);

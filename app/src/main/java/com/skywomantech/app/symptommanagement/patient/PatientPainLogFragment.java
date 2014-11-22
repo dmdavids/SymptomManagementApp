@@ -26,7 +26,7 @@ public class PatientPainLogFragment extends Fragment {
     public final static String LOG_TAG = PatientPainLogFragment.class.getSimpleName();
 
     public interface Callbacks {
-        public boolean onPainLogComplete();
+        public boolean onPainLogComplete(long checkinId);
     }
 
     private PainLog mLog;
@@ -88,6 +88,7 @@ public class PatientPainLogFragment extends Fragment {
     public void savePainLog() {
         // save Pain Log to the CP
         mPatientId = LoginUtility.getLoginId(getActivity());
+        mLog.setCheckinId(LoginUtility.getCheckInLogId(getActivity()));
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLog);
         Log.d(LOG_TAG, "Saving this Pain Log : " + mLog.toString());
         Uri uri = getActivity().getContentResolver().insert(PainLogEntry.CONTENT_URI, cv);
@@ -98,7 +99,11 @@ public class PatientPainLogFragment extends Fragment {
         SymptomManagementSyncAdapter.syncImmediately(getActivity());
 
         // tell the activity we're done and if check-in put up the med log fragment
-        boolean isCheckIn = ((Callbacks) getActivity()).onPainLogComplete();
+        // also tell the med log fragment to use the same checkin id so we can associate the
+        // pain log with the med logs
+        boolean isCheckIn = ((Callbacks) getActivity()).onPainLogComplete(mLog.getCheckinId());
+        Log.d(LOG_TAG, "Status log and Med logs should have this same id: "
+                + Long.toString(mLog.getCheckinId()));
         if (!isCheckIn) {
             getActivity().onBackPressed();
         }

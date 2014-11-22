@@ -5,9 +5,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,7 +19,10 @@ import android.view.MenuItem;
 import com.skywomantech.app.symptommanagement.LoginActivity;
 import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
+import com.skywomantech.app.symptommanagement.data.CheckInLog;
 import com.skywomantech.app.symptommanagement.data.Patient;
+import com.skywomantech.app.symptommanagement.data.PatientCPContract;
+import com.skywomantech.app.symptommanagement.data.PatientCPcvHelper;
 import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 import com.skywomantech.app.symptommanagement.data.Reminder;
 import com.skywomantech.app.symptommanagement.data.UserCredential;
@@ -43,6 +49,7 @@ public class PatientMainActivity extends Activity
     private String mPatientId;  // cloud login db id
     private Patient mPatient;
     private Context mContext;
+    private ReminderManager reminderManager = new ReminderManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,13 +148,33 @@ public class PatientMainActivity extends Activity
         }
     }
 
+    /**
+     * When the pain log is completed it has to check to see if there is a checkin
+     * in process and if so it needs to go directly to the medication logs... and it
+     * needs to pass the checkin id to the med logs so they are associated with the
+     * same checkin process that the pain log just associated with.  If its not a
+     * check in process then the med logs us 0 for the checkin id.
+     *
+     * Note that when the med logs complete they immediately try to sync with the server
+     * and so the doctor will get this new data if logged on
+     *
+     * @return
+     */
     @Override
-    public boolean onPainLogComplete() {
-        if (LoginUtility.isCheckin(getApplicationContext())) {
-            Log.d(LOG_TAG, "CHECKIN IS STILL SET TO TRUE!!!");
-            // replace fragment with the medication log fragment
-            LoginUtility.setCheckin(getApplicationContext(), false);  // we go to the med logs now
-            Log.d(LOG_TAG, "CHECKIN IS NOW FALSE!!!");
+    public boolean onPainLogComplete(long checkinId) {
+        if (LoginUtility.isCheckin(getApplication())) {
+            Log.d(LOG_TAG, "CHECKIN IS SET TO TRUE!!!");
+            // create a checkinLog to match the status log id
+            createCheckInLog(checkinId);
+            // set the checkin process to false
+            LoginUtility.setCheckin(getApplication(), false);  // we go to the med logs now
+            // complete the last step in the checkin process by starting the med logs
+            // tell the med logs to set their checkin id to match the status log and the
+            // checkin log and then we will have all our checkin data associated
+            Log.d(LOG_TAG, "CHECKIN IS NOW FALSE!!! Check In ID to use for med logs "
+                    + Long.toString(checkinId));
+            Bundle arguments = new Bundle();
+            arguments.putLong(PatientMedicationLogFragment.CHECK_IN_ID_KEY, checkinId);
             getFragmentManager().beginTransaction()
                     .replace(R.id.patient_main_container,
                             new PatientMedicationLogFragment(), "patient_medlog_frag")
@@ -158,6 +185,25 @@ public class PatientMainActivity extends Activity
         return false;
     }
 
+    /**
+     * creates a check in log .. could be used by history logs or for data graphing
+     * is associated with pain and medication logs.
+     *
+     * @param checkinId
+     */
+    private void createCheckInLog(long checkinId) {
+        CheckInLog cLog = new CheckInLog();
+        cLog.setCheckinId(checkinId);
+        cLog.setCreated(checkinId);
+        ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, cLog);
+        Log.d(LOG_TAG, "Saving this Checkin Log : " + cLog.toString());
+        Uri uri = getContentResolver().insert(PatientCPContract.CheckInLogEntry.CONTENT_URI, cv);
+        long objectId = ContentUris.parseId(uri);
+        if (objectId < 0) {
+            Log.e(LOG_TAG, "Check-in Log Insert Failed.");
+        }
+    }
+
     @Override
     public boolean onStatusLogComplete() {
         setLastLoggedTimestamp();
@@ -166,7 +212,7 @@ public class PatientMainActivity extends Activity
 
     @Override
     public boolean onMedicationLogComplete() {
-        Log.d(LOG_TAG, "DOUBLE DOUBLE SET THE CHECKIN TO FALSE!!");
+        Log.d(LOG_TAG, "DOUBLE DOUBLE SET THE CHECKIN TO FALSE & CHECKIN ID to 0!!");
         LoginUtility.setCheckin(getApplicationContext(), false);
         setLastLoggedTimestamp();
         return true;
@@ -179,7 +225,7 @@ public class PatientMainActivity extends Activity
             mPatient.setLastLogin(System.currentTimeMillis());
             PatientDataManager.updateLastLoginFromCP(mContext, mPatient);
         } else {
-            Log.d(LOG_TAG, "Could not upate the last login ... no patient found.");
+            Log.d(LOG_TAG, "Could not update the last login ... no patient found.");
         }
     }
 
@@ -259,17 +305,18 @@ public class PatientMainActivity extends Activity
     @Override
     public void onRequestReminderActivate(Reminder reminder) {
         if (reminder == null) return;
+
         Log.d(LOG_TAG, "Attempting to activate the alarm for reminder " + reminder.toString());
-        ReminderManager.printAlarms(this, LoginUtility.getLoginId(this));
+        reminderManager.printAlarms(this, LoginUtility.getLoginId(this));
         if (reminder.isOn()) {
             Log.d(LOG_TAG, "activating Reminder " + reminder.getName());
-            ReminderManager.cancelSingleReminderAlarm(reminder); // in case the reminder is updated
-            ReminderManager.setSingleReminderAlarm(this, reminder);
+            reminderManager.cancelSingleReminderAlarm(reminder); // in case the reminder is updated
+            reminderManager.setSingleReminderAlarm(this, reminder);
         } else { // deactivate it
             Log.d(LOG_TAG, "deactivating Reminder " + reminder.getName());
-            ReminderManager.cancelSingleReminderAlarm(reminder);
+            reminderManager.cancelSingleReminderAlarm(reminder);
         }
-        ReminderManager.printAlarms(this, LoginUtility.getLoginId(this));
+        reminderManager.printAlarms(this, LoginUtility.getLoginId(this));
         PatientDataManager.updateSingleReminder(mContext, mPatientId, reminder);
     }
 

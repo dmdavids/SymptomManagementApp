@@ -19,6 +19,7 @@ public class LoginUtility {
     static UserCredential.UserRole mRole;
     static UserCredential mCredential = null;
 
+
     // everything EXCEPT for the service is checked here
     public static synchronized boolean
     setLoggedIn(Context context, UserCredential credential) {
@@ -84,18 +85,37 @@ public class LoginUtility {
         }
     }
 
-
     public static synchronized boolean setCheckin(Context context, boolean value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("isCheckin", value);
         editor.apply();
+        // time for a reminder-prompted checkin so set the checkin id ..
+        // pain and med log use this id
+        // if it is not a checkin then reset the checkin id to
+        // show that pain or med log is
+        // not associated with a checkin process
+        setCheckInLogId(context, (value) ? System.currentTimeMillis() : 0L);
         return isCheckin(context);
     }
 
     public static boolean isCheckin(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean("isCheckin", false);
+    }
+
+    public static synchronized boolean setCheckInLogId(Context context, long value) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("checkin_log_id", value);
+        editor.apply();
+        return isCheckin(context);
+    }
+
+    // called by status and med logs to see if they need to associate with a checkin log
+    public static long getCheckInLogId(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getLong("checkin_log_id", 0L);
     }
 
     public static synchronized String setLoginId(Context context, String value) {
