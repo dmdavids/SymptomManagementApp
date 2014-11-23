@@ -12,7 +12,13 @@ public class HistoryLog {
     private long created;
 
     public enum LogType {
-        GENERIC(0), PAIN_LOG(10), MED_LOG(20), STATUS_LOG(30);
+        GENERIC(0),
+        PAIN_LOG(10),
+        CHECK_IN_PAIN_LOG(15),
+        MED_LOG(20),
+        CHECK_IN_MED_LOG(25),
+        STATUS_LOG(30),
+        CHECK_IN_LOG(40);
 
         private final int value;
 

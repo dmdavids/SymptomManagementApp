@@ -64,13 +64,17 @@ public class HistoryLogAdapter extends ArrayAdapter<HistoryLog> {
         holder.info.setText(logs[position].getInfo());
         holder.created.setText(logs[position].getFormattedCreatedDate());
         holder.log = logs[position];
+        holder.typeIcon.setImageResource(getImageResourceForLogType(logs[position].getType()));
         return view;
     }
 
-    public static int getImageResourceForLogType(HistoryLog.LogType type) {
+    public static synchronized int getImageResourceForLogType(HistoryLog.LogType type) {
         if (type == HistoryLog.LogType.PAIN_LOG) return R.drawable.ic_action_pain_history;
+        if (type == HistoryLog.LogType.CHECK_IN_PAIN_LOG) return R.drawable.ic_action_pain_history_ci;
         if (type == HistoryLog.LogType.MED_LOG) return R.drawable.ic_action_green_pill;
+        if (type == HistoryLog.LogType.CHECK_IN_MED_LOG) return R.drawable.ic_action_green_pill_ci;
         if (type == HistoryLog.LogType.STATUS_LOG) return R.drawable.ic_action_brown_log;
+        if (type == HistoryLog.LogType.CHECK_IN_LOG) return R.drawable.ic_action_check_in;
         return R.drawable.ic_action_pain_history;
     }
 }

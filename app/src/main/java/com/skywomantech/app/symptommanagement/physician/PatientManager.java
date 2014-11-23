@@ -13,6 +13,7 @@ import com.skywomantech.app.symptommanagement.client.CallableTask;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementApi;
 import com.skywomantech.app.symptommanagement.client.SymptomManagementService;
 import com.skywomantech.app.symptommanagement.client.TaskCallback;
+import com.skywomantech.app.symptommanagement.data.CheckInLog;
 import com.skywomantech.app.symptommanagement.data.HistoryLog;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.MedicationLog;
@@ -180,7 +181,7 @@ public class PatientManager {
     }
 
     /**
-     * Generates a sorted list of the pain, medication and status logs to display
+     * Generates a sorted list of the check-in, pain, medication and status logs to display
      * Puts them into a generalized format for display
      *
      * @param mPatient Patient with logs
@@ -190,12 +191,28 @@ public class PatientManager {
         HistoryLogSorter sorter = new HistoryLogSorter();
         TreeSet<HistoryLog> sortedLogs = new TreeSet<HistoryLog>(
                 Collections.reverseOrder(sorter));
+
+        Collection<CheckInLog> checkinLogs = mPatient.getCheckinLog();
+        if (checkinLogs != null) {
+            for (CheckInLog p : checkinLogs) {
+                HistoryLog h = new HistoryLog();
+                h.setCreated(p.getCreated());
+                h.setType(HistoryLog.LogType.CHECK_IN_LOG);
+                String info = "Checked In with Reminder.";
+                h.setInfo(info);
+                sortedLogs.add(h);
+            }
+        }
         Collection<PainLog> painLogs = mPatient.getPainLog();
         if (painLogs != null) {
             for (PainLog p : painLogs) {
                 HistoryLog h = new HistoryLog();
                 h.setCreated(p.getCreated());
-                h.setType(HistoryLog.LogType.PAIN_LOG);
+                HistoryLog.LogType hType =
+                        (p.getCheckinId() > 0L ?
+                                HistoryLog.LogType.CHECK_IN_PAIN_LOG :
+                                HistoryLog.LogType.PAIN_LOG);
+                h.setType(hType);
                 String severity = (p.getSeverity() == PainLog.Severity.SEVERE) ? "SEVERE"
                         : (p.getSeverity() == PainLog.Severity.MODERATE) ? "Moderate"
                         : "Well-Defined";
@@ -211,7 +228,11 @@ public class PatientManager {
             for (MedicationLog m : medLogs) {
                 HistoryLog h = new HistoryLog();
                 h.setCreated(m.getCreated());
-                h.setType(HistoryLog.LogType.MED_LOG);
+                HistoryLog.LogType hType =
+                        (m.getCheckinId() > 0L ?
+                                HistoryLog.LogType.CHECK_IN_MED_LOG :
+                                HistoryLog.LogType.MED_LOG);
+                h.setType(hType);
                 String name = m.getMed().getName();
                 String taken = m.getTakenDateFormattedString(" hh:mm a 'on' E, MMM d yyyy");
                 String info = name + " taken " + taken;

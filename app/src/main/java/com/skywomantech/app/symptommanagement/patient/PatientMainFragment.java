@@ -128,7 +128,7 @@ public class PatientMainFragment extends Fragment {
         int count = 0;
         // consider pain logs as the indicator of a check-in occurring
         for (HistoryLog h : logList) {
-            if (h.getType() == HistoryLog.LogType.PAIN_LOG &&
+            if (h.getType() == HistoryLog.LogType.CHECK_IN_LOG &&
                     h.getCreated() >= start_of_day) {
                 count++;
             }
