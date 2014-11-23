@@ -547,7 +547,7 @@ public abstract class PhysicianActivity
     @Override
     public void onNameSelected(String lastName, String firstName) {
         Toast.makeText(getApplication(),
-                "Name selected is " + firstName + " " + lastName,
+                "Name selected is " + getName(lastName, firstName),
                 Toast.LENGTH_LONG).show();
     }
 
@@ -573,6 +573,22 @@ public abstract class PhysicianActivity
     @Override
     public void failedSearch(String message) {
         Toast.makeText(getApplication(), message, Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * This formats it the same way that the server formats it so they can compare
+     * the same way.
+     *
+     * @param lastName
+     * @param firstName
+     * @return
+     */
+    public static String getName(String lastName, String firstName) {
+        String name = "";
+        if (firstName != null && !firstName.isEmpty()) name += firstName;
+        if (!name.isEmpty()) name += " ";
+        if (lastName != null  && !lastName.isEmpty()) name+= lastName;
+        return name;
     }
 
 }

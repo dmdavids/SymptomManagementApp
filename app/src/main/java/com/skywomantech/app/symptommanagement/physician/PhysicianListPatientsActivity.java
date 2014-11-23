@@ -181,8 +181,8 @@ public class PhysicianListPatientsActivity extends PhysicianActivity {
      */
     @Override
     public void onNameSelected(String lastName, String firstName) {
-        Log.e(LOG_TAG, "THE NAME SELECTED IS : " + firstName + " " + lastName);
-        PatientManager.findPatientByName(this, lastName, firstName);
+        Log.e(LOG_TAG, "THE NAME SELECTED IS : " + getName(lastName, firstName));
+        PatientManager.findPatientByName(this, getName(lastName, firstName));
     }
 
     /**

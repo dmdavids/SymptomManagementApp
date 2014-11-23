@@ -34,6 +34,7 @@ public interface SymptomManagementApi {
     public static final String CREDENTIAL_PATH = "/credential";
 
     public static final String NAME_PARAMETER = "name";
+ //   public static final String LAST_NAME_PARAMETER = "lastname";
     public static final String ID_PATH = "/{id}";
     public static final String ID_PARAMETER = "id";
 
@@ -46,7 +47,6 @@ public interface SymptomManagementApi {
 
     // access any severe patients via /physician/{id}/notification
     public static final String PHYSICIAN_ALERT_PATH = PHYSICIAN_PATH + ID_PATH + ALERT_PATH;
-
 
     // BEGIN Patient
 
@@ -65,8 +65,11 @@ public interface SymptomManagementApi {
     @DELETE(PATIENT_PATH+ID_PATH)
     public Patient deletePatient(@Path(ID_PARAMETER) String id);
 
+//    @GET(PATIENT_SEARCH_PATH)
+//    public Collection<Patient> findByPatientLastName(@Query(LAST_NAME_PARAMETER) String lastName);
+
     @GET(PATIENT_SEARCH_PATH)
-    public Collection<Patient> findByPatientLastName(@Query(NAME_PARAMETER) String lastName);
+    public Collection<Patient> findByPatientName(@Query(NAME_PARAMETER) String name);
 
     // BEGIN Physician
 

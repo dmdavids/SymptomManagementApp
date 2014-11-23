@@ -139,7 +139,7 @@ public class PatientManager {
      * @param last
      * @param first
      */
-    public static synchronized void findPatientByName(final Activity activity,
+/*    public static synchronized void findPatientByLastName(final Activity activity,
                                                       final String last, final String first) {
         if (activity == null || last == null) {
             Log.e(LOG_TAG, "Invalid parameters for the findByPatientName search.");
@@ -175,6 +175,53 @@ public class PatientManager {
                 @Override
                 public void error(Exception e) {
                     ((Callbacks) activity).failedSearch("No patients with that last name.");
+                }
+            });
+        }
+    }*/
+
+
+    /**
+     * Does a patient name search for the full first and last name on the server
+     * returns the first match found
+     * Uses activity callbacks to let the calling activity deal with processing of the
+     * the searches.
+     * If the search fails it gives a detailed message
+     *
+     * @param activity
+     * @param fullName
+     */
+    public static synchronized void findPatientByName(final Activity activity, final String fullName) {
+        if (activity == null || fullName == null) {
+            Log.e(LOG_TAG, "Invalid parameters for the findByPatientName search.");
+            return;
+        }
+        final SymptomManagementApi svc = SymptomManagementService.getService();
+        if (svc != null) {
+            CallableTask.invoke(new Callable<Collection<Patient>>() {
+
+                @Override
+                public Collection<Patient> call() throws Exception {
+                    Log.d(LOG_TAG, "Searching for full name on the server : " + fullName);
+                    return svc.findByPatientName(fullName);
+                }
+            }, new TaskCallback<Collection<Patient>>() {
+                @Override
+                public void success(Collection<Patient> result) {
+                    // check for first name match
+                    Patient patient = null;
+                    if (result == null || result.size() <= 0) {
+                        ((Callbacks) activity).failedSearch("No patients match that name.");
+                    }
+                    for (Patient p : result) {
+                        Log.d(LOG_TAG, "Found at least one match using the first one");
+                        patient = p;
+                    }
+                    ((Callbacks) activity).successfulSearch(patient);
+                }
+                @Override
+                public void error(Exception e) {
+                    ((Callbacks) activity).failedSearch("No patients with that name.");
                 }
             });
         }
