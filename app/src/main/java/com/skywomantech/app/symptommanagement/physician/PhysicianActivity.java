@@ -22,6 +22,7 @@ import com.skywomantech.app.symptommanagement.data.StatusLog;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * This abstract class provides many of the methods and fields that are common to the details
@@ -125,19 +126,51 @@ public abstract class PhysicianActivity
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        Fragment frag =
-                getFragmentManager().findFragmentById(R.id.patient_graphics_container);
+        Fragment frag = getActiveFragment();
+        if (frag == null) {
+            Log.e(LOG_TAG, "Active Fragment is not found!");
+            return super.onPrepareOptionsMenu(menu);
+        }
         if (frag instanceof PatientMedicationFragment) {
             menu.removeItem(R.id.action_medication_list);
         } else if (frag instanceof HistoryLogFragment) {
             menu.removeItem(R.id.action_history_log);
         } else if (frag instanceof MedicationListFragment) {
             menu.removeItem(R.id.action_medication_list);
+            // when add medication remove the history stuff too
             menu.removeItem(R.id.action_history_log);
         } else if (frag instanceof PatientGraphicsFragment) {
             menu.removeItem(R.id.action_chart);
         }
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    public Fragment getActiveFragment() {
+        Fragment medicationFrag;
+        medicationFrag = getFragmentManager().findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
+        if (medicationFrag != null && medicationFrag.isVisible()) {
+            Log.d(LOG_TAG, "Medication Frag is visible.");
+            return medicationFrag;
+        }
+        Fragment graphicsFrag;
+        graphicsFrag = getFragmentManager().findFragmentByTag(PatientGraphicsFragment.FRAGMENT_TAG);
+        if (graphicsFrag != null && graphicsFrag.isVisible()) {
+            Log.d(LOG_TAG, "Graphics Frag is visible.");
+            return graphicsFrag;
+        }
+        Fragment historyFrag;
+        historyFrag = getFragmentManager().findFragmentByTag(HistoryLogFragment.FRAGMENT_TAG);
+        if (historyFrag != null && historyFrag.isVisible()) {
+            Log.d(LOG_TAG, "History Frag is visible.");
+            return historyFrag;
+        }
+        Fragment medicationListFrag;
+        medicationListFrag = getFragmentManager().findFragmentByTag(MedicationListFragment.FRAGMENT_TAG);
+        if (medicationListFrag != null && medicationListFrag.isVisible()) {
+            Log.d(LOG_TAG, "Medication List Frag is visible.");
+            return medicationListFrag;
+        }
+        return null;
     }
 
     /**
@@ -238,37 +271,40 @@ public abstract class PhysicianActivity
         // try the details fragment first
         Fragment detailFrag;
         detailFrag = getFragmentManager().findFragmentByTag(PhysicianPatientDetailFragment.FRAGMENT_TAG);
-        if (detailFrag != null && detailFrag instanceof PhysicianPatientDetailFragment) {
+        if (detailFrag != null && detailFrag.isVisible()
+                && detailFrag instanceof PhysicianPatientDetailFragment) {
+            Log.d(LOG_TAG, "Detail Frag is visible.");
             ((PhysicianPatientDetailFragment) detailFrag).updatePatient(patient);
         }
-        boolean sentPatient = false;
         Log.d(LOG_TAG, "Sending Patient to the medication frag+ ....");
         // then patient medication fragment
         Fragment medicationFrag;
         medicationFrag = getFragmentManager().findFragmentByTag(PatientMedicationFragment.FRAGMENT_TAG);
-        if (medicationFrag != null && medicationFrag instanceof PatientMedicationFragment) {
+        if (medicationFrag != null && medicationFrag.isVisible() &&
+                medicationFrag instanceof PatientMedicationFragment) {
+            Log.d(LOG_TAG, "Medication Frag is visible.");
             ((PatientMedicationFragment) medicationFrag).updatePatient(patient);
-            sentPatient = true;
         }
         Log.d(LOG_TAG, "Sending Patient to the graphics frag+ ....");
         // finally the patient graphing fragment
         Fragment graphicsFrag;
         graphicsFrag = getFragmentManager().findFragmentByTag(PatientGraphicsFragment.FRAGMENT_TAG);
-        if (graphicsFrag != null && graphicsFrag instanceof PatientGraphicsFragment) {
+        if (graphicsFrag != null && graphicsFrag.isVisible() &&
+                graphicsFrag instanceof PatientGraphicsFragment) {
+            Log.d(LOG_TAG, "Graphics Frag is visible.");
             ((PatientGraphicsFragment) graphicsFrag).updatePatient(patient);
-            sentPatient = true;
         }
         Log.d(LOG_TAG, "Sending Patient to the history frag+ ....");
 
         // now the history log fragment
         // if the history log fragment is not the only fragment this causes a problem
         // this is a hack but I'm running out of time
-        if ( sentPatient == false ) {
-            Fragment historyFrag;
-            historyFrag = getFragmentManager().findFragmentByTag(HistoryLogFragment.FRAGMENT_TAG);
-            if (historyFrag != null && historyFrag instanceof HistoryLogFragment) {
-                ((HistoryLogFragment) historyFrag).updatePatient(patient);
-            }
+        Fragment historyFrag;
+        historyFrag = getFragmentManager().findFragmentByTag(HistoryLogFragment.FRAGMENT_TAG);
+        if (historyFrag != null && historyFrag.isVisible() &&
+                historyFrag instanceof HistoryLogFragment) {
+            Log.d(LOG_TAG, "History Frag is visible.");
+            ((HistoryLogFragment) historyFrag).updatePatient(patient);
         }
         Log.d(LOG_TAG, "Sending Patient to the fragments is DONE.");
     }

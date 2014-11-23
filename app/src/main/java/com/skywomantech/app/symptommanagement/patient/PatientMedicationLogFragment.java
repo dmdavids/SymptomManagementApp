@@ -36,7 +36,6 @@ import butterknife.InjectView;
 public class PatientMedicationLogFragment extends Fragment {
 
     public final static String LOG_TAG = PatientMedicationLogFragment.class.getSimpleName();
-    public final static String CHECK_IN_ID_KEY = "checkin_id_key";
 
     MedicationLogListAdapter mAdapter;
     private Collection<MedicationLog> medicationLogs;
@@ -58,9 +57,6 @@ public class PatientMedicationLogFragment extends Fragment {
         this.setRetainInstance(true);  // save the fragment state with rotations
         ActionBar actionBar = getActivity().getActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
-        if (getArguments() != null) {
-            mCheckInId = getArguments().getLong(CHECK_IN_ID_KEY, 0L);
-        }
     }
 
     @Override
@@ -75,7 +71,18 @@ public class PatientMedicationLogFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        // get the checkin Id to use for the logs
+        mCheckInId = LoginUtility.getCheckInLogId(getActivity());
+        // create a list of empty logs that the patient can enter dates into
         loadMedicationLogList();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // we are leaving this screen and this always means that
+        // there is no check-in process happening now
+        LoginUtility.setCheckin(getActivity(), false);
     }
 
     private void loadMedicationLogList() {
@@ -120,10 +127,6 @@ public class PatientMedicationLogFragment extends Fragment {
         }
         SymptomManagementSyncAdapter.syncImmediately(getActivity());
         mAdapter.notifyDataSetChanged();
-        // if we were in the checkin process we can tell everyone that we are done with it for now
-        if (LoginUtility.isCheckin(getActivity())) {
-            LoginUtility.setCheckin(getActivity(), false);
-        }
     }
 
     @Override

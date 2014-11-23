@@ -162,19 +162,12 @@ public class PatientMainActivity extends Activity
      */
     @Override
     public boolean onPainLogComplete(long checkinId) {
+        // when we are doing the checkin process we have to force the screen flow
+        // to go the medication logs
         if (LoginUtility.isCheckin(getApplication())) {
-            Log.d(LOG_TAG, "CHECKIN IS SET TO TRUE!!!");
             // create a checkinLog to match the status log id
             createCheckInLog(checkinId);
-            // set the checkin process to false
-            LoginUtility.setCheckin(getApplication(), false);  // we go to the med logs now
             // complete the last step in the checkin process by starting the med logs
-            // tell the med logs to set their checkin id to match the status log and the
-            // checkin log and then we will have all our checkin data associated
-            Log.d(LOG_TAG, "CHECKIN IS NOW FALSE!!! Check In ID to use for med logs "
-                    + Long.toString(checkinId));
-            Bundle arguments = new Bundle();
-            arguments.putLong(PatientMedicationLogFragment.CHECK_IN_ID_KEY, checkinId);
             getFragmentManager().beginTransaction()
                     .replace(R.id.patient_main_container,
                             new PatientMedicationLogFragment(), "patient_medlog_frag")
@@ -212,8 +205,6 @@ public class PatientMainActivity extends Activity
 
     @Override
     public boolean onMedicationLogComplete() {
-        Log.d(LOG_TAG, "DOUBLE DOUBLE SET THE CHECKIN TO FALSE & CHECKIN ID to 0!!");
-        LoginUtility.setCheckin(getApplicationContext(), false);
         setLastLoggedTimestamp();
         return true;
     }

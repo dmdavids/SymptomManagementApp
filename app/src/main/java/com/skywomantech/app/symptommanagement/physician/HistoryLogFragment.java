@@ -82,6 +82,7 @@ public class HistoryLogFragment extends ListFragment {
     public void onResume() {
         super.onResume();
         mPatient = ((Callbacks) getActivity()).getPatientForHistory();
+        if (mPatient != null ) Log.d(LOG_TAG, "History Patient is " +mPatient.toString());
         displayLogList(mPatient);
     }
 
