@@ -16,13 +16,14 @@ import com.skywomantech.app.symptommanagement.R;
 
 /**
  * When a Reminder Alarm is triggered this Service sets up the Patient app for
- * processing an official Check-In.  And it lets the user know that it is time for check-in.
+ * processing an official reminder-prompted Check-In.
+ * And then it lets the user know that it is time for check-in.
  *
  * It sends a notification with a pending intent that will start the Login Activity
  * but first it sets the check-in flag to TRUE so the Login Activity will run Check-In
  * screen flow.
  *
- * So if the user is already in the app and tries to do anything it will be sent to the
+ * If the user is already in the app and tries to do anything it will be sent to the
  * check-in screen flow.  If the user clicks on the notification it will go to the app
  * and start checkin.  If the user does the check-in first and then clicks on the notification
  * it will NOT take them to checkin again.  It is smart enough to know that it was completed.
@@ -32,7 +33,6 @@ public class ReminderService extends Service {
 
     private static final String LOG_TAG = ReminderService.class.getSimpleName();
     private static final int SYMPTOM_MANAGEMENT_NOTIFICATION_ID = 1111;
-    private NotificationManager mManager;
 
     public ReminderService() {
     }
@@ -58,6 +58,7 @@ public class ReminderService extends Service {
         // The check-in screen flow first shows the PainLog fragment and then the
         // Medication Log fragment.
         Log.d(LOG_TAG, "Creating Check-In Notification. Setting Check-In to true.");
+
         // setting check-in to true also creates a unique check-in that all logs
         // created during the check-in flow will use to associate their data with
         // this check-in
@@ -68,8 +69,8 @@ public class ReminderService extends Service {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(getApplicationContext())
                         .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("SymptomManagement")
-                        .setContentText("Time to Check-In")
+                        .setContentTitle(getString(R.string.check_in_notification_title))
+                        .setContentText(getString(R.string.check_in_notification_text))
                         .setOnlyAlertOnce(true)
                         .setAutoCancel(true);
 
@@ -94,13 +95,13 @@ public class ReminderService extends Service {
                 stackBuilder.getPendingIntent( 0, PendingIntent.FLAG_UPDATE_CURRENT );
         mBuilder.setContentIntent(resultPendingIntent);
 
+        // send the notification
         ((NotificationManager)getApplicationContext()
                 .getSystemService(Context.NOTIFICATION_SERVICE))
                 .notify(SYMPTOM_MANAGEMENT_NOTIFICATION_ID, mBuilder.build());
 
         return super.onStartCommand(intent, flags, startId);
     }
-
 
     @Override
     public void onDestroy()

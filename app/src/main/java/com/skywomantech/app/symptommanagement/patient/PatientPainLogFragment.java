@@ -24,6 +24,7 @@ import butterknife.OnClick;
 public class PatientPainLogFragment extends Fragment {
 
     public final static String LOG_TAG = PatientPainLogFragment.class.getSimpleName();
+    public final static String FRAGMENT_TAG = "patient_pain_log_fragment";
 
     public interface Callbacks {
         public boolean onPainLogComplete(long checkinId);

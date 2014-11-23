@@ -16,6 +16,7 @@ import java.util.Calendar;
 
 
 public class MedicationTimeDialog extends DialogFragment {
+    public final static String FRAGMENT_TAG = "patient_medication_time_dialog";
 
     public interface Callbacks {
         public void onPositiveResult(long msTime, int position);

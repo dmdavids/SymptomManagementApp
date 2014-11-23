@@ -39,6 +39,7 @@ import butterknife.OnClick;
 public class PatientStatusLogFragment extends Fragment {
 
     public final static String LOG_TAG = PatientStatusLogFragment.class.getSimpleName();
+    public final static String FRAGMENT_TAG = "patient_status_Log_fragment";
 
     private StatusLog mLog;
 

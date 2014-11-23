@@ -41,6 +41,7 @@ import butterknife.InjectView;
 public class ReminderFragment extends Fragment {
 
     public final static String LOG_TAG = ReminderFragment.class.getSimpleName();
+    public final static String FRAGMENT_TAG = "reminder_fragment";
 
     public interface Callbacks {
         public void onRequestReminderAdd(Reminder reminder);

@@ -36,6 +36,7 @@ import butterknife.InjectView;
 public class PatientMedicationLogFragment extends Fragment {
 
     public final static String LOG_TAG = PatientMedicationLogFragment.class.getSimpleName();
+    public final static String FRAGMENT_TAG = "patient_med_log_fragment";
 
     MedicationLogListAdapter mAdapter;
     private Collection<MedicationLog> medicationLogs;

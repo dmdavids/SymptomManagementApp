@@ -66,5 +66,12 @@
     <string name="medication_add_edit_dialog_tag">med_add_dialog</string>
     <string name="Ok_button_text">Ok</string>
     <string name="cancel_button_text">Cancel</string>
+    <string name="check_in_notification_title">SymptomManagement</string>
+    <string name="check_in_notification_text">Time to Check-In</string>
+    <string name="confirm_reminder_delete_title">Confirm Delete</string>
+    <string name="confirm_reminder_delete_message">Do you want to delete this reminder?</string>
+    <string name="patient_welcome_message">"Welcome "</string>
+    <string name="no_check_ins_today_message">You have not yet checked in today.</string>
+    <string name="todays_check_ins_complete_message">Today\'s Check-Ins Complete.</string>
 
 </resources>
