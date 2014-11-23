@@ -19,6 +19,10 @@ import com.skywomantech.app.symptommanagement.data.Reminder;
 
 import java.util.Calendar;
 
+/**
+ * This Array Adapter manages the Reminder List for the Patient
+ *
+ */
 public class ReminderListAdapter extends ArrayAdapter<Reminder> {
 
     public final static String LOG_TAG = ReminderAddEditDialog.class.getSimpleName();
@@ -73,10 +77,13 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     Reminder reminder = (Reminder) buttonView.getTag();
-                    reminder.setOn(isChecked);
-                    Log.d(LOG_TAG, "REMINDER Clicked ... it is now "
-                            + (reminder.isOn() ? "ON" : "OFF"));
-                    ((Callbacks) activity).onRequestReminderActivate(reminder);
+                    if (reminder.isOn() != isChecked) {
+                        reminder.setOn(isChecked);
+                        Log.d(LOG_TAG, "Reminder switch has changed ... it is now "
+                                + (reminder.isOn() ? "ON" : "OFF"));
+                        //Activity process the activation/deactivation
+                        ((Callbacks) activity).onRequestReminderActivate(reminder);
+                    }
                 }
             });
 
@@ -85,6 +92,7 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
                 @Override
                 public void onClick(View view) {
                     ReminderHolder remHolder = (ReminderHolder) holder.deleteView.getTag();
+                    // activity manages the deletion
                     ((Callbacks) activity).onReminderDelete(remHolder.position, remHolder.reminder);
                 }
             });
@@ -93,6 +101,7 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
                 @Override
                 public void onClick(View view) {
                     ReminderHolder remHolder = (ReminderHolder) holder.editView.getTag();
+                    // activity manages the edit
                     ((Callbacks) activity).onRequestReminderEdit(remHolder.position, remHolder.reminder);
                 }
             });
@@ -118,10 +127,13 @@ public class ReminderListAdapter extends ArrayAdapter<Reminder> {
             cal.set(Calendar.HOUR_OF_DAY, reminders[position].getHour());
             cal.set(Calendar.MINUTE, reminders[position].getMinutes());
             int hour = cal.get(Calendar.HOUR);
-            if (hour == 0) hour = 12;
+            if (hour == 0 || hour == 23) hour = 12;
             int min = cal.get(Calendar.MINUTE);
+            String minString = "";
+            if (min < 10)  minString += "0";
+            minString += Integer.toString(min);
             int am_pm = cal.get(Calendar.AM_PM);
-            summary = Integer.toString(hour) + ":" + min + (am_pm == 1 ? "PM" : "AM");
+            summary = Integer.toString(hour) + ":" + minString + (am_pm == 1 ? "PM" : "AM");
         }
         holder.reminderSummary.setText(summary);
         holder.isActive.setChecked(reminders[position].isOn());

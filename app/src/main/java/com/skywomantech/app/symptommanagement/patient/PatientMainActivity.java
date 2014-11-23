@@ -49,7 +49,7 @@ public class PatientMainActivity extends Activity
     private String mPatientId;  // cloud login db id
     private Patient mPatient;
     private Context mContext;
-    private ReminderManager reminderManager = new ReminderManager();
+    //private ReminderManager reminderManager = new ReminderManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -302,21 +302,28 @@ public class PatientMainActivity extends Activity
         alert.show();
     }
 
+    /**
+     * Callback method for the Reminder List Adapter
+     * gets called when the switch value for the reminder has been toggled
+     *
+     * @param reminder
+     */
     @Override
     public void onRequestReminderActivate(Reminder reminder) {
-        if (reminder == null) return;
-
+        if (reminder == null) {
+            Log.e(LOG_TAG, "Null Reminder value attempting to be activated.");
+            return;
+        }
         Log.d(LOG_TAG, "Attempting to activate the alarm for reminder " + reminder.toString());
-        reminderManager.printAlarms(this, LoginUtility.getLoginId(this));
         if (reminder.isOn()) {
             Log.d(LOG_TAG, "activating Reminder " + reminder.getName());
-            reminderManager.cancelSingleReminderAlarm(reminder); // in case the reminder is updated
-            reminderManager.setSingleReminderAlarm(this, reminder);
-        } else { // deactivate it
+            ReminderManager.cancelSingleReminderAlarm(this, reminder);
+            ReminderManager.setSingleReminderAlarm(this, reminder);
+        } else {
             Log.d(LOG_TAG, "deactivating Reminder " + reminder.getName());
-            reminderManager.cancelSingleReminderAlarm(reminder);
+            ReminderManager.cancelSingleReminderAlarm(this, reminder);
         }
-        reminderManager.printAlarms(this, LoginUtility.getLoginId(this));
+        ReminderManager.printAlarms(this, LoginUtility.getLoginId(this));
         PatientDataManager.updateSingleReminder(mContext, mPatientId, reminder);
     }
 

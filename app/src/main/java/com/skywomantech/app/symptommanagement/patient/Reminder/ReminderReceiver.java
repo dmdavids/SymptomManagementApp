@@ -7,15 +7,18 @@ import android.util.Log;
 
 import java.util.Calendar;
 
+/**
+ * Simple Receiver to accept the Alarm Trigger and start up the Reminder Service
+ * The Reminder Service will start the check-in process for the app and notify the patient that
+ * its time to check-in.
+ */
 public class ReminderReceiver extends BroadcastReceiver {
-    private final static String LOG_TAG = ReminderReceiver.class.getSimpleName();
     public ReminderReceiver() {
     }
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent service1 = new Intent(context, ReminderService.class);
-        Calendar cal = Calendar.getInstance();
-        Log.d(LOG_TAG, "The REMINDER RECEIVER IS STARTING SERVICE AT " + cal.toString());
-        context.startService(service1);
+        Intent intentReminderService = new Intent(context, ReminderService.class);
+        context.startService(intentReminderService);
     }
 }

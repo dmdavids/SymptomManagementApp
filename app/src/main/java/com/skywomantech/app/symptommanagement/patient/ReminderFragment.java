@@ -108,10 +108,6 @@ public class ReminderFragment extends Fragment {
         }
         mAdapter = new ReminderListAdapter(getActivity(), mReminders);
         mReminderView.setAdapter(mAdapter);
-        // start any reminders that might not have already been started.. hmmmmm?
-
-        ReminderManager.startPatientReminders(getActivity(), LoginUtility.getLoginId(getActivity()));
-        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
     }
 
     public void addReminder(Reminder newReminder) {
@@ -152,7 +148,7 @@ public class ReminderFragment extends Fragment {
         }
         Log.d(LOG_TAG, "deleting a Reminder " + mReminders[position].getName());
         ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
-        ReminderManager.cancelSingleReminderAlarm(mReminders[position]);
+        ReminderManager.cancelSingleReminderAlarm(getActivity(), mReminders[position]);
         ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
         reminders.remove(mReminders[position]);
         mReminders = reminders.toArray(new Reminder[reminders.size()]);
@@ -173,7 +169,7 @@ public class ReminderFragment extends Fragment {
         // cancel and restart the alarm related to this reminder
         Log.d(LOG_TAG, "updating a Reminder " + mReminders[position].getName());
         ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
-        ReminderManager.cancelSingleReminderAlarm(mReminders[position]);
+        ReminderManager.cancelSingleReminderAlarm(getActivity(), mReminders[position]);
         ReminderManager.setSingleReminderAlarm(getActivity(), mReminders[position]);
         ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
 

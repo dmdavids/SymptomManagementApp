@@ -63,7 +63,7 @@ public class LoginUtility {
         // reset all the values that make the app think we are logged in
         if (mRole == UserCredential.UserRole.PATIENT) {
             Log.d(LOG_TAG, "Cancelling Patient Reminders.");
-            ReminderManager.cancelPatientReminders(context, mLoginId);
+            ReminderManager.cancelPatientReminders(context);
         }
         mUserName = "";
         mLoginId = "";
