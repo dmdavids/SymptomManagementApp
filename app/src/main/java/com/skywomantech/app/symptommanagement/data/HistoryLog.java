@@ -121,7 +121,6 @@ public class HistoryLog {
         return format.format(date);
     }
 
-    // TODO: put the guts in this one
     public String getFormattedCreatedDate() {
         return getFormattedDate(this.created, "E, MMM d yyyy 'at' hh:mm a" );
     }
