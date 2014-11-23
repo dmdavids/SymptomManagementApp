@@ -70,7 +70,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setEmptyText(getString(R.string.empty_list_text));
-        getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        getListView().setChoiceMode(ListView.CHOICE_MODE_SINGLE); // vs multiple selections
     }
 
     @Override
@@ -114,6 +114,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
      */
     private void displayPatientList(Physician physician) {
         if (physician == null) {
+            mActivatedPosition = ListView.INVALID_POSITION;
             Log.e(LOG_TAG, "Trying to display a null physician.");
             return;
         }
@@ -121,8 +122,13 @@ public class PhysicianListPatientsFragment extends ListFragment {
         if (physician.getPatients() != null) {
             mTempList = physician.getPatients();
             mPatientList = mTempList.toArray(new Patient[mTempList.size()]);
+            mActivatedPosition = (mTempList.size() > 0 ) ? 0 : ListView.INVALID_POSITION;
         }
         setListAdapter(new PatientListAdapter(getActivity(), mPatientList));
+        // scroll to the current position in the list
+        if (mActivatedPosition != ListView.INVALID_POSITION) {
+            getListView().smoothScrollToPosition(mActivatedPosition);
+        }
     }
 
     /**
@@ -140,6 +146,13 @@ public class PhysicianListPatientsFragment extends ListFragment {
         }
         mPatientList = mTempList.toArray(new Patient[mTempList.size()]);
         setListAdapter(new PatientListAdapter(getActivity(), mPatientList));
+        // scroll to the current position in the list
+        if( mPatientList != null && mTempList.size() > 0) {
+            mActivatedPosition = mTempList.size() - 1;
+        }
+        if (mActivatedPosition != ListView.INVALID_POSITION) {
+            getListView().smoothScrollToPosition(mActivatedPosition);
+        }
     }
 
     /**
@@ -157,10 +170,13 @@ public class PhysicianListPatientsFragment extends ListFragment {
     @Override
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
+        setActivatedPosition(position);
+       // getListView().setSelection(position);
         Patient patient = (Patient) getListAdapter().getItem(position);
         Log.d(LOG_TAG, "Patient selected is " + patient.toString());
         mPhysicianId = LoginUtility.getLoginId(getActivity());
         ((Callbacks) getActivity()).onItemSelected(mPhysicianId, patient);
+
     }
 
     @Override
@@ -178,6 +194,7 @@ public class PhysicianListPatientsFragment extends ListFragment {
     }
 
     private void setActivatedPosition(int position) {
+        Log.e(LOG_TAG, "Setting the activated list position to : " + Integer.toString(position));
         if (position == ListView.INVALID_POSITION) {
             getListView().setItemChecked(mActivatedPosition, false);
         } else {
