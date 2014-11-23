@@ -60,6 +60,7 @@ public class PatientStatusLogFragment extends Fragment {
     Uri imagePath;
     Uri imageFile = null;
     public static final int CAMERA_PIC_REQUEST = 99;
+    static boolean showCameraButton = true;
 
     public PatientStatusLogFragment() {
     }
@@ -93,14 +94,19 @@ public class PatientStatusLogFragment extends Fragment {
             mLog = new StatusLog();
         } else {
             imageLocation.setVisibility(View.GONE);
-            imageButton.setVisibility(View.GONE);
+            imageButton.setVisibility(showCameraButton ? View.VISIBLE : View.GONE);
             Log.d(LOG_TAG, "file path being opened in view : " + mLog.getImage_location());
-            Picasso.with(getActivity())
-                    .load(mLog.getImage_location())
-                    .resize(800, 800)
-                    .centerInside()
-                    .into(imageView);
-            imageView.setVisibility(View.VISIBLE);
+            if (mLog != null && mLog.getImage_location() != null && !mLog.getImage_location().isEmpty()) {
+                Picasso.with(getActivity())
+                        .load(mLog.getImage_location())
+                        .resize(800, 800)
+                        .centerInside()
+                        .into(imageView);
+                imageView.setVisibility(View.VISIBLE);
+                imageButton.setVisibility(View.GONE);
+                showCameraButton = false;
+            }
+
         }
     }
 
@@ -142,6 +148,7 @@ public class PatientStatusLogFragment extends Fragment {
                 mLog.setImage_location(imagePathFinal.toString());
                 imageLocation.setVisibility(View.GONE);
                 imageButton.setVisibility(View.GONE);
+                showCameraButton = false;
                 Log.d(LOG_TAG, "file path being opened in view : " + mLog.getImage_location());
                 Picasso.with(getActivity())
                         .load(mLog.getImage_location())
@@ -154,11 +161,17 @@ public class PatientStatusLogFragment extends Fragment {
                 Log.e(LOG_TAG, "Image Capture Was Cancelled by User.");
                 mLog.setImage_location(null);
                 imageButton.setImageResource(android.R.drawable.ic_menu_camera);
+                imageButton.setVisibility(View.VISIBLE);
+                imageView.setVisibility(View.GONE);
+                showCameraButton = true;
             } else {
                 // Image capture failed, advise user
                 Log.e(LOG_TAG, "Image Capture Failed.");
                 mLog.setImage_location(null);
                 imageButton.setImageResource(android.R.drawable.ic_menu_camera);
+                showCameraButton = true;
+                imageButton.setVisibility(View.VISIBLE);
+                imageView.setVisibility(View.GONE);
             }
         }
     }
