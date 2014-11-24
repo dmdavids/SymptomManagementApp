@@ -9,14 +9,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.skywomantech.app.symptommanagement.LoginActivity;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Medication;
 import com.skywomantech.app.symptommanagement.data.Patient;
-import com.skywomantech.app.symptommanagement.data.Physician;
-import com.skywomantech.app.symptommanagement.data.StatusLog;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
 public class PhysicianListPatientsActivity extends PhysicianActivity {
@@ -75,6 +71,36 @@ public class PhysicianListPatientsActivity extends PhysicianActivity {
     }
 
     /**
+     * remove menu items if the related fragment is already displaying ..
+     * so it doesn't look weird
+     *
+     * @param menu
+     * @return
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        Fragment frag = getActiveFragment();
+        if (frag == null) {
+            Log.e(LOG_TAG, "Active Fragment is not found!");
+            return super.onPrepareOptionsMenu(menu);
+        }
+
+        if (frag instanceof PatientMedicationFragment) {
+            menu.removeItem(R.id.action_medication_list);
+        } else if (frag instanceof HistoryLogFragment) {
+            menu.removeItem(R.id.action_history_log);
+        } else if (frag instanceof MedicationListFragment) {
+            menu.removeItem(R.id.action_medication_list);
+            // when add medication remove the history stuff too
+            // menu.removeItem(R.id.action_history_log);
+        } else if (frag instanceof PatientGraphicsFragment) {
+            menu.removeItem(R.id.action_chart);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
      * uses different menus for the two pane vs classic display
      *
      * @param menu
@@ -112,7 +138,6 @@ public class PhysicianListPatientsActivity extends PhysicianActivity {
 
     /**
      * This makes the list activity, the top activity so you can't go back to login
-     * TODO: Make this work with two pane
      */
     @Override
     public void onBackPressed() {

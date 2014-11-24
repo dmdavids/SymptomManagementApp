@@ -189,6 +189,7 @@ public abstract class PhysicianActivity
                             PatientMedicationFragment.FRAGMENT_TAG)
                     .addToBackStack(null)
                     .commit();
+            invalidateOptionsMenu(); // force to rebuild the options menu
             return true;
         } else if (id == R.id.action_history_log) { //dual pane only
             getFragmentManager().beginTransaction()
@@ -196,6 +197,7 @@ public abstract class PhysicianActivity
                             new HistoryLogFragment(),
                             HistoryLogFragment.FRAGMENT_TAG)
                     .commit();
+            invalidateOptionsMenu(); // force to rebuild the options menu
             return true;
         } else if (id == R.id.action_chart) { //dual pane only
             getFragmentManager().beginTransaction()
@@ -203,6 +205,7 @@ public abstract class PhysicianActivity
                             new PatientGraphicsFragment(),
                             PatientGraphicsFragment.FRAGMENT_TAG)
                     .commit();
+            invalidateOptionsMenu();// force to rebuild the options menu
             return true;
         } else if (id == R.id.physician_logout) { // both menus no special processing
             LoginActivity.restartLoginActivity(this);
