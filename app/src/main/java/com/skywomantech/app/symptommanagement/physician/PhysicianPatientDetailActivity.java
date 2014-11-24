@@ -50,7 +50,8 @@ public class PhysicianPatientDetailActivity extends PhysicianActivity  {
                             new PhysicianPatientDetailFragment(),
                             PhysicianPatientDetailFragment.FRAGMENT_TAG)
                     .replace(R.id.patient_graphics_container,
-                            new HistoryLogFragment(), HistoryLogFragment.FRAGMENT_TAG)
+                            new PatientGraphicsFragment(),
+                            PatientGraphicsFragment.FRAGMENT_TAG)
                     .commit();
         }
     }

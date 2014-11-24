@@ -10,5 +10,4 @@
     -->
 
     <item name="activity_adminmedication_list" type="layout">@layout/activity_admin_medication_twopane</item>
-
 </resources>

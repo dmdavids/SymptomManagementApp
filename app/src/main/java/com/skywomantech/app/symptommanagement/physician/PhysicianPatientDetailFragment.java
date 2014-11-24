@@ -20,6 +20,7 @@ import com.skywomantech.app.symptommanagement.data.StatusLog;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import butterknife.Optional;
 
 /**
  * This fragment displays detail information about the current patient
@@ -54,9 +55,9 @@ public class PhysicianPatientDetailFragment extends Fragment {
 
     @InjectView(R.id.physician_patient_detail_name)
     TextView mNameView;
-    @InjectView(R.id.physician_patient_detail_birthdate)
+    @Optional @InjectView(R.id.physician_patient_detail_birthdate)
     TextView mBDView;
-    @InjectView(R.id.patient_medical_id)
+    @Optional  @InjectView(R.id.patient_medical_id)
     TextView mRecordId;
 
     public PhysicianPatientDetailFragment() {
@@ -112,8 +113,8 @@ public class PhysicianPatientDetailFragment extends Fragment {
         if (mPatient != null) {
             // update the display
             mNameView.setText(mPatient.getName());
-            mBDView.setText(mPatient.getBirthdate());
-            mRecordId.setText(mPatient.getId());
+            if (mBDView != null)  mBDView.setText(mPatient.getBirthdate());
+            if (mRecordId != null) mRecordId.setText(mPatient.getId());
         }
     }
 
