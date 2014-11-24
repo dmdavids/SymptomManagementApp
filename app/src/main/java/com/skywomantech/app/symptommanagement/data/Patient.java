@@ -7,7 +7,8 @@ import java.util.Set;
 
 public class Patient {
 
-    private String id;
+    private String id;   //This is the Medical  Record ID!!
+
     private transient long dbId;  // local CP database id!!
     private int severityLevel = 0; // boolean indicating if an alert exists for this patient
 
