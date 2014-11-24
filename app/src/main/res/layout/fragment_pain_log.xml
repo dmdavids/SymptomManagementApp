@@ -17,7 +17,7 @@
         android:id="@+id/severity_heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="How bad is your mouth pain/sore throat?"
+        android:text="@string/pain_log_mouth_pain_question"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_centerHorizontal="true"
         android:minWidth="400dp"/>
@@ -35,21 +35,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Well-Controlled" />
+                android:text="@string/pain_log_well_controlled" />
 
             <RadioButton
                 android:id="@+id/moderate_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Moderate" />
+                android:text="@string/pain_log_moderate" />
 
             <RadioButton
                 android:id="@+id/severe_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Severe" />
+                android:text="@string/pain_log_severe" />
 
     </RadioGroup>
 
@@ -57,7 +57,7 @@
         android:id="@+id/eating_heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Does your pain stop you from eating or drinking?"
+        android:text="@string/pain_log_eating_drinking_question"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_below="@id/severity_radio_group"
         android:layout_marginTop="24dp"
@@ -78,21 +78,21 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="No" />
+                android:text="@string/pain_log_eating" />
 
             <RadioButton
                 android:id="@+id/eating_some_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Some" />
+                android:text="@string/pain_log_eating_some" />
 
             <RadioButton
                 android:id="@+id/not_eating_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="I cannot eat" />
+                android:text="@string/pain_log_cannot_eat" />
 
     </RadioGroup>
 

@@ -16,9 +16,12 @@ import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.MedicationLog;
 
 /**
- * Manage the list items for Tracking Medications .. Asks if they medication was taken?
+ * Manage the list items for Tracking Medications .. Asks if the medication was taken?
  * then it gets the time taken via the main activity and finally updates the view with
  * the entered time taken
+ *
+ * The yes/no answer to the question is represented as a clicked/un-clicked checkbox
+ *
  */
 public class MedicationLogListAdapter extends ArrayAdapter<MedicationLog> {
 
@@ -34,7 +37,7 @@ public class MedicationLogListAdapter extends ArrayAdapter<MedicationLog> {
     private final MedicationLog[] logs;
 
     public static class ViewHolder {
-        CheckBox isTaken;
+        CheckBox isTaken;  // this holds the YES or NO answer to the pain medication question
         TextView question;
         TextView summary;
         int savePosition;
@@ -60,6 +63,7 @@ public class MedicationLogListAdapter extends ArrayAdapter<MedicationLog> {
             holder.summary = (TextView) view.findViewById(R.id.patient_medication_check_summary);
             holder.isTaken = (CheckBox) view.findViewById(R.id.patient_medication_check_answer);
             // processing for when the checkbox is clicked
+            // instead of YES or NO answer this uses a CHECKBOX and clicked = YES/ unclicked = NO
             holder.isTaken
                     .setOnClickListener(new CompoundButton.OnClickListener() {
                         @Override
@@ -87,6 +91,8 @@ public class MedicationLogListAdapter extends ArrayAdapter<MedicationLog> {
 
         ViewHolder holder = (ViewHolder) view.getTag();
         holder.savePosition = position;
+        // Instead of generic Did you take your pain medicine? this displays
+        // an actual medication name to replace pain medicine
         String question = "Did you take " + logs[position].getMed().getName() + "?";
         holder.question.setText(question);
         holder.summary.setText("");

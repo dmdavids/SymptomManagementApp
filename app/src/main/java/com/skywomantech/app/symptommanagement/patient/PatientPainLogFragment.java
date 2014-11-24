@@ -111,6 +111,7 @@ public class PatientPainLogFragment extends Fragment {
     public void savePainLog() {
         // save Pain Log to the CP
         mPatientId = LoginUtility.getLoginId(getActivity());
+        // associate pain log with a checkin
         mLog.setCheckinId(LoginUtility.getCheckInLogId(getActivity()));
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLog);
         Log.d(LOG_TAG, "Saving this Pain Log : " + mLog.toString());

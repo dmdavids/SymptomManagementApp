@@ -31,7 +31,7 @@
             android:id="@+id/patient_medication_check_question"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Did you take OxyContin?"
+            android:text="@string/medication_log_generic_question"
             android:textColor="#333"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -39,7 +39,7 @@
             android:id="@+id/patient_medication_check_summary"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="Taken at 2:00 PM"
+            android:text=""
             android:textColor="#333"
             android:textAppearance="?android:attr/textAppearanceSmall"/>
     </LinearLayout>

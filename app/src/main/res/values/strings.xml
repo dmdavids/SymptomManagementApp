@@ -77,5 +77,14 @@
     <string name="image_folder_name">SymptomManagement</string>
     <string name="media_file_date_format">yyyyMMdd_HHmmss</string>
     <string name="reminder_configuration_title">Reminder Configuration</string>
+    <string name="pain_log_mouth_pain_question">How bad is your mouth pain/sore throat?</string>
+    <string name="pain_log_well_controlled">Well-Controlled</string>
+    <string name="pain_log_severe">Severe</string>
+    <string name="pain_log_moderate">Moderate</string>
+    <string name="medication_log_generic_question">Did you take your pain medication?”</string>
+    <string name="pain_log_eating_drinking_question">Does your pain stop you from eating or drinking?</string>
+    <string name="pain_log_eating_some">Some</string>
+    <string name="pain_log_cannot_eat">I cannot eat</string>
+    <string name="pain_log_eating">No</string>
 
 </resources>
