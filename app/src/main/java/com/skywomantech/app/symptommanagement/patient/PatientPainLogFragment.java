@@ -21,11 +21,19 @@ import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+/**
+ * This class manages the screen for the pain level and eating ability questions
+ *
+ * There are a few check-in processing things that need to be done here
+ *
+ */
 public class PatientPainLogFragment extends Fragment {
 
     public final static String LOG_TAG = PatientPainLogFragment.class.getSimpleName();
     public final static String FRAGMENT_TAG = "patient_pain_log_fragment";
 
+    // tells the main activity that the OK button was pressed and the log was saved
+    // in this case there are check-in processing that needs to be done by the activity
     public interface Callbacks {
         public boolean onPainLogComplete(long checkinId);
     }
@@ -42,8 +50,9 @@ public class PatientPainLogFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // want the up navigation for this one
         ActionBar actionBar = getActivity().getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -55,6 +64,10 @@ public class PatientPainLogFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * process the radio buttons for the pain severity level choices
+     * @param v
+     */
     @OnClick({R.id.well_controlled_button, R.id.moderate_button, R.id.severe_button})
     public void onSeverityRadioGroup(View v) {
         switch (v.getId()) {
@@ -70,6 +83,11 @@ public class PatientPainLogFragment extends Fragment {
         }
     }
 
+    /**
+     * process the eating ability radio buttons
+     *
+     * @param v
+     */
     @OnClick({R.id.eating_ok_button, R.id.eating_some_button, R.id.not_eating_button})
     public void onEatingRadioGroup(View v) {
         switch (v.getId()) {
@@ -85,6 +103,10 @@ public class PatientPainLogFragment extends Fragment {
         }
     }
 
+    /**
+     * done entering the pain log information so save it to the local storage
+     * and sync immediately with the server so the doctor can view the logs
+     */
     @OnClick(R.id.pain_log_done_button)
     public void savePainLog() {
         // save Pain Log to the CP
@@ -97,6 +119,8 @@ public class PatientPainLogFragment extends Fragment {
         if (objectId < 0) {
             Log.e(LOG_TAG, "Pain Log Insert Failed.");
         }
+
+        //try to send to server asap
         SymptomManagementSyncAdapter.syncImmediately(getActivity());
 
         // tell the activity we're done and if check-in put up the med log fragment

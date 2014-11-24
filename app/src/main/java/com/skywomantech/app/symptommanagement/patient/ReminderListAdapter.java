@@ -22,11 +22,14 @@ import java.util.Calendar;
 /**
  * This Array Adapter manages the Reminder List for the Patient
  *
+ * This is where reminders are turned on or off or edited or deleted
+ *
  */
 public class ReminderListAdapter extends ArrayAdapter<Reminder> {
 
     public final static String LOG_TAG = ReminderAddEditDialog.class.getSimpleName();
 
+    // tells the main activity when the user want to edit or delete or turn a reminder on/off
     public interface Callbacks {
         public void onRequestReminderEdit(int position, Reminder reminder);
         public void onReminderDelete(int position, Reminder reminder);

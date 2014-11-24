@@ -36,7 +36,10 @@ import butterknife.OnClick;
 
 
 /**
- * A login screen that offers login via email/password.
+ * This the main task of all the apps  It controls the screen flow for different users
+ * and for the checkin.
+ *
+ * This also manages logging
  */
 public class LoginActivity extends Activity {
 
@@ -63,7 +66,6 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         PHYSICIAN_ID_KEY = getString(R.string.physician_id_key);
-
         setContentView(R.layout.activity_login_main);
         ButterKnife.inject(this);
 
@@ -109,7 +111,8 @@ public class LoginActivity extends Activity {
     }
 
     public void attemptLogin() {
-        Log.d(LOG_TAG, "Attempting to Login  mAuthTask is " + ((mAuthTask != null) ? "Not NULL" : "NULL"));
+        Log.d(LOG_TAG, "Attempting to Login  mAuthTask is "
+                + ((mAuthTask != null) ? "Not NULL" : "NULL"));
 
         if (mAuthTask != null) return;
 
@@ -119,7 +122,7 @@ public class LoginActivity extends Activity {
         // always lowercase the user name
         String username = mUsernameView.getText().toString().toLowerCase();
         String password = mPasswordView.getText().toString();
-        Log.d(LOG_TAG, "Username: " + username + " Password: " + password);
+        Log.d(LOG_TAG, "Username: " + username + " Password: NOT PRINTED" );
 
         boolean cancel = false;
         View focusView = null;
@@ -199,7 +202,7 @@ public class LoginActivity extends Activity {
 
         UserLoginTask(String username, String password) {
             Log.d(LOG_TAG, "creating thread with username "
-                    + username + "and password " + password);
+                    + username + "and password NOT PRINTED");
             mUsername = username.toLowerCase();
             mPassword = password;
         }
@@ -207,7 +210,7 @@ public class LoginActivity extends Activity {
         @Override
         protected Boolean doInBackground(Void... params) {
             Log.d(LOG_TAG, "attempting an actually login to the server with username "
-                    + mUsername + " password " + mPassword);
+                    + mUsername + " password NOT PRINTED");
             // this is the version that actually does a logging into the service
             SymptomManagementApi svc = SymptomManagementService.getService(mUsername, mPassword);
             Log.d(LOG_TAG, "Service is : " +
@@ -251,13 +254,26 @@ public class LoginActivity extends Activity {
         }
     }
 
+    /**
+     * get the user credentials from the local storage
+     *
+     * @param username
+     * @param password
+     * @return
+     */
     private UserCredential checkCredentialsOnDevice(String username, String password) {
-        Log.d(LOG_TAG, "Looking for username " + username + " password " + password);
+        Log.d(LOG_TAG, "Looking for username " + username + " password NOT PRINTED");
         UserCredential credential =
                 PatientDataManager.getUserCredentials(getApplicationContext(), username, password);
         return credential;
     }
 
+    /**
+     * find the credentials and then go to the method that redirects it all
+     *
+     * @param username
+     * @param password
+     */
     public void getCredentialsAndRedirect(String username, String password) {
         if (LoginUtility.isLoggedIn(this)) {
             // already logged in
@@ -268,6 +284,11 @@ public class LoginActivity extends Activity {
         }
     }
 
+    /**
+     * This is the method that does all the redirect stuff depending on the user role
+     *
+     * @param role
+     */
     private void processLoginRedirect(UserCredential.UserRole role) {
         Log.d(LOG_TAG, "Process Login REDIRECTing to appropriate screen flow " +
                 "for " + role.toString());
@@ -299,6 +320,12 @@ public class LoginActivity extends Activity {
         }
     }
 
+    /**
+     * This is the method that checks the server to get the user credential
+     *
+     * @param username
+     * @param password
+     */
     private void getUserCredentialsAndProcessLogin(final String username, final String password) {
         Log.d(LOG_TAG, "Attempting to get the credentials to be fully logged in.");
         // we need the credentials or we can't be considered logged in!

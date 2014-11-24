@@ -10,8 +10,11 @@ import com.skywomantech.app.symptommanagement.data.PatientDataManager;
 import com.skywomantech.app.symptommanagement.data.UserCredential;
 import com.skywomantech.app.symptommanagement.patient.Reminder.ReminderManager;
 
+/**
+ * These are a group of utility and helper methods for the Login and Check In processing
+ *
+ */
 public class LoginUtility {
-
     private static final String LOG_TAG = LoginUtility.class.getSimpleName();
 
     static String mUserName;
@@ -19,8 +22,13 @@ public class LoginUtility {
     static UserCredential.UserRole mRole;
     static UserCredential mCredential = null;
 
-
-    // everything EXCEPT for the service is checked here
+    /**
+     * Everything except for the service is checked here
+     *
+     * @param context
+     * @param credential
+     * @return
+     */
     public static synchronized boolean
     setLoggedIn(Context context, UserCredential credential) {
         Log.d(LOG_TAG, "Setting Logged In Values for credential:" + credential.toString());
@@ -47,7 +55,12 @@ public class LoginUtility {
         return true;
     }
 
-    // Everything except for the service is checked here
+    /**
+     * Everything except for the service is checked here
+     *
+     * @param context
+     * @return
+     */
     public static boolean isLoggedIn(Context context) {
         mUserName = getUsername(context);
         mLoginId = getLoginId(context);
@@ -59,6 +72,11 @@ public class LoginUtility {
         return true;
     }
 
+    /**
+     * set everything that is needed to reset the app and logout
+     *
+     * @param context
+     */
     public static synchronized void logout(Context context) {
         // reset all the values that make the app think we are logged in
         if (mRole == UserCredential.UserRole.PATIENT) {
@@ -76,6 +94,12 @@ public class LoginUtility {
         SymptomManagementService.reset();
     }
 
+    /**
+     * Store the patient's credentials so they can log in without internet
+     *
+     * @param context
+     * @param credential
+     */
     public static synchronized void savePatientCredential(Context context, UserCredential credential) {
         if (mRole == UserCredential.UserRole.PATIENT) {
             Log.d(LOG_TAG, "Saving the PATIENT credentials to CP.");
@@ -85,6 +109,13 @@ public class LoginUtility {
         }
     }
 
+    /**
+     * This is where the Check-in event processing begins and ends
+     *
+     * @param context
+     * @param value
+     * @return
+     */
     public static synchronized boolean setCheckin(Context context, boolean value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -99,11 +130,22 @@ public class LoginUtility {
         return isCheckin(context);
     }
 
+    /**
+     * c
+     * @param context
+     * @return
+     */
     public static boolean isCheckin(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean("isCheckin", false);
     }
 
+    /**
+     *
+     * @param context
+     * @param value
+     * @return
+     */
     public static synchronized boolean setCheckInLogId(Context context, long value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -112,12 +154,22 @@ public class LoginUtility {
         return isCheckin(context);
     }
 
-    // called by status and med logs to see if they need to associate with a checkin log
+    /**
+     * called by status and med logs to see if they need to associate with a checkin log
+     * @param context
+     * @return
+     */
     public static long getCheckInLogId(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getLong("checkin_log_id", 0L);
     }
 
+    /**
+     *
+     * @param context
+     * @param value
+     * @return
+     */
     public static synchronized String setLoginId(Context context, String value) {
         if (value == null) value = "";
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -127,11 +179,22 @@ public class LoginUtility {
         return getLoginId(context);
     }
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     public static String getLoginId(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString("login_id", "");
     }
 
+    /**
+     *
+     * @param context
+     * @param value
+     * @return
+     */
     public static synchronized String setUsername(Context context, String value) {
         if (value == null) value = "";
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -141,11 +204,22 @@ public class LoginUtility {
         return getUsername(context);
     }
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     public static String getUsername(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString("username", "").toLowerCase();
     }
 
+    /**
+     *
+     * @param context
+     * @param value
+     * @return
+     */
     public static synchronized int setUserRoleValue(Context context, int value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -154,15 +228,33 @@ public class LoginUtility {
         return getUserRoleValue(context);
     }
 
+    /**
+     *
+     * @param context
+     * @return
+     */
     public static int getUserRoleValue(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getInt("role_value", UserCredential.UserRole.NOT_ASSIGNED.getValue());
     }
 
+    /**
+     * helper method for converting the type to a value.. stuff need because
+     * json wasn't liking the enums
+     *
+     * @param context
+     * @return
+     */
     public static UserCredential.UserRole getUserRole(Context context) {
         return UserCredential.UserRole.findByValue(getUserRoleValue(context));
     }
 
+    /**
+     *
+     * @param context
+     * @param value
+     * @return
+     */
     public static synchronized boolean setRememberMe(Context context, boolean value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -171,11 +263,23 @@ public class LoginUtility {
         return getRememberMe(context);
     }
 
+    /**
+     *  for future enhancements
+     * @param context
+     * @return
+     */
     public static boolean getRememberMe(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean("remember_me", false);
     }
 
+    /**
+     *  for future enhancements
+     *
+     * @param context
+     * @param value
+     * @return
+     */
     public static synchronized long setLastDeviceLogin(Context context, long value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -184,6 +288,12 @@ public class LoginUtility {
         return getLastDeviceLogin(context);
     }
 
+    /**
+     * for future enhancements
+     *
+     * @param context
+     * @return
+     */
     public static long getLastDeviceLogin(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getLong("last_device_login", 0L);

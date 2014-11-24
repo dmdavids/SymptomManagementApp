@@ -14,11 +14,15 @@ import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.Reminder;
 
 
+/**
+ * Used to add or edit the reminder information
+ */
 public class ReminderAddEditDialog extends DialogFragment {
 
     public final static String LOG_TAG = ReminderAddEditDialog.class.getSimpleName();
     public final static String FRAGMENT_TAG = "reminder_add_edit_dialog";
 
+    // tells the main activity that the reminder is being either added or updated
     public interface Callbacks {
         public void onReminderAdd(Reminder newReminder);
         public void onReminderUpdate(int position, Reminder reminder);
@@ -54,34 +58,36 @@ public class ReminderAddEditDialog extends DialogFragment {
         View view = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_reminder_add_edit, null);
         AlertDialog.Builder builder =  new AlertDialog.Builder(getActivity())
-                .setTitle("Reminder Configuration")
+                .setTitle(getActivity().getString(R.string.reminder_configuration_title))
                 .setView(view)
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mName = reminderName.getText().toString();
-                        mHour = timePicker.getCurrentHour();
-                        mMinutes = timePicker.getCurrentMinute();
-                        if (mReminder.getHour() == -1 && mReminder.getMinutes() == -1) {
-                            mReminder.setHour(mHour);
-                            mReminder.setMinutes(mMinutes);
-                            mReminder.setName(mName);
-                            ((Callbacks) getActivity()).onReminderAdd(mReminder);
-                        } else {
-                            mReminder.setHour(mHour);
-                            mReminder.setMinutes(mMinutes);
-                            mReminder.setName(mName);
-                            mReminder.setDbId(mDbId);
-                            ((Callbacks) getActivity()).onReminderUpdate(mPosition, mReminder);
-                        }
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        // do nothing
-                    }
-                });
+                .setPositiveButton("getActivity().getString(R.string.Ok_button_text)",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                mName = reminderName.getText().toString();
+                                mHour = timePicker.getCurrentHour();
+                                mMinutes = timePicker.getCurrentMinute();
+                                if (mReminder.getHour() == -1 && mReminder.getMinutes() == -1) {
+                                    mReminder.setHour(mHour);
+                                    mReminder.setMinutes(mMinutes);
+                                    mReminder.setName(mName);
+                                    ((Callbacks) getActivity()).onReminderAdd(mReminder);
+                                } else {
+                                    mReminder.setHour(mHour);
+                                    mReminder.setMinutes(mMinutes);
+                                    mReminder.setName(mName);
+                                    mReminder.setDbId(mDbId);
+                                    ((Callbacks) getActivity()).onReminderUpdate(mPosition, mReminder);
+                                }
+                            }
+                        })
+                .setNegativeButton(getActivity().getString(R.string.cancel_button_text),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // do nothing
+                            }
+                        });
 
         // set up the widgets to get the selections from
         timePicker = (TimePicker) view.findViewById(R.id.reminder_timePicker);

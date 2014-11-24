@@ -14,11 +14,9 @@ import com.skywomantech.app.symptommanagement.data.HistoryLog;
 /**
  * This adapter displays a HistoryLog item for viewing only.
  * Depending on the log type it will display the appropriate icon.
- *
+ * <p/>
  * Pretty straightforward.
- *
  */
-
 public class HistoryLogAdapter extends ArrayAdapter<HistoryLog> {
 
     private final Context context;
@@ -34,6 +32,7 @@ public class HistoryLogAdapter extends ArrayAdapter<HistoryLog> {
             info = (TextView) view.findViewById(R.id.history_log_info);
             created = (TextView) view.findViewById(R.id.history_log_created);
         }
+
         HistoryLog log;
     }
 
@@ -68,9 +67,17 @@ public class HistoryLogAdapter extends ArrayAdapter<HistoryLog> {
         return view;
     }
 
+    /**
+     * Determines which image resource needs to be displayed with this list item
+     * depending on the history log type
+     *
+     * @param type of history log
+     * @return  image resource id
+     */
     public static synchronized int getImageResourceForLogType(HistoryLog.LogType type) {
         if (type == HistoryLog.LogType.PAIN_LOG) return R.drawable.ic_action_pain_history;
-        if (type == HistoryLog.LogType.CHECK_IN_PAIN_LOG) return R.drawable.ic_action_pain_history_ci;
+        if (type == HistoryLog.LogType.CHECK_IN_PAIN_LOG)
+            return R.drawable.ic_action_pain_history_ci;
         if (type == HistoryLog.LogType.MED_LOG) return R.drawable.ic_action_green_pill;
         if (type == HistoryLog.LogType.CHECK_IN_MED_LOG) return R.drawable.ic_action_green_pill_ci;
         if (type == HistoryLog.LogType.STATUS_LOG) return R.drawable.ic_action_brown_log;

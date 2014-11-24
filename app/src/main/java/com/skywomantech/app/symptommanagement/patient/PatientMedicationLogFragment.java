@@ -31,23 +31,32 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 /**
- * A placeholder fragment containing a simple view.
+ * This fragment displays the patient prescription list and asks if the patient has taken
+ * any of the medications
+ *
+ * It lets the main activity know when a medication log has been added
+ *
+ * Adds the check-in id to the log so we know the data is connected to a check-in and which one
+ *
  */
 public class PatientMedicationLogFragment extends Fragment {
 
     public final static String LOG_TAG = PatientMedicationLogFragment.class.getSimpleName();
     public final static String FRAGMENT_TAG = "patient_med_log_fragment";
 
-    MedicationLogListAdapter mAdapter;
-    private Collection<MedicationLog> medicationLogs;
-    MedicationLog[] mLogList;
-    private long mCheckInId = 0L;
-
-    @InjectView(R.id.patient_medication_check_list)  ListView mLogListView;
-
+    // tell the main activity that a medication log has been entered so it can do its processing
+    // if needed
     public interface Callbacks {
         public boolean onMedicationLogComplete();
     }
+
+    MedicationLogListAdapter mAdapter;
+    private Collection<MedicationLog> medicationLogs;
+    MedicationLog[] mLogList;
+    // if this occurs during a check-in this id will be set the a true check-in id
+    private long mCheckInId = 0L;
+
+    @InjectView(R.id.patient_medication_check_list)  ListView mLogListView;
 
     public PatientMedicationLogFragment() {
     }
@@ -56,8 +65,10 @@ public class PatientMedicationLogFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setRetainInstance(true);  // save the fragment state with rotations
+
+        // we want the action bar up to display on this one
         ActionBar actionBar = getActivity().getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if(actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -81,7 +92,7 @@ public class PatientMedicationLogFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        // we are leaving this screen and this always means that
+        // we are leaving this screen and this ALWAYS means that
         // there is no check-in process happening now
         LoginUtility.setCheckin(getActivity(), false);
     }
@@ -98,6 +109,12 @@ public class PatientMedicationLogFragment extends Fragment {
         mLogListView.setAdapter(mAdapter);
     }
 
+    /**
+     * creates an list of prescriptions to be used by list adapter
+     * The time taken is empty until the user inputs it
+     *
+     * @param medications
+     */
     private void createEmptyLogsList(Collection<Medication> medications) {
         Log.d(LOG_TAG,"Setting all medication logs with a Check-in id of : "
                 + Long.toString(mCheckInId));
@@ -105,17 +122,23 @@ public class PatientMedicationLogFragment extends Fragment {
         for(Medication m: medications) {
             MedicationLog ml = new MedicationLog();
             ml.setMed(m);
-            ml.setCheckinId(mCheckInId);
+            ml.setCheckinId(mCheckInId); // make sure we have a check-in id!
             medicationLogs.add(ml);
         }
         mLogList =  medicationLogs.toArray(new MedicationLog[medicationLogs.size()]);
     }
 
-    // callback for the list adapter
+    /**
+     * Main activity pushes this information to this fragment when the user has
+     * entered a time taken for the prescription
+     *
+     * @param msTime  time entered by the patient
+     * @param position where in the list of prescriptions this information goes
+     */
     public void updateMedicationLogTimeTaken(long msTime, int position) {
         mLogList[position].setTaken(msTime);
 
-        // save this one to the database
+        // save this one to the local storage
         String mPatientId = LoginUtility.getLoginId(getActivity());
         ContentValues cv = PatientCPcvHelper.createValuesObject(mPatientId, mLogList[position]);
         Log.d(LOG_TAG, "Saving this Med Log : " + mLogList[position].toString());
@@ -126,7 +149,9 @@ public class PatientMedicationLogFragment extends Fragment {
         } else {
             ((Callbacks) getActivity()).onMedicationLogComplete();
         }
+        // try to push this to the server so the doctor can view it
         SymptomManagementSyncAdapter.syncImmediately(getActivity());
+        // list update
         mAdapter.notifyDataSetChanged();
     }
 

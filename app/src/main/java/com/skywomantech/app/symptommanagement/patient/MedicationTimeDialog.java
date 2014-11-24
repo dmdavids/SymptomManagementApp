@@ -14,9 +14,14 @@ import com.skywomantech.app.symptommanagement.R;
 
 import java.util.Calendar;
 
+/**
+ * Requests the date and time a medication was taken from the user
+ * uses a time picker and date picker for this purpose
+ */
 
 public class MedicationTimeDialog extends DialogFragment {
     public final static String FRAGMENT_TAG = "patient_medication_time_dialog";
+    private final static String logPositionKey = "logPosition";
 
     public interface Callbacks {
         public void onPositiveResult(long msTime, int position);
@@ -35,29 +40,29 @@ public class MedicationTimeDialog extends DialogFragment {
     public static MedicationTimeDialog newInstance(int position) {
         MedicationTimeDialog frag = new MedicationTimeDialog();
         Bundle args = new Bundle();
-        args.putInt("logPosition", position);
+        args.putInt(logPositionKey, position);
         frag.setArguments(args);
         return frag;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mLogPosition = getArguments().getInt("logPosition");
+        mLogPosition = getArguments().getInt(logPositionKey);
         View view = LayoutInflater.from(getActivity())
                 .inflate(R.layout.dialog_medication_taken_entry, null);
         AlertDialog.Builder builder =  new AlertDialog.Builder(getActivity())
-                .setTitle("When did you take your medication?")
+                .setTitle(getActivity().getString(R.string.med_time_taken_question))
                 .setView(view)
-
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getActivity().getString(R.string.Ok_button_text),
+                        new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         msTime = convertSelectionToMilliseconds();
                         ((Callbacks) getActivity()).onPositiveResult(msTime, mLogPosition);
                     }
                 })
-
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getActivity().getString(R.string.cancel_button_text),
+                        new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         msTime = 0L;

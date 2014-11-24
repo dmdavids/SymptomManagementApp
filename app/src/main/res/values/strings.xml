@@ -73,5 +73,9 @@
     <string name="patient_welcome_message">"Welcome "</string>
     <string name="no_check_ins_today_message">You have not yet checked in today.</string>
     <string name="todays_check_ins_complete_message">Today\'s Check-Ins Complete.</string>
+    <string name="med_time_taken_question">When did you take your medication?</string>
+    <string name="image_folder_name">SymptomManagement</string>
+    <string name="media_file_date_format">yyyyMMdd_HHmmss</string>
+    <string name="reminder_configuration_title">Reminder Configuration</string>
 
 </resources>

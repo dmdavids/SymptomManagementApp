@@ -15,8 +15,16 @@ import android.widget.TextView;
 import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.data.MedicationLog;
 
+/**
+ * Manage the list items for Tracking Medications .. Asks if they medication was taken?
+ * then it gets the time taken via the main activity and finally updates the view with
+ * the entered time taken
+ */
 public class MedicationLogListAdapter extends ArrayAdapter<MedicationLog> {
 
+    /**
+     * Get the main activity to display the date and time dialog and return it here
+     */
     public interface Callbacks {
         public void onRequestDateTime(int position);
     }

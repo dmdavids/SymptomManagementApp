@@ -61,6 +61,50 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
+/**
+ * This class manages the patient graphs currently only viewed by the doctor
+ * It uses the open source library from AndroidPlot.com
+ * It is ugly but I ran out of time to clean this one up
+ *
+ * There is a whole lot of option for this graphing but I only implemented a few
+ * simple ideas.
+ *
+ * A lot of this data is determined using fuzzy logic .. where I give values to the
+ * the answers and then use them mathematically to display the graphs.
+ *
+ * I implement four graphs and I have no idea if they are useful as I did not have
+ * access to a doctor but for this project I mostly wanted to show its capability.
+ *
+ * 1- Line Plot that uses fuzzy values to calculate 3 day moving averages for pain severity
+ * level and eating ability and then plots them with a shaded region underneath.  For this
+ * graph I made the fuzzy scales for the eating ability be scaled at 50% of the
+ * ones for the pain severity levels so that it gives different heights in the chart.
+ * There is a checkbox for each series (pain vs eating) and they can be removed or added back
+ * into the graph by the user.
+ *
+ * 2- Bar chart that uses fuzzy values to graph the bars.  In this case both the severity and
+ * eating ability have the same scale so they can be compared side by side. There is a checkbox
+ * for each series (pain vs eating) and they can be removed or added back
+ * into the graph by the user.
+ *
+ * 3- Scatter plot that plots the answer value given (using the same scale again) vs the hour
+ * of day that the answer was submitted.  I would have liked to use a heat map instead but that
+ * was not easily done with android plot.  But the idea is similar in trying to find what time of
+ * day the patient might have more or less pain / worse or better eating ability. There is a
+ * checkbox for each series (pain vs eating) and they can be removed or added back
+ * into the graph by the user.
+ *
+ * 4 - Pie chart that show the percentage of answers for either pain level or eating ability
+ * The percentages are calculated from the entire log of answers but could be modified to use
+ * a variety of different periods of time.  The radio buttons allow the user to change which
+ * series of data that they want to display.
+ *
+ * I put a lot of code in here for future enhancement to allow other options for graphs that
+ * an actual doctor might find really useful.
+ *
+ * But it makes the doctor dashboard look really cool ;-}
+ *
+ */
 public class PatientGraphicsFragment extends Fragment {
 
     public final static String LOG_TAG = PatientGraphicsFragment.class.getSimpleName();

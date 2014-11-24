@@ -16,7 +16,6 @@ public class SymptomManagementSyncService extends Service {
             }
         }
     }
-
     @Override
     public IBinder onBind(Intent intent) {
         return sSyncAdapter.getSyncAdapterBinder();

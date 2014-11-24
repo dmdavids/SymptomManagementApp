@@ -42,7 +42,8 @@ public class AdminMainFragment extends Fragment {
         startActivity(new Intent(getActivity(), AdminPhysicianListActivity.class));
     }
 
-/*    @OnClick(R.id.edit_medications_button)
+/*    There is no real need for this in the admin side anymore but it could be put back in later
+    @OnClick(R.id.edit_medications_button)
     public void addEditMedications() {
         startActivity(new Intent(getActivity(), AdminMedicationListActivity.class));
     }*/

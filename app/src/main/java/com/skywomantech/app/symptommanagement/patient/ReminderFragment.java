@@ -38,11 +38,16 @@ import java.util.HashSet;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
+/**
+ * This fragment manages the reminder list screen
+ *
+ */
 public class ReminderFragment extends Fragment {
 
     public final static String LOG_TAG = ReminderFragment.class.getSimpleName();
     public final static String FRAGMENT_TAG = "reminder_fragment";
 
+    // tells the main activity that a reminder is being added
     public interface Callbacks {
         public void onRequestReminderAdd(Reminder reminder);
     }
@@ -82,6 +87,11 @@ public class ReminderFragment extends Fragment {
         inflater.inflate(R.menu.reminder_add_menu, menu);
     }
 
+    /**
+     * allows the activity to process when adding a new reminder
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
@@ -111,6 +121,11 @@ public class ReminderFragment extends Fragment {
         mReminderView.setAdapter(mAdapter);
     }
 
+    /**
+     * adds a new reminder to the local storage and then an alarm to match it
+     *
+     * @param newReminder
+     */
     public void addReminder(Reminder newReminder) {
         // add to database first
         String mPatientId = LoginUtility.getLoginId(getActivity());
@@ -136,9 +151,16 @@ public class ReminderFragment extends Fragment {
             mAdapter = new ReminderListAdapter(getActivity(), mReminders);
             mReminderView.setAdapter(mAdapter);
         }
-        SymptomManagementSyncAdapter.syncImmediately(getActivity());
+        //update the server with this new reminder information .. may be ok to wait
+        //SymptomManagementSyncAdapter.syncImmediately(getActivity());
     }
 
+    /**
+     * removes the reminder information from the local storage and then cancels the
+     * related alarm
+     *
+     * @param position
+     */
     public void deleteReminder(int position ) {
         if (mReminders[position].getDbId() >= 0) {
             String selection =
@@ -148,14 +170,15 @@ public class ReminderFragment extends Fragment {
             Log.v(LOG_TAG, "Reminder rows deleted : " + Integer.toString(rowsDeleted));
         }
         Log.d(LOG_TAG, "deleting a Reminder " + mReminders[position].getName());
-        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
+        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity())); // DEBUG
         ReminderManager.cancelSingleReminderAlarm(getActivity(), mReminders[position]);
-        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
+        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity())); //DEBUG
         reminders.remove(mReminders[position]);
         mReminders = reminders.toArray(new Reminder[reminders.size()]);
         mAdapter = new ReminderListAdapter(getActivity(), mReminders);
         mReminderView.setAdapter(mAdapter);
-        SymptomManagementSyncAdapter.syncImmediately(getActivity());
+        // update the server with this new reminder information  .. may be ok to wait until sync
+        //SymptomManagementSyncAdapter.syncImmediately(getActivity());
         mAdapter.notifyDataSetChanged();
     }
 
@@ -169,12 +192,13 @@ public class ReminderFragment extends Fragment {
         }
         // cancel and restart the alarm related to this reminder
         Log.d(LOG_TAG, "updating a Reminder " + mReminders[position].getName());
-        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
+        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity())); //DEBUG
         ReminderManager.cancelSingleReminderAlarm(getActivity(), mReminders[position]);
         ReminderManager.setSingleReminderAlarm(getActivity(), mReminders[position]);
-        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity()));
+        ReminderManager.printAlarms(getActivity(), LoginUtility.getLoginId(getActivity())); // DEBUG
 
-        SymptomManagementSyncAdapter.syncImmediately(getActivity());
+        // send update to server immediately .. may be ok to wait on this one
+        //SymptomManagementSyncAdapter.syncImmediately(getActivity());
         mAdapter.notifyDataSetChanged();
     }
 

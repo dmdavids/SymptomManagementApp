@@ -12,7 +12,13 @@ import com.skywomantech.app.symptommanagement.R;
 import com.skywomantech.app.symptommanagement.patient.PatientMainFragment;
 import com.skywomantech.app.symptommanagement.sync.SymptomManagementSyncAdapter;
 
-
+/**
+ * The admin stuff was written when I first started this app
+ * and its not a requirement.  Due to the limited amount of time
+ * I choose not to go back and fix it up because its adequate for what it
+ * needs to do at this time.
+ *
+ */
 public class AdminMain extends Activity {
 
     @Override
@@ -37,10 +43,6 @@ public class AdminMain extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-//        if (id == R.id.action_refresh) {
-//            SymptomManagementSyncAdapter.syncImmediately(this);
-//            return true;
-//        } else
         if (id == R.id.action_logout) {
             LoginActivity.restartLoginActivity(this);
         }
