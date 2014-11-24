@@ -12,11 +12,8 @@ import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.patient.Reminder.ReminderManager;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.Vector;
 
 public class PatientDataManager {
@@ -24,10 +21,10 @@ public class PatientDataManager {
     private final static String LOG_TAG = PatientDataManager.class.getSimpleName();
 
     /**
-     *  This method is important to saving patient data from the cloud to CP
-     *  Not currently saving or updating all the information ...
-     *
-     *  TODO:  but we could even if we aren't using it
+     * This method is important to saving patient data from the cloud to CP
+     * Not currently saving or updating all the information ...
+     * <p/>
+     * TODO:  but we could even if we aren't using it
      *
      * @param context
      * @param patient
@@ -190,7 +187,8 @@ public class PatientDataManager {
 
     public static synchronized UserCredential getUserCredentials(Context context, String username, String password) {
         Log.d(LOG_TAG, "Trying to get the credentials...");
-        if (username == null || username.isEmpty() || password == null ||password.isEmpty() ) return null;
+        if (username == null || username.isEmpty() || password == null || password.isEmpty())
+            return null;
         Log.d(LOG_TAG, "... Inputs are good.. now doing a query.");
         UserCredential credential = null;
         // get all the stored credentials on this device .. should not be significant number
@@ -211,10 +209,10 @@ public class PatientDataManager {
             if (credential.getUserName().toLowerCase().contentEquals(username.toLowerCase())) {
                 Log.d(LOG_TAG, "Credential User name matches.. " + credential.getUserName());
                 //if(credential.getPassword().contentEquals(password)) {
-                    //Log.d(LOG_TAG, "Password matches ... " + credential.getPassword());
-                    // TODO: remove this debug before putting out there
-                    return credential;
-               // }
+                //Log.d(LOG_TAG, "Password matches ... " + credential.getPassword());
+                // TODO: remove this debug before putting out there
+                return credential;
+                // }
             } else {
                 Log.d(LOG_TAG, "Credential Not a match for username and password.");
             }
@@ -244,7 +242,7 @@ public class PatientDataManager {
         if (patient.getCheckinLog() == null) return;
         String id = patient.getId();
         Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getCheckinLog().size());
-        for (CheckInLog p: patient.getCheckinLog()) {
+        for (CheckInLog p : patient.getCheckinLog()) {
             ContentValues cv = PatientCPcvHelper.createValuesObject(id, p);
             cVVector.add(cv);
         }
@@ -257,7 +255,7 @@ public class PatientDataManager {
         if (patient.getPainLog() == null) return;
         String id = patient.getId();
         Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getPainLog().size());
-        for (PainLog p: patient.getPainLog()) {
+        for (PainLog p : patient.getPainLog()) {
             ContentValues cv = PatientCPcvHelper.createValuesObject(id, p);
             cVVector.add(cv);
         }
@@ -270,7 +268,7 @@ public class PatientDataManager {
         if (patient.getMedLog() == null) return;
         String id = patient.getId();
         Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getMedLog().size());
-        for (MedicationLog l: patient.getMedLog()) {
+        for (MedicationLog l : patient.getMedLog()) {
             ContentValues cv = PatientCPcvHelper.createValuesObject(id, l);
             cVVector.add(cv);
         }
@@ -283,7 +281,7 @@ public class PatientDataManager {
         if (patient.getStatusLog() == null) return;
         String id = patient.getId();
         Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getStatusLog().size());
-        for (StatusLog l: patient.getStatusLog()) {
+        for (StatusLog l : patient.getStatusLog()) {
             ContentValues cv = PatientCPcvHelper.createValuesObject(id, l);
             cVVector.add(cv);
         }
@@ -330,7 +328,7 @@ public class PatientDataManager {
 
         String id = patient.getId();
         Vector<ContentValues> cVVector = new Vector<ContentValues>(patient.getPrefs().getAlerts().size());
-        for (Reminder r: patient.getPrefs().getAlerts()) {
+        for (Reminder r : patient.getPrefs().getAlerts()) {
             if (isReminderInCP(context, r)) {
                 updateSingleReminder(context, patient.getId(), r);
             } else {
@@ -338,7 +336,7 @@ public class PatientDataManager {
                 cVVector.add(cv);
             }
         }
-        if (cVVector.size() > 0 ) {
+        if (cVVector.size() > 0) {
             ContentValues[] cvArray = new ContentValues[cVVector.size()];
             cVVector.toArray(cvArray);
             context.getContentResolver().bulkInsert(PatientCPContract.ReminderEntry.CONTENT_URI, cvArray);
@@ -346,11 +344,11 @@ public class PatientDataManager {
     }
 
     public static synchronized boolean isReminderInCP(Context context, Reminder reminder) {
-        if (reminder == null || reminder.getCreated() <= 0 ) return false;
+        if (reminder == null || reminder.getCreated() <= 0) return false;
         String selection = PatientCPContract.ReminderEntry.COLUMN_CREATED + "=" + "\'"
-                +  reminder.getCreated() + "\'";
+                + reminder.getCreated() + "\'";
         Cursor cursor = context.getContentResolver()
-                .query(PatientCPContract.ReminderEntry.CONTENT_URI, null, selection, null,null);
+                .query(PatientCPContract.ReminderEntry.CONTENT_URI, null, selection, null, null);
         boolean found = (cursor.getCount() > 0) ? true : false;
         cursor.close();
         Log.d(LOG_TAG, "Does Reminder " + reminder + " exist in DB? " + Boolean.toString(found));
@@ -358,20 +356,20 @@ public class PatientDataManager {
     }
 
     public static synchronized int howManyRemindersOnDevice(Context context, String id) {
-        if (id == null || id.isEmpty() ) return -1; // invalid id
+        if (id == null || id.isEmpty()) return -1; // invalid id
         String selection = PatientCPContract.ReminderEntry.COLUMN_PATIENT_ID
-                             + "=" + "\'"  +  id + "\'";
+                + "=" + "\'" + id + "\'";
         Cursor cursor = context.getContentResolver()
-                .query(PatientCPContract.ReminderEntry.CONTENT_URI, null, selection, null,null);
+                .query(PatientCPContract.ReminderEntry.CONTENT_URI, null, selection, null, null);
         int found = cursor.getCount();
         cursor.close();
-        Log.d(LOG_TAG, "How Many Reminders  exist in DB for this patient [" + id +"]? "
+        Log.d(LOG_TAG, "How Many Reminders  exist in DB for this patient [" + id + "]? "
                 + Integer.toString(found));
         return found;
     }
 
     public static synchronized int updateSingleReminder(Context context, String id, Reminder reminder) {
-        if (id == null || id.isEmpty() || reminder == null ) return 0;
+        if (id == null || id.isEmpty() || reminder == null) return 0;
         Log.d(LOG_TAG, "Updating a single REMINDER for this patient." + id
                 + " reminder name is " + reminder.getName());
         int rowsUpdated = 0;
@@ -379,7 +377,7 @@ public class PatientDataManager {
             ContentValues cv = PatientCPcvHelper.createValuesObject(id, reminder);
             String selection =
                     PatientCPContract.ReminderEntry.COLUMN_CREATED + "=" + Long.toString(reminder.getCreated());
-             rowsUpdated = context.getContentResolver()
+            rowsUpdated = context.getContentResolver()
                     .update(PatientCPContract.ReminderEntry.CONTENT_URI, cv, selection, null);
             Log.v(LOG_TAG, "Reminder rows updated : " + Integer.toString(rowsUpdated));
         }
@@ -407,7 +405,7 @@ public class PatientDataManager {
 
     /**
      * Take the prescriptions from the cloud patient, remove the ones from the local patient
-     * and put the new ones in the CP.. just in case the doctor updated them.
+     * and put the new ones in the CP.. just in case the doctor deleted any of them.
      * <p/>
      *
      * @param prescriptions
@@ -416,11 +414,12 @@ public class PatientDataManager {
         if (prescriptions == null) return;
 
         String mPatientId = LoginUtility.getLoginId(context);
-        Log.d(LOG_TAG, "SYNC is Updating Prescriptions for patient : "  + mPatientId);
-//        // delete all of the patient's prescriptions DON'T NEED ANYMORE WITH UPDATE TABLES
-//        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
-//        int deleted = mContext.getContentResolver().delete(PrescriptionEntry.CONTENT_URI, selection, null);
-//        Log.d(LOG_TAG, "Deleted prescription count is :" + Integer.toString(deleted));
+        Log.d(LOG_TAG, "SYNC is Updating Prescriptions for patient : " + mPatientId);
+        // delete all of the patient's prescriptions because doctor can delete them
+        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + mPatientId + "\'";
+        int deleted = context.getContentResolver()
+                .delete(PatientCPContract.PrescriptionEntry.CONTENT_URI, selection, null);
+        Log.d(LOG_TAG, "Deleted prescription count is :" + Integer.toString(deleted));
         //insert all of the prescriptions at once
         Vector<ContentValues> cVVector = new Vector<ContentValues>(prescriptions.size());
         for (Medication m : prescriptions) {
@@ -436,7 +435,7 @@ public class PatientDataManager {
 
     public static synchronized Collection<Medication> getPrescriptionsFromCP(Context context, String id) {
 
-        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'"  + id+ "\'";
+        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + id + "\'";
         Cursor cursor = context.getContentResolver()
                 .query(PatientCPContract.PrescriptionEntry.CONTENT_URI, null, selection, null, null);
         Collection<Medication> prescriptions = new HashSet<Medication>();
@@ -471,9 +470,9 @@ public class PatientDataManager {
         Log.d(LOG_TAG, "Is this Patient in the local database? " + id);
         Patient patient = new Patient();
         patient.setId(id); // cloud id
-        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'"  + id + "\'";
+        String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'" + id + "\'";
         Cursor cursor = context.getContentResolver()
-                .query(PatientCPContract.PatientEntry.CONTENT_URI, null, selection, null,null);
+                .query(PatientCPContract.PatientEntry.CONTENT_URI, null, selection, null, null);
         if (cursor.getCount() > 1) {
             Log.d(LOG_TAG, "There are multiple entries for the same DB patient! " +
                     "This really should not occur! id : " + id);
@@ -521,9 +520,9 @@ public class PatientDataManager {
     public static synchronized boolean isPatientInCP(Context context, Patient patient) {
         if (patient == null || patient.getId() == null || patient.getId().isEmpty()) return false;
         String selection = PatientCPContract.PatientEntry.COLUMN_PATIENT_ID + "=" + "\'"
-                +  patient.getId() + "\'";
+                + patient.getId() + "\'";
         Cursor cursor = context.getContentResolver()
-                .query(PatientCPContract.PatientEntry.CONTENT_URI, null, selection, null,null);
+                .query(PatientCPContract.PatientEntry.CONTENT_URI, null, selection, null, null);
         boolean found = (cursor.getCount() > 0) ? true : false;
         cursor.close();
         Log.d(LOG_TAG, "Does Patient " + patient + " exist in DB? " + Boolean.toString(found));
@@ -552,7 +551,7 @@ public class PatientDataManager {
                 .update(PatientCPContract.PatientEntry.CONTENT_URI, cvPatient, selection, null);
         Log.d(LOG_TAG, "Update Patient to local DB was "
                 + (updated > 0 ? "SUCCESSFUL" : " UNSUCCESSFUL"));
-        if ( updated <= 0) {
+        if (updated <= 0) {
             Log.d(LOG_TAG, "Trying to insert it instead because this table should REPLACE on conflict.");
             insertPatientToCP(context, patient);
         }
