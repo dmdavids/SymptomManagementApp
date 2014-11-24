@@ -60,7 +60,7 @@ public class ReminderAddEditDialog extends DialogFragment {
         AlertDialog.Builder builder =  new AlertDialog.Builder(getActivity())
                 .setTitle(getActivity().getString(R.string.reminder_configuration_title))
                 .setView(view)
-                .setPositiveButton("getActivity().getString(R.string.Ok_button_text)",
+                .setPositiveButton(getActivity().getString(R.string.Ok_button_text),
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
