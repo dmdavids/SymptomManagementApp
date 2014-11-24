@@ -56,7 +56,7 @@ public class HistoryLogFragment extends ListFragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             Boolean found = getArguments().getBoolean(BACKUP_KEY);
-            if (found != null) allowBackup = found;
+            if (found) allowBackup = found;
         } else allowBackup = false;
         ActionBar actionBar = getActivity().getActionBar();
         if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(allowBackup);

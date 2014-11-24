@@ -26,7 +26,7 @@ public class AdminMain extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_main);
         ActionBar actionBar = getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(false);
+        if(actionBar != null) actionBar.setDisplayHomeAsUpEnabled(false);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
                     .add(R.id.admin_main_container, new AdminMainFragment())

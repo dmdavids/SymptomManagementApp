@@ -68,7 +68,7 @@ public class ReminderFragment extends Fragment {
         setHasOptionsMenu(true);
         this.setRetainInstance(true);  // save the fragment state with rotations
         ActionBar actionBar = getActivity().getActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override

@@ -212,8 +212,10 @@ public class PatientManager {
                     Patient patient = null;
                     if (result == null || result.size() <= 0) {
                         ((Callbacks) activity).failedSearch("No patients match that name.");
+                        return;
                     }
-                    for (Patient p : result) {
+                    Collection<Patient> tempList = result;
+                    for (Patient p : tempList) {
                         Log.d(LOG_TAG, "Found at least one match using the first one");
                         patient = p;
                     }

@@ -382,6 +382,7 @@ public abstract class PhysicianActivity
     public void onItemSelected(String physicianId, Patient patient) {
         if (patient == null || physicianId == null) {
             Log.d(LOG_TAG, "Invalid item selected.");
+            return;
         }
         mPatientId = patient.getId();
         PatientManager.getPatient(this, mPatientId);

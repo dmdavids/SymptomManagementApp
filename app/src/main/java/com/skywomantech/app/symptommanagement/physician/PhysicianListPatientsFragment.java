@@ -143,11 +143,11 @@ public class PhysicianListPatientsFragment extends ListFragment {
         // use the current patient list and add one to it
         if (mTempList != null && patient != null) {
             mTempList.add(patient);
+            mPatientList = mTempList.toArray(new Patient[mTempList.size()]);
         }
-        mPatientList = mTempList.toArray(new Patient[mTempList.size()]);
         setListAdapter(new PatientListAdapter(getActivity(), mPatientList));
         // scroll to the current position in the list
-        if( mPatientList != null && mTempList.size() > 0) {
+        if( mPatientList != null && mTempList != null && mTempList.size() > 0) {
             mActivatedPosition = mTempList.size() - 1;
         }
         if (mActivatedPosition != ListView.INVALID_POSITION) {

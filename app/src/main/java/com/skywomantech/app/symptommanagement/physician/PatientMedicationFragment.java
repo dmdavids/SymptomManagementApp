@@ -130,6 +130,7 @@ public class PatientMedicationFragment extends ListFragment {
     private void displayPrescriptions(Patient patient) {
         if (patient == null) {
             Log.e(LOG_TAG, "Trying to display prescriptions for null patient.");
+            return;
         }
         Log.d(LOG_TAG, "We are updating the display list for Prescriptions.");
         if (patient.getPrescriptions() == null)
