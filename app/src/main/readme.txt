@@ -16,6 +16,9 @@ Retrofit by Square (http://square.github.io/retrofit/)
 Copyright 2013 Square, Inc.
 Licensed under the Apache License, Version 2.0 (the "License")
 
+Coursera MOOC Coursework and examples
+
+
 ICON CREDITS
 ===================================================
 
