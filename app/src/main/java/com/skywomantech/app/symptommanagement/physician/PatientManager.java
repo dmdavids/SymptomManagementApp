@@ -264,9 +264,12 @@ public class PatientManager {
                 h.setType(hType);
                 String severity = (p.getSeverity() == PainLog.Severity.SEVERE) ? "SEVERE"
                         : (p.getSeverity() == PainLog.Severity.MODERATE) ? "Moderate"
-                        : "Well-Defined";
+                        : (p.getSeverity() == PainLog.Severity.WELL_CONTROLLED) ? "Well-Controlled"
+                        : "No Answer";
                 String eating = (p.getEating() == PainLog.Eating.NOT_EATING) ? "NOT EATING"
-                        : (p.getEating() == PainLog.Eating.SOME_EATING) ? "Some Eating" : "Eating";
+                        : (p.getEating() == PainLog.Eating.SOME_EATING) ? "Some Eating"
+                        : (p.getEating() == PainLog.Eating.SOME_EATING) ? "Eating"
+                        : "No Answer";
                 String info = "Pain : " + severity + " -- " + eating;
                 h.setInfo(info);
                 sortedLogs.add(h);

@@ -32,7 +32,7 @@ Icons made by Freepik from www.flaticon.com
 is licensed by
 <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0">CC BY 3.0</a></div>
 
-Fatcows icons (http://www.fatcow.com/free-icons)
+Fatcow icons (http://www.fatcow.com/free-icons)
 Terms of Use : These icon sets are licensed under a Creative Commons Attribution 3.0 License.
 This means you can freely use these icons for any purpose, private and commercial,
 including online services, templates, themes and software.
