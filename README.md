@@ -25,10 +25,18 @@ care.<br></p>
 <p>
  <a href="doc/Final SMA Design Document.pdf">Final Functional Requirements Design Document</a>
 <br></p>
+
 <p> <a href="doc/symptom management final 11-30.mp4">Final Video with App Usage</a>
 <br></p>
+
+<p> Example of Patient Screens</p>
 <p><img border="0" src="images/checkin 1.png" width="50%" height="50%"><br></p>
-<p><img border="0" src="images/dr dashboard nexus sever patient.png" width="80%" height="80%"><br></p>
 <p><img border="0" src="images/patient history log.png" width="50%" height="50%"><br></p>
+<p><img border="0" src="images/patient meds list phone.png" width="50%" height="50%"><br></p>
+<p> Example of Doctor Screens</p>
+<p><img border="0" src="images/dr dashboard nexus sever patient.png" width="80%" height="80%"><br></p>
+<p><img border="0" src="images/dr dashboard pie chart nexus.png" width="50%" height="50%"><br></p>
+<p> Example of Administrator Screens</p>
+
 
 
