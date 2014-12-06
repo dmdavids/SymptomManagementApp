@@ -1,10 +1,12 @@
-SymptomManagementApp
-====================
-
+Symptom Management App
+======================
+<p>
 <img border="0" alt="Symptom Management App Icon" src="images/red_border_white_pain_log.png" width="50" height="50">
-<br>
+<br></p>
+<p>
 This is the Android app for the Coursera Mobile Cloud Computing with Android Capstone project.
-<br>
+<br></p>
+<p>
 Project Description:
 Over half of head and neck cancer patients will receive chemotherapy and radiation
 therapy for 6-7 weeks. During this time, symptoms can flare suddenly. The worst
@@ -19,14 +21,14 @@ symptoms sub-optimally managed for days.
 “Symptom Management” is a smartphone-based application which provides a more
 reliable method to assess symptoms in near real-time. It provides patients a simple way
 to work with their healthcare providers to improve management of pain and quality of
-care.<br>
-
+care.<br></p>
+<p>
  <a href="doc/Final SMA Design Document.pdf">Final Functional Requirements Design Document</a>
-<br>
- <a href="doc/symptom management final 11-30.mp4">Final Video with App Usage</a>
- <br>
-<img border="0" src="images/checkin 1.png" width="50%" height="50%"><br>
-<img border="0" src="images/dr dashboard nexus sever patient.png" width="50%" height="50%"><br>
-<img border="0" src="images/patient history log.png" width="50%" height="50%"><br>
+<br></p>
+<p> <a href="doc/symptom management final 11-30.mp4">Final Video with App Usage</a>
+<br></p>
+<p><img border="0" src="images/checkin 1.png" width="50%" height="50%"><br></p>
+<p><img border="0" src="images/dr dashboard nexus sever patient.png" width="50%" height="50%"><br></p>
+<p><img border="0" src="images/patient history log.png" width="50%" height="50%"><br></p>
 
 
