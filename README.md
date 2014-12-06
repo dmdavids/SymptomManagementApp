@@ -28,7 +28,7 @@ care.<br></p>
 <p> <a href="doc/symptom management final 11-30.mp4">Final Video with App Usage</a>
 <br></p>
 <p><img border="0" src="images/checkin 1.png" width="50%" height="50%"><br></p>
-<p><img border="0" src="images/dr dashboard nexus sever patient.png" width="50%" height="50%"><br></p>
+<p><img border="0" src="images/dr dashboard nexus sever patient.png" width="80%" height="80%"><br></p>
 <p><img border="0" src="images/patient history log.png" width="50%" height="50%"><br></p>
 
 
