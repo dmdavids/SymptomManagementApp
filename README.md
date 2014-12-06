@@ -37,6 +37,7 @@ care.<br></p>
 <p><img border="0" src="images/dr dashboard nexus sever patient.png" width="80%" height="80%"><br></p>
 <p><img border="0" src="images/dr dashboard pie chart nexus.png"width="80%" height="80%"><br></p>
 <p> Example of Administrator Screens</p>
-
-
+<p><img border="0" src="images/admin add patient nexus.png" width="40%" height="40%"><br></p>
+<p><img border="0" src="images/admin patient edit phone.png" width="40%" height="40%"><br></p>
+<p><img border="0" src="images/admin patient list phone.png" width="40%" height="40%"><br></p>
 
