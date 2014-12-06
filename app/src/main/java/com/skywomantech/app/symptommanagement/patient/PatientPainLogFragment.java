@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.skywomantech.app.symptommanagement.LoginUtility;
 import com.skywomantech.app.symptommanagement.R;
@@ -109,6 +110,16 @@ public class PatientPainLogFragment extends Fragment {
      */
     @OnClick(R.id.pain_log_done_button)
     public void savePainLog() {
+
+        // force patient to answer both questions
+        if (mLog.getSeverity() == PainLog.Severity.NOT_DEFINED
+                || mLog.getEating() == PainLog.Eating.NOT_DEFINED ) {
+            Toast.makeText(
+                    getActivity(),
+                    "Please answer both questions.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         // save Pain Log to the CP
         mPatientId = LoginUtility.getLoginId(getActivity());
         // associate pain log with a checkin
