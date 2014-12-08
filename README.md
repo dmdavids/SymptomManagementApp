@@ -25,10 +25,10 @@ to work with their healthcare providers to improve management of pain and qualit
 care.<br></p>
 ======================
 <p>
- <a href="doc/Final SMA Design Document.pdf">Final Functional Requirements Design Document</a>
+ <a href="doc/Final SMA Design Document.pdf">Final Functional Requirements Design Document (Detailed PDF)</a>
 <br></p>
 ======================
-<p> <a href="doc/symptom management final 11-30.mp4">Final Video with App Usage</a>
+<p> <a href="doc/symptom management final 11-30.mp4">Final Video with App Usage - You may want to listed at 2X speed. ;-}</a>
 <br></p>
 ======================
 <p><strong> Example of Patient Screens</strong> </p>
