@@ -6,7 +6,7 @@ Symptom Management App
 <p>
 This is the Android app for the Capstone project course in the Coursera Mobile Cloud Computing with Android (MoCCA) Specialization, which is the first Capstone course offered on the Coursera platform.  The Capstone started the week of Oct 5th, 2014 with the final submission due November 30th, 2014.</p>
 <p>The deliverables included this app along with a Java Spring Server.  The server source for this project can be found at : </p>
-<p>https://github.com/dmdavids/SMServer.</p>
+<p>https://github.com/dmdavids/SMServer</p>
 <p>
 The Capstone MOOC gives Signature Track students who passed all previous MOOCs in the MoCCA Specialization “with Distinction” an opportunity to integrate and demonstrate the knowledge they acquired across the three earlier content area MOOCs. Participation in this Capstone course was by invitation only.
 </p>
