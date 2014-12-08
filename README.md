@@ -4,11 +4,23 @@ Symptom Management App
 <img border="0" alt="Symptom Management App Icon" src="images/red_border_white_pain_log.png" width="50" height="50">
 <br></p>
 <p>
-This is the Android app for the Coursera Mobile Cloud Computing with Android Capstone project.
+This is the Android app for the Capstone project course in the Coursera Mobile Cloud Computing with Android (MoCCA) Specialization, which is the first Capstone course offered on the Coursera platform.  The Capstone started the week of Oct 5th, 2014 with the final submission due November 30th, 2014.</p>
+<p>The deliverables included this app along with a Java Spring Server.  The server source for this project can be found at : </p>
+<p>https://github.com/dmdavids/SMServer.</p>
+<p>
+The Capstone MOOC gives Signature Track students who passed all previous MOOCs in the MoCCA Specialization “with Distinction” an opportunity to integrate and demonstrate the knowledge they acquired across the three earlier content area MOOCs. Participation in this Capstone course was by invitation only.
+</p>
+<p>https://www.coursera.org/specialization/mobilecloudcomputing/2?utm_medium=courseDescripLabel</p>
+<p>
+Course 1 Programming Mobile Applications for Android Handheld Systems</p>
+<p>
+Course 2 Pattern-Oriented Software Architectures: Programming Mobile Services for Android Handheld Systems</p>
+<p>
+Course 3 Programming Cloud Services for Android Handheld Systems
 <br></p>
 ======================
 <p>
-Project Description:
+<strong>Project Description:</strong>
 Over half of head and neck cancer patients will receive chemotherapy and radiation
 therapy for 6-7 weeks. During this time, symptoms can flare suddenly. The worst
 symptom for patients is radiation-induced oral pain and sore throat. Between the 2nd
@@ -28,9 +40,10 @@ care.<br></p>
  <a href="doc/Final SMA Design Document.pdf">Final Functional Requirements Design Document (Detailed PDF)</a>
 <br></p>
 ======================
-<p> <a href="doc/symptom management final 11-30.mp4">Final Video with App Usage - You may want to listed at 2X speed. ;-}</a>
+<p> <a href="doc/symptom management final 11-30.mp4">Final Video with App Usage - I suggest > 1X listening speed. ;-}</a>
 <br></p>
 ======================
+<p><strong>Below are examples of screens from the app.  Please see the <a href="doc/Final SMA Design Document.pdf">Final Functional Requirements Design Document</a> for more screen images.</strong></p>
 <p><strong> Example of Patient Screens</strong> </p>
 <p><img border="0" src="images/checkin 1.png" width="40%" height="40%"><br></p>
 <p><img border="0" src="images/patient history log.png" width="40%" height="40%"><br></p>
