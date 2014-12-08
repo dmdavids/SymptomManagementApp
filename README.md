@@ -40,7 +40,7 @@ care.<br></p>
  <a href="doc/Final SMA Design Document.pdf">Final Functional Requirements Design Document (Detailed PDF)</a>
 <br></p>
 ======================
-<p> <a href="doc/symptom management final 11-30.mp4">Final Video with App Usage - I suggest > 1X listening speed. ;-}</a>
+<p> <a href="doc/symptom management final 11-30.mp4">Final Video with App Usage - Suggested listening speed >1X best at 2X ;-}</a>
 <br></p>
 ======================
 <p><strong>Below are examples of screens from the app.  Please see the <a href="doc/Final SMA Design Document.pdf">Final Functional Requirements Design Document</a> for more screen images.</strong></p>
