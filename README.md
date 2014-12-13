@@ -60,6 +60,11 @@ care.<br></p>
 <p><img border="0" src="images/admin patient edit phone.png" width="40%" height="40%"><br></p>
 <p><img border="0" src="images/admin patient list phone.png" width="40%" height="40%"><br></p>
 ======================
+FEEDBACK FROM PEER REVIEWS
+<p><img border="0" src="images/ReviewsImage.PNG" width="40%" height="40%"><br></p>
+<p> <a href="doc/FEEDBACK.pdf">PDF print of Peer Review Evaluation 12-13-2014</a>
+<br></p>
+======================
 
 LICENSE
 
