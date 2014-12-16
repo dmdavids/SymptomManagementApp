@@ -13,11 +13,11 @@ The Capstone MOOC gives Signature Track students who passed all previous MOOCs i
 </p>
 <p>https://www.coursera.org/specialization/mobilecloudcomputing/2?utm_medium=courseDescripLabel</p>
 <p>
-Course 1 Programming Mobile Applications for Android Handheld Systems (5200 met the "distinction" criteria.)</p>
+Course 1 Programming Mobile Applications for Android Handheld Systems (5200 students met the "distinction" criteria.)</p>
 <p>
-Course 2 Pattern-Oriented Software Architectures: Programming Mobile Services for Android Handheld Systems (3,600 users met the "distinction" criteria.)</p>
+Course 2 Pattern-Oriented Software Architectures: Programming Mobile Services for Android Handheld Systems (3,600 students met the "distinction" criteria.)</p>
 <p>
-Course 3 Programming Cloud Services for Android Handheld Systems
+Course 3 Programming Cloud Services for Android Handheld Systems (no statistics given)
 </p>
 <p><strong>Statistics related to the Symptom Management project.</strong></p>
 <p>
