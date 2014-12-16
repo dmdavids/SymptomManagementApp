@@ -19,7 +19,7 @@ Course 2 Pattern-Oriented Software Architectures: Programming Mobile Services fo
 <p>
 Course 3 Programming Cloud Services for Android Handheld Systems
 </p>
-Note: Statistics related to the Symptom Management project.</p>
+<p><strong>Statistics related to the Symptom Management project.</strong></p>
 <p>
 364 students created a mid-term design for the Symptom Management project. </p>
 <p>
