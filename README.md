@@ -5,6 +5,7 @@ Symptom Management App
 <br></p>
 <p>
 This is the Android app for the Capstone project course in the Coursera Mobile Cloud Computing with Android (MoCCA) Specialization, which is the first Capstone course offered on the Coursera platform.  The Capstone started the week of Oct 5th, 2014 with the final submission due November 30th, 2014.</p>
+<p> Final peer review evaluation for this specific project was 100% or 44/44 points.</p>
 <p>The deliverables included this app along with a Java Spring Server.  The server source for this project can be found at : </p>
 <p>https://github.com/dmdavids/SymptomManagementServer</p>
 <p>
@@ -12,13 +13,21 @@ The Capstone MOOC gives Signature Track students who passed all previous MOOCs i
 </p>
 <p>https://www.coursera.org/specialization/mobilecloudcomputing/2?utm_medium=courseDescripLabel</p>
 <p>
-Course 1 Programming Mobile Applications for Android Handheld Systems</p>
+Course 1 Programming Mobile Applications for Android Handheld Systems (5200 met the "distinction" criteria.)</p>
 <p>
-Course 2 Pattern-Oriented Software Architectures: Programming Mobile Services for Android Handheld Systems</p>
+Course 2 Pattern-Oriented Software Architectures: Programming Mobile Services for Android Handheld Systems (3,600 users met the "distinction" criteria.)</p>
 <p>
 Course 3 Programming Cloud Services for Android Handheld Systems
-<br></p>
-======================
+</p>
+Note: Statistics related to the Symptom Management project.</p>
+<p>
+364 students created a mid-term design for the Symptom Management project. </p>
+<p>
+57% of these submitted a final Symptom Management project or ~208 students. Compared to 63% and 75% for other projects.</p>
+<p>
+90 students or about 25% received 44/44 for the peer review evaluation grade.</p>
+<br><p>
+==============================================================================</p>
 <p>
 <strong>Project Description:</strong>
 Over half of head and neck cancer patients will receive chemotherapy and radiation
