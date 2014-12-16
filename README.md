@@ -26,10 +26,8 @@ Note: Statistics related to the Symptom Management project.</p>
 57% of these submitted a final Symptom Management project or ~208 students. Compared to 63% and 75% for other projects.</p>
 <p>
 90 students or about 25% received 44/44 for the peer review evaluation grade.</p>
-<br><p>
-==============================================================================</p>
-<p>
-<strong>Project Description:</strong>
+==============================================================================
+<p><strong>Project Description:</strong>
 Over half of head and neck cancer patients will receive chemotherapy and radiation
 therapy for 6-7 weeks. During this time, symptoms can flare suddenly. The worst
 symptom for patients is radiation-induced oral pain and sore throat. Between the 2nd
@@ -42,8 +40,7 @@ symptoms, but patient recall is notoriously unreliable, and weekly visits can le
 symptoms sub-optimally managed for days.
 “Symptom Management” is a smartphone-based application which provides a more
 reliable method to assess symptoms in near real-time. It provides patients a simple way
-to work with their healthcare providers to improve management of pain and quality of
-care.<br></p>
+to work with their healthcare providers to improve management of pain and quality of care.</p>
 ======================
 <p>
  <a href="doc/Final SMA Design Document.pdf">Final Functional Requirements Design Document (Detailed PDF)</a>
