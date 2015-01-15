@@ -4,10 +4,9 @@ Symptom Management App
 <img border="0" alt="Symptom Management App Icon" src="images/red_border_white_pain_log.png" width="50" height="50">
 <br></p>
 <p><strong>I am very excited to announce that my app was one of the 30 Top-Reviewed Apps or 'Best of the Best Apps' in the Mobile Cloud Computing Capstone! (Notified January 14, 2015)</strong></p>
-<p>According the <a href="https://github.com/douglascraigschmidt/MoCCA-Capstone/wiki/MoCCA-Capstone-FAQ">FAQ (#36)</a> The top 30 apps will consist of the top 10 apps from each project (Potlatch, Mutibo, and Symptoms Management).</p>
+<p>According the <a href="https://github.com/douglascraigschmidt/MoCCA-Capstone/wiki/MoCCA-Capstone-FAQ">FAQ (#36)</a> <emphasis>"The top 30 apps will consist of the top 10 apps from each project (Potlatch, Mutibo, and Symptoms Management)."</emphasis>  I estimate that approximately 200 apps from participants all over the world were created in the Symptom Management capstone project.  I am very honored and grateful that my peers voted my app as one of the top 10.</p>
 <p>
 This is the Android app for the Capstone project course in the Coursera Mobile Cloud Computing with Android (MoCCA) Specialization, which is the first Capstone course offered on the Coursera platform.  The Capstone started the week of Oct 5th, 2014 with the final submission due November 30th, 2014.</p>
-
 
 <p> Final peer review evaluation for this specific project was 100% or 44/44 points.</p>
 <p>The deliverables included this app along with a Java Spring Server.  The server source for this project can be found at : </p>
