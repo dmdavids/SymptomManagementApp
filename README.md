@@ -5,6 +5,9 @@ Symptom Management App
 <br></p>
 <p>
 This is the Android app for the Capstone project course in the Coursera Mobile Cloud Computing with Android (MoCCA) Specialization, which is the first Capstone course offered on the Coursera platform.  The Capstone started the week of Oct 5th, 2014 with the final submission due November 30th, 2014.</p>
+<p><strong>I am very excited to announce that my app was one of the 30 Top-Reviewed Apps in the Mobile Cloud Computing Capstone! (Notified January 14, 2015)</strong></p>
+<p>According the <a href="https://github.com/douglascraigschmidt/MoCCA-Capstone/wiki/MoCCA-Capstone-FAQ">FAQ (#36)</a> The top 30 apps will consist of the top 10 apps from each project (Potlatch, Mutibo, and Symptoms Management).</p>
+
 <p> Final peer review evaluation for this specific project was 100% or 44/44 points.</p>
 <p>The deliverables included this app along with a Java Spring Server.  The server source for this project can be found at : </p>
 <p>https://github.com/dmdavids/SymptomManagementServer</p>
@@ -26,6 +29,9 @@ Course 3 Programming Cloud Services for Android Handheld Systems (no statistics 
 57% of these submitted a final Symptom Management project or ~208 students. Compared to 63% and 75% for other projects.</p>
 <p>
 90 students or about 25% received 44/44 for the peer review evaluation grade.</p>
+<p>
+10 students were voted as developing the "Best of the Best Apps" <strong>This app was voted in the Best of the Best Apps!!</strong>
+</p>
 ==============================================================================
 <p><strong>Project Description:</strong>
 Over half of head and neck cancer patients will receive chemotherapy and radiation
