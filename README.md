@@ -3,24 +3,37 @@ Symptom Management App
 <p>
 <img border="0" alt="Symptom Management App Icon" src="images/red_border_white_pain_log.png" width="50" height="50">
 <br></p>
+<p><strong>I am very excited to announce that my app was one of the 30 Top-Reviewed Apps or 'Best of the Best Apps' in the Coursera Mobile Cloud Computing Capstone! (Notified January 14, 2015)</strong></p>
+<p>According the <a href="https://github.com/douglascraigschmidt/MoCCA-Capstone/wiki/MoCCA-Capstone-FAQ">FAQ (#36)</a> <emphasis>"The top 30 apps will consist of the top 10 apps from each project (Potlatch, Mutibo, and Symptoms Management)."</emphasis>  I estimate that approximately 200 apps from participants all over the world were created in the Symptom Management project for this capstone.  I am very honored and grateful that my peers voted my app as one of the top 10.</p>
 <p>
 This is the Android app for the Capstone project course in the Coursera Mobile Cloud Computing with Android (MoCCA) Specialization, which is the first Capstone course offered on the Coursera platform.  The Capstone started the week of Oct 5th, 2014 with the final submission due November 30th, 2014.</p>
+
+<p> Final peer review evaluation for this specific project was 100% or 44/44 points.</p>
 <p>The deliverables included this app along with a Java Spring Server.  The server source for this project can be found at : </p>
-<p>https://github.com/dmdavids/SMServer</p>
+<p>https://github.com/dmdavids/SymptomManagementServer</p>
 <p>
 The Capstone MOOC gives Signature Track students who passed all previous MOOCs in the MoCCA Specialization “with Distinction” an opportunity to integrate and demonstrate the knowledge they acquired across the three earlier content area MOOCs. Participation in this Capstone course was by invitation only.
 </p>
 <p>https://www.coursera.org/specialization/mobilecloudcomputing/2?utm_medium=courseDescripLabel</p>
 <p>
-Course 1 Programming Mobile Applications for Android Handheld Systems</p>
+Course 1 Programming Mobile Applications for Android Handheld Systems (5200 students met the "distinction" criteria.)</p>
 <p>
-Course 2 Pattern-Oriented Software Architectures: Programming Mobile Services for Android Handheld Systems</p>
+Course 2 Pattern-Oriented Software Architectures: Programming Mobile Services for Android Handheld Systems (3,600 students met the "distinction" criteria.)</p>
 <p>
-Course 3 Programming Cloud Services for Android Handheld Systems
-<br></p>
-======================
+Course 3 Programming Cloud Services for Android Handheld Systems (no statistics given)
+</p>
+<p><strong>Statistics related to the Symptom Management project.</strong></p>
 <p>
-<strong>Project Description:</strong>
+364 students created a mid-term design for the Symptom Management project. </p>
+<p>
+57% of these submitted a final Symptom Management project or ~208 students. Compared to 63% and 75% for other projects.</p>
+<p>
+90 students or about 25% received 44/44 for the peer review evaluation grade.</p>
+<p>
+10 students were voted as developing the "Best of the Best Apps" <strong>This app was voted in the Best of the Best Apps!!</strong>
+</p>
+==============================================================================
+<p><strong>Project Description:</strong>
 Over half of head and neck cancer patients will receive chemotherapy and radiation
 therapy for 6-7 weeks. During this time, symptoms can flare suddenly. The worst
 symptom for patients is radiation-induced oral pain and sore throat. Between the 2nd
@@ -33,8 +46,7 @@ symptoms, but patient recall is notoriously unreliable, and weekly visits can le
 symptoms sub-optimally managed for days.
 “Symptom Management” is a smartphone-based application which provides a more
 reliable method to assess symptoms in near real-time. It provides patients a simple way
-to work with their healthcare providers to improve management of pain and quality of
-care.<br></p>
+to work with their healthcare providers to improve management of pain and quality of care.</p>
 ======================
 <p>
  <a href="doc/Final SMA Design Document.pdf">Final Functional Requirements Design Document (Detailed PDF)</a>
