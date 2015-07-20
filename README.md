@@ -12,7 +12,7 @@ This is the Android app for the Capstone project course in the Coursera Mobile C
 <p>
 The Capstone MOOC gives Signature Track students who passed all previous MOOCs in the MoCCA Specialization “with Distinction” an opportunity to integrate and demonstrate the knowledge they acquired across the three earlier content area MOOCs. 
 </p>
-Interesting Statistics from the MOOC:
+
 <p>https://www.coursera.org/specialization/mobilecloudcomputing/2?utm_medium=courseDescripLabel</p>
 <p>
 Course 1 Programming Mobile Applications for Android Handheld Systems (5200 students met the "distinction" criteria.)</p>
@@ -21,7 +21,7 @@ Course 2 Pattern-Oriented Software Architectures: Programming Mobile Services fo
 <p>
 Course 3 Programming Cloud Services for Android Handheld Systems (no statistics given)
 </p>
-<p><strong>Statistics related to the Symptom Management project.</strong></p>
+<p>Intersting Statistics related to the Symptom Management project.</p>
 <p>
 364 students created a mid-term design for the Symptom Management project. </p>
 <p>
