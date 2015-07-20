@@ -3,17 +3,16 @@ Symptom Management App
 <p>
 <img border="0" alt="Symptom Management App Icon" src="images/red_border_white_pain_log.png" width="50" height="50">
 <br></p>
-<p><strong>I am very excited to announce that my app was one of the 30 Top-Reviewed Apps or 'Best of the Best Apps' in the Coursera Mobile Cloud Computing Capstone! (Notified January 14, 2015)</strong></p>
-<p>According the <a href="https://github.com/douglascraigschmidt/MoCCA-Capstone/wiki/MoCCA-Capstone-FAQ">FAQ (#36)</a> <emphasis>"The top 30 apps will consist of the top 10 apps from each project (Potlatch, Mutibo, and Symptoms Management)."</emphasis>  I estimate that approximately 200 apps from participants all over the world were created in the Symptom Management project for this capstone.  I am very honored and grateful that my peers voted my app as one of the top 10.</p>
+<p>I am very honored and grateful that my peers voted my app as one of the top apps in this Specialization. Thank you.</p>
 <p>
 This is the Android app for the Capstone project course in the Coursera Mobile Cloud Computing with Android (MoCCA) Specialization, which is the first Capstone course offered on the Coursera platform.  The Capstone started the week of Oct 5th, 2014 with the final submission due November 30th, 2014.</p>
 
-<p> Final peer review evaluation for this specific project was 100% or 44/44 points.</p>
 <p>The deliverables included this app along with a Java Spring Server.  The server source for this project can be found at : </p>
 <p>https://github.com/dmdavids/SymptomManagementServer</p>
 <p>
-The Capstone MOOC gives Signature Track students who passed all previous MOOCs in the MoCCA Specialization “with Distinction” an opportunity to integrate and demonstrate the knowledge they acquired across the three earlier content area MOOCs. Participation in this Capstone course was by invitation only.
+The Capstone MOOC gives Signature Track students who passed all previous MOOCs in the MoCCA Specialization “with Distinction” an opportunity to integrate and demonstrate the knowledge they acquired across the three earlier content area MOOCs. 
 </p>
+Interesting Statistics from the MOOC:
 <p>https://www.coursera.org/specialization/mobilecloudcomputing/2?utm_medium=courseDescripLabel</p>
 <p>
 Course 1 Programming Mobile Applications for Android Handheld Systems (5200 students met the "distinction" criteria.)</p>
@@ -30,7 +29,6 @@ Course 3 Programming Cloud Services for Android Handheld Systems (no statistics 
 <p>
 90 students or about 25% received 44/44 for the peer review evaluation grade.</p>
 <p>
-10 students were voted as developing the "Best of the Best Apps" <strong>This app was voted in the Best of the Best Apps!!</strong>
 </p>
 ==============================================================================
 <p><strong>Project Description:</strong>
