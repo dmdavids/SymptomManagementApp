@@ -53,11 +53,6 @@ to work with their healthcare providers to improve management of pain and qualit
 <p> <a href="doc/symptom management final 11-30.mp4">Final Video with App Usage - Suggested listening speed >1X best at 2X ;-}</a>
 <br></p>
 ======================
-FEEDBACK FROM PEER REVIEWS
-<p><img border="0" src="images/ReviewsImage.PNG" width="40%" height="40%"><br></p>
-<p> <a href="doc/FEEDBACK.pdf">PDF print of Full Itemized Peer Review Evaluation 12-13-2014</a>
-<br></p>
-======================
 <p><strong>Below are examples of screens from the app.  Please see the <a href="doc/Final SMA Design Document.pdf">Final Functional Requirements Design Document</a> for more screen images.</strong></p>
 <p><strong> Example of Patient Screens</strong> </p>
 <p><img border="0" src="images/checkin 1.png" width="40%" height="40%"><br></p>
